@@ -1,12 +1,12 @@
 package com.perfree.controller;
 
 import com.perfree.commons.common.CommonResult;
-import com.perfree.vo.LoginUserReqVO;
-import com.perfree.vo.LoginUserRespVO;
-import com.perfree.service.IUserService;
+import com.perfree.service.user.UserService;
+import com.perfree.vo.system.LoginUserReqVO;
+import com.perfree.vo.system.LoginUserRespVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
+import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,11 +22,11 @@ import static com.perfree.commons.common.CommonResult.success;
  **/
 @RestController
 @Tag(name = "系统基础接口")
-@RequiredArgsConstructor
 @RequestMapping("api")
 public class SystemController {
 
-    private final IUserService userService;
+    @Resource
+    private UserService userService;
 
 
     @PostMapping("login")

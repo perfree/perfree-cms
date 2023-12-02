@@ -5,14 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.perfree</groupId>
-        <artifactId>PerfreeBlog</artifactId>
+        <artifactId>perfree-cms</artifactId>
         <version>${revision}</version>
     </parent>
 
     <artifactId>perfree-core</artifactId>
     <name>${project.artifactId}</name>
     <packaging>jar</packaging>
-    <description>核心包,PerfreeBlog核心逻辑</description>
+    <description>核心包,perfree-cms核心逻辑</description>
 
     <dependencies>
         <dependency>

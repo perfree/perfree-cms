@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.perfree</groupId>
-        <artifactId>PerfreeBlog</artifactId>
+        <artifactId>perfree-cms</artifactId>
         <version>${revision}</version>
     </parent>
     <modules>
@@ -15,7 +15,7 @@
     <artifactId>perfree-plugins</artifactId>
     <name>${project.artifactId}</name>
     <packaging>pom</packaging>
-    <description>插件包,PerfreeBlog插件</description>
+    <description>插件包,perfree-cms插件</description>
 
     <dependencyManagement>
         <dependencies>

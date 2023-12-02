@@ -2,16 +2,14 @@ package com.perfree.commons.utils;
 
 import com.perfree.commons.constant.SecurityConstants;
 import com.perfree.model.Role;
-import com.perfree.service.IRoleService;
-import com.perfree.service.IUserService;
+import com.perfree.service.role.RoleService;
+import com.perfree.service.user.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.xml.bind.DatatypeConverter;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -36,11 +34,11 @@ public class JwtUtil {
 
     private static final byte[] refreshKey = DatatypeConverter.parseBase64Binary(SecurityConstants.JWT_REFRESH_KEY);
 
-    private static IUserService userService;
-    private static IRoleService roleService;
+    private static UserService userService;
+    private static RoleService roleService;
 
     @Autowired
-    public JwtUtil(IUserService userService, IRoleService roleService) {
+    public JwtUtil(UserService userService, RoleService roleService) {
         JwtUtil.userService = userService;
         JwtUtil.roleService = roleService;
     }

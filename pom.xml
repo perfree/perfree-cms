@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.perfree</groupId>
-    <artifactId>PerfreeBlog</artifactId>
+    <artifactId>perfree-cms</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
-    <description>PerfreeBlog</description>
-    <url>https://github.com/perfree/PerfreeBlog</url>
+    <description>perfree-cms</description>
+    <url>https://github.com/perfree/perfree-cms</url>
     <modules>
         <module>perfree-core</module>
         <module>perfree-web</module>

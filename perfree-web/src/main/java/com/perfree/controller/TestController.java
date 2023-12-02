@@ -2,7 +2,6 @@ package com.perfree.controller;
 
 import cn.hutool.core.io.FileUtil;
 import com.perfree.plugin.PluginManager;
-import com.perfree.service.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
