@@ -1,10 +1,7 @@
 <template>
   <div class="login">
     <div class="login-box">
-      <div class="login-left">
-        <h2 class="left-title">PerfreeCms</h2>
-        <h2 class="left-title">内容管理系统</h2>
-      </div>
+      <div class="login-left"> </div>
       <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="login-form">
         <h3 class="title">登录</h3>
         <el-form-item prop="account">
@@ -113,8 +110,11 @@ function handleLogin() {
 .login-left{
   width: 400px;
   height: 600px;
-  background: var(--el-color-primary);
   padding-top: 200px;
+  background-image: url(../assets/images/login-left.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 20px 0 0 20px;
 }
 .left-title{
   color: white;
