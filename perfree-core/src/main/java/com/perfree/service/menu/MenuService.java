@@ -13,4 +13,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface MenuService extends IService<Menu> {
 
+    /**
+     * 获取当前登录用户拥有的后台管理菜单
+     */
+    void menuAdminListByLoginUser();
 }

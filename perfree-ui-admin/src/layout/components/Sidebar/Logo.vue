@@ -25,7 +25,7 @@ defineProps({
   }
 })
 
-const title = ref('车响汽车CRM系统');
+const title = ref('管理系统');
 const settingsStore = useSettingsStore();
 const sideTheme = computed(() => settingsStore.sideTheme);
 </script>

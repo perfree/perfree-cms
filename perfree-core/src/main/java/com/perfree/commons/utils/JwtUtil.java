@@ -2,6 +2,7 @@ package com.perfree.commons.utils;
 
 import com.perfree.commons.constant.SecurityConstants;
 import com.perfree.model.Role;
+import com.perfree.model.User;
 import com.perfree.service.role.RoleService;
 import com.perfree.service.user.UserService;
 import io.jsonwebtoken.Claims;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -114,13 +114,15 @@ public class JwtUtil {
             claims = e.getClaims();
         }
         //  获取用户角色 TODO 老数据为单角色不分权限,这里在考虑要不要升级为多角色加权限的方式
-        com.perfree.model.User byAccount = userService.findByAccount(claims.getSubject());
+        User byAccount = userService.findByAccount(claims.getSubject());
+        byAccount.setSalt(null);
+        byAccount.setPassword(null);
         Role role = roleService.getById(byAccount.getRoleId());
         List<String> roles = new ArrayList<>();
         //  roles.add(role.getCode().startsWith("ROLE_") ? role.getCode(): "ROLE_" + role.getCode());
         roles.add(role.getCode());
         List<SimpleGrantedAuthority> authorities = roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-        return new UsernamePasswordAuthenticationToken(new User(claims.getSubject(), "******", authorities), token, authorities);
+        return new UsernamePasswordAuthenticationToken(byAccount, token, authorities);
     }
 
     /**

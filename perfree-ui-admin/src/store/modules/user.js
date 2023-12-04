@@ -19,7 +19,6 @@ const useUserStore = defineStore(
         const password = userInfo.password
         return new Promise((resolve, reject) => {
           login(account, password).then(res => {
-            console.log(res);
             setToken(res.data.token)
             this.token = res.data.token
             resolve()

@@ -1,10 +1,13 @@
 package com.perfree.commons.enums;
 
+import lombok.Getter;
+
 /**
  * @author Perfree
  * @description 定义响应编码枚举
  * @date 15:11 2023/9/28
  */
+@Getter
 public enum ResultCodeEnum {
     SUCCESS(200,"成功"),
     FAIL(500,"失败"),
@@ -17,14 +20,6 @@ public enum ResultCodeEnum {
     ResultCodeEnum(Integer code, String msg) {
         this.code = code;
         this.msg = msg;
-    }
-
-    public Integer getCode() {
-        return code;
-    }
-
-    public String getMsg() {
-        return msg;
     }
 
 }
