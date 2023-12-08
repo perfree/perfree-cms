@@ -86,7 +86,7 @@ export function selectDictLabel(datas, value) {
   return actions.join('');
 }
 
-// 回显数据字典（字符串数组）
+// 回显数据字典（字符串、数组）
 export function selectDictLabels(datas, value, separator) {
   if (value === undefined || value.length ===0) {
     return "";
@@ -227,41 +227,7 @@ export function tansParams(params) {
   return result
 }
 
-
-// 返回项目路径
-export function getNormalPath(p) {
-  if (p.length === 0 || !p || p == 'undefined') {
-    return p
-  };
-  let res = p.replace('//', '/')
-  if (res[res.length - 1] === '/') {
-    return res.slice(0, res.length - 1)
-  }
-  return res;
-}
-
 // 验证是否为blob格式
 export function blobValidate(data) {
   return data.type !== 'application/json'
 }
-
-export function formatDate(time, format) {
-  let t = new Date(time);
-  let tf = function(i){return (i < 10 ? '0' : '') + i};
-  return format.replace(/yyyy|MM|dd|HH|mm|ss/g, function(a){
-      switch(a){
-          case 'yyyy':
-              return tf(t.getFullYear());
-          case 'MM':
-              return tf(t.getMonth() + 1);
-          case 'mm':
-              return tf(t.getMinutes());
-          case 'dd':
-              return tf(t.getDate());
-          case 'HH':
-              return tf(t.getHours());
-          case 'ss':
-              return tf(t.getSeconds());
-      }
-  })
-};

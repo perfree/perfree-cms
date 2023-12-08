@@ -1,10 +1,14 @@
 package com.perfree.model;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,12 +31,13 @@ public class Menu implements Serializable {
     /**
      * 主键
      */
+    @TableId(value = "id", type = IdType.ASSIGN_UUID)
     private String id;
 
     /**
      * 父级id
      */
-    private String pid;
+    private String parentId;
 
     /**
      * 菜单名
@@ -40,9 +45,9 @@ public class Menu implements Serializable {
     private String name;
 
     /**
-     * 菜单链接
+     * 菜单路径
      */
-    private String url;
+    private String path;
 
     /**
      * 菜单图标
@@ -79,13 +84,36 @@ public class Menu implements Serializable {
      */
     private Integer flag;
 
+    /** 组件路径 */
+    private String component;
+
+    /** 路由参数 */
+    private String query;
+
+    /** 是否为外链（0是 1否） */
+    private String isFrame;
+
+    /** 是否缓存（0缓存 1不缓存） */
+    private String isCache;
+
+    /** 类型（M目录 C菜单 F按钮） */
+    private String menuType;
+
+    /** 显示状态（0显示 1隐藏） */
+    private String visible;
+
+    /** 权限字符串 */
+    private String perms;
+
     /**
      * 创建时间
      */
-    private LocalDateTime createTime;
+    private Date createTime;
 
     /**
      * 更新时间
      */
-    private LocalDateTime updateTime;
+    private Date updateTime;
+
+
 }

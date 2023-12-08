@@ -1,5 +1,6 @@
 package com.perfree.commons.common;
 
+import com.perfree.commons.enums.ErrorCode;
 import com.perfree.commons.enums.ResultCodeEnum;
 import lombok.Data;
 import org.springframework.util.Assert;
@@ -62,6 +63,17 @@ public class CommonResult<T> implements Serializable {
         result.msg = message;
         result.data = data;
         return result;
+    }
+
+    /**
+     * @author Perfree
+     * @description 响应错误信息
+     * @date 15:10 2023/9/28
+     * @param errorCode 错误信息
+     * @return com.perfree.commons.common.CommonResult<T>
+     */
+    public static <T> CommonResult<T> error(ErrorCode errorCode) {
+        return error(errorCode.getCode(), errorCode.getMsg());
     }
 
     /**

@@ -10,7 +10,10 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
     ACCOUNT_NOT_FOUNT(100000001,"账号不存在!"),
-    ACCOUNT_PASSWORD_ERROR(100000002,"账号或密码错误!");
+    ACCOUNT_PASSWORD_ERROR(100000002,"账号或密码错误!"),
+    CAPTCHA_IMAGE_ERROR(100000004,"验证码生成失败!"),
+    CAPTCHA_EXPIRE(100000005,"验证码已过期!"),
+    CAPTCHA_VALID_ERROR(100000006,"验证码错误!");
 
     private final Integer code;
 

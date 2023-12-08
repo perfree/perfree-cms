@@ -2,6 +2,7 @@ package com.perfree.service.user;
 
 import com.perfree.model.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.perfree.vo.system.LoginUserInfoRespVO;
 import com.perfree.vo.system.LoginUserReqVO;
 import com.perfree.vo.system.LoginUserRespVO;
 
@@ -32,4 +33,11 @@ public interface UserService extends IService<User> {
      * @return com.perfree.model.User
      */
    User findByAccount(String account);
+
+    /**
+     * 获取当前登录的用户信息
+     * @return LoginUserInfoRespVO
+     */
+    LoginUserInfoRespVO userInfo();
+
 }

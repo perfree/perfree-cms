@@ -1,14 +1,17 @@
 import request from '@/utils/request'
 
 // 登录方法
-export function login(account, password) {
+export function login(username, password, code, uuid) {
+  const data = {
+    username,
+    password,
+    code,
+    uuid
+  }
   return request({
-    url: '/login',
-    headers: {
-      isToken: false
-    },
+    url: '/api/login',
     method: 'post',
-    data: {account: account, password: password}
+    data: data
   })
 }
 
@@ -27,7 +30,7 @@ export function register(data) {
 // 获取用户详细信息
 export function getInfo() {
   return request({
-    url: '/getInfo',
+    url: '/api/userInfo',
     method: 'get'
   })
 }
@@ -35,7 +38,7 @@ export function getInfo() {
 // 退出方法
 export function logout() {
   return request({
-    url: '/logout',
+    url: '/api/logout',
     method: 'post'
   })
 }
@@ -43,11 +46,8 @@ export function logout() {
 // 获取验证码
 export function getCodeImg() {
   return request({
-    url: '/captchaImage',
-    headers: {
-      isToken: false
-    },
-    method: 'get',
+    url: '/api/captchaImage',
+    method: 'post',
     timeout: 20000
   })
 }

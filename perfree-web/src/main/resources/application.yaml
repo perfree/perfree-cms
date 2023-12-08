@@ -12,6 +12,9 @@ server:
     accept-count: 1000
     max-connections: 6500
     connection-timeout: 12000
+logging:
+  level:
+    root: info
 
 spring:
   aop:
@@ -27,8 +30,8 @@ spring:
       load-on-startup: 1
   datasource:
     username: root
-    url: jdbc:mysql://127.0.0.1:3306/perfree?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&nullCatalogMeansCurrent=true
-    password: 215607..
+    url: jdbc:mysql://192.168.0.77:3306/perfree?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&nullCatalogMeansCurrent=true
+    password: xwt@123
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     druid:

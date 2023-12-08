@@ -94,5 +94,10 @@
             <artifactId>mapstruct-processor</artifactId>
         </dependency>
 
+        <!-- 缓存 -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
     </dependencies>
 </project>

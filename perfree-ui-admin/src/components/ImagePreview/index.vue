@@ -4,67 +4,65 @@
     fit="cover"
     :style="`width:${realWidth};height:${realHeight};`"
     :preview-src-list="realSrcList"
-    append-to-body="true"
   >
-    <template #error>
-      <div class="image-slot">
-        <el-icon><picture-filled /></el-icon>
-      </div>
-    </template>
+    <div slot="error" class="image-slot">
+      <i class="el-icon-picture-outline"></i>
+    </div>
   </el-image>
 </template>
 
-<script setup>
+<script>
 import { isExternal } from "@/utils/validate";
 
-const props = defineProps({
-  src: {
-    type: String,
-    default: ""
-  },
-  width: {
-    type: [Number, String],
-    default: ""
-  },
-  height: {
-    type: [Number, String],
-    default: ""
-  }
-});
-
-const realSrc = computed(() => {
-  if (!props.src) {
-    return;
-  }
-  let real_src = props.src.split(",")[0];
-  if (isExternal(real_src)) {
-    return real_src;
-  }
-  return import.meta.env.VITE_APP_BASE_API + real_src;
-});
-
-const realSrcList = computed(() => {
-  if (!props.src) {
-    return;
-  }
-  let real_src_list = props.src.split(",");
-  let srcList = [];
-  real_src_list.forEach(item => {
-    if (isExternal(item)) {
-      return srcList.push(item);
+export default {
+  name: "ImagePreview",
+  props: {
+    src: {
+      type: String,
+      default: ""
+    },
+    width: {
+      type: [Number, String],
+      default: ""
+    },
+    height: {
+      type: [Number, String],
+      default: ""
     }
-    return srcList.push(import.meta.env.VITE_APP_BASE_API + item);
-  });
-  return srcList;
-});
-
-const realWidth = computed(() =>
-  typeof props.width == "string" ? props.width : `${props.width}px`
-);
-
-const realHeight = computed(() =>
-  typeof props.height == "string" ? props.height : `${props.height}px`
-);
+  },
+  computed: {
+    realSrc() {
+      if (!this.src) {
+        return;
+      }
+      let real_src = this.src.split(",")[0];
+      if (isExternal(real_src)) {
+        return real_src;
+      }
+      return process.env.VUE_APP_BASE_API + real_src;
+    },
+    realSrcList() {
+      if (!this.src) {
+        return;
+      }
+      let real_src_list = this.src.split(",");
+      let srcList = [];
+      real_src_list.forEach(item => {
+        if (isExternal(item)) {
+          return srcList.push(item);
+        }
+        return srcList.push(process.env.VUE_APP_BASE_API + item);
+      });
+      return srcList;
+    },
+    realWidth() {
+      return typeof this.width == "string" ? this.width : `${this.width}px`;
+    },
+    realHeight() {
+      return typeof this.height == "string" ? this.height : `${this.height}px`;
+    }
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -72,14 +70,14 @@ const realHeight = computed(() =>
   border-radius: 5px;
   background-color: #ebeef5;
   box-shadow: 0 0 5px 1px #ccc;
-  :deep(.el-image__inner) {
+  ::v-deep .el-image__inner {
     transition: all 0.3s;
     cursor: pointer;
     &:hover {
       transform: scale(1.2);
     }
   }
-  :deep(.image-slot) {
+  ::v-deep .image-slot {
     display: flex;
     justify-content: center;
     align-items: center;

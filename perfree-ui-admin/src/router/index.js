@@ -1,4 +1,8 @@
-import { createWebHistory, createRouter } from 'vue-router'
+import Vue from 'vue'
+import Router from 'vue-router'
+
+Vue.use(Router)
+
 /* Layout */
 import Layout from '@/layout'
 
@@ -33,7 +37,7 @@ export const constantRoutes = [
     children: [
       {
         path: '/redirect/:path(.*)',
-        component: () => import('@/views/redirect/index.vue')
+        component: () => import('@/views/redirect')
       }
     ]
   },
@@ -48,7 +52,7 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: "/:pathMatch(.*)*",
+    path: '/404',
     component: () => import('@/views/error/404'),
     hidden: true
   },
@@ -60,10 +64,10 @@ export const constantRoutes = [
   {
     path: '',
     component: Layout,
-    redirect: '/index',
+    redirect: 'index',
     children: [
       {
-        path: '/index',
+        path: 'index',
         component: () => import('@/views/index'),
         name: 'Index',
         meta: { title: '首页', icon: 'dashboard', affix: true }
@@ -71,81 +75,21 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '',
-    component: Layout,
-    redirect: 'noredirect',
-    children: [
-      {
-        path: 'system/activic/index',
-        component: () => import('@/views/system/activic/index'),
-        name: 'activic',
-        meta: { title: '活动管理', icon: 'activic', affix: false }
-      }
-    ]
-  },
-  {
-    path: '',
-    component: Layout,
-    redirect: 'noredirect',
-    children: [
-      {
-        path: 'system/clientUser/index',
-        component: () => import('@/views/system/clientUser/index'),
-        name: 'clientUser',
-        meta: { title: '客户管理', icon: 'clientUser', affix: false }
-      }
-    ]
-  },
-  {
-    path: '',
-    component: Layout,
-    redirect: 'noredirect',
-    children: [
-      {
-        path: 'system/car/index',
-        component: () => import('@/views/system/car/index'),
-        name: 'car',
-        meta: { title: '车辆管理', icon: 'car', affix: false }
-      }
-    ]
-  },
-  {
-    path: '',
-    component: Layout,
-    redirect: 'noredirect',
-    children: [
-      {
-        path: 'system/order/index',
-        component: () => import('@/views/system/order/index'),
-        name: 'order',
-        meta: { title: '订单管理', icon: 'order', affix: false }
-      }
-    ]
-  },
-  {
-    path: '',
-    component: Layout,
-    redirect: 'noredirect',
-    children: [
-      {
-        path: 'system/contract/index',
-        component: () => import('@/views/system/contract/index'),
-        name: 'contract',
-        meta: { title: '合同管理', icon: 'contract', affix: false }
-      }
-    ]
-  },
-  {
-    path: '/user',
+    path: '/system',
     component: Layout,
     hidden: true,
-    redirect: 'noredirect',
     children: [
       {
-        path: 'profile',
-        component: () => import('@/views/system/user/profile/index'),
-        name: 'Profile',
-        meta: { title: '个人中心', icon: 'user' }
+        path: 'user',
+        component: () => import('@/views/system/user/index'),
+        name: 'user',
+        meta: { title: '用户管理' }
+      },
+      {
+        path: 'menu',
+        component: () => import('@/views/system/menu/index'),
+        name: 'menu',
+        meta: { title: '菜单管理'}
       }
     ]
   }
@@ -154,16 +98,20 @@ export const constantRoutes = [
 // 动态路由，基于用户权限动态去加载
 export const dynamicRoutes = []
 
-const router = createRouter({
-  history: createWebHistory(),
-  routes: constantRoutes,
-  scrollBehavior(to, from, savedPosition) {
-    if (savedPosition) {
-      return savedPosition
-    } else {
-      return { top: 0 }
-    }
-  },
-});
+// 防止连续点击多次路由报错
+let routerPush = Router.prototype.push;
+let routerReplace = Router.prototype.replace;
+// push
+Router.prototype.push = function push(location) {
+  return routerPush.call(this, location).catch(err => err)
+}
+// replace
+Router.prototype.replace = function push(location) {
+  return routerReplace.call(this, location).catch(err => err)
+}
 
-export default router;
+export default new Router({
+  mode: 'history', // 去掉url中的#
+  scrollBehavior: () => ({ y: 0 }),
+  routes: constantRoutes
+})
