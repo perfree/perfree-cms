@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container home">
+   <div class="app-container home">
     首页
   </div>
 </template>
@@ -19,6 +19,5 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 </style>
 

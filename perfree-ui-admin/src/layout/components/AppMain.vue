@@ -1,29 +1,21 @@
 <template>
   <section class="app-main">
-    <transition name="fade-transform" mode="out-in">
-      <keep-alive :include="cachedViews">
-        <router-view v-if="!$route.meta.link" :key="key" />
-      </keep-alive>
-    </transition>
+    <router-view v-slot="{ Component, route }">
+      <transition name="fade-transform" mode="out-in">
+        <keep-alive :include="tagsViewStore.cachedViews">
+          <component v-if="!route.meta.link" :is="Component" :key="route.path"/>
+        </keep-alive>
+      </transition>
+    </router-view>
     <iframe-toggle />
   </section>
 </template>
 
-<script>
+<script setup>
 import iframeToggle from "./IframeToggle/index"
+import useTagsViewStore from '@/store/modules/tagsView'
 
-export default {
-  name: 'AppMain',
-  components: { iframeToggle },
-  computed: {
-    cachedViews() {
-      return this.$store.state.tagsView.cachedViews
-    },
-    key() {
-      return this.$route.path
-    }
-  }
-}
+const tagsViewStore = useTagsViewStore()
 </script>
 
 <style lang="scss" scoped>
@@ -73,3 +65,4 @@ export default {
   border-radius: 3px;
 }
 </style>
+

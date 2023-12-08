@@ -1,8 +1,18 @@
 /**
+ * 判断url是否是http或https 
  * @param {string} path
  * @returns {Boolean}
  */
-export function isExternal(path) {
+ export function isHttp(url) {
+  return url.indexOf('http://') !== -1 || url.indexOf('https://') !== -1
+}
+
+/**
+ * 判断path是否为外链
+ * @param {string} path
+ * @returns {Boolean}
+ */
+ export function isExternal(path) {
   return /^(https?:|mailto:|tel:)/.test(path)
 }
 
@@ -65,7 +75,10 @@ export function validEmail(email) {
  * @returns {Boolean}
  */
 export function isString(str) {
-  return typeof str === 'string' || str instanceof String;
+  if (typeof str === 'string' || str instanceof String) {
+    return true
+  }
+  return false
 }
 
 /**

@@ -72,7 +72,6 @@ public class SystemController {
         return success("退出成功");
     }
 
-
     @PostMapping("captchaImage")
     @Operation(summary = "获取验证码")
     public CommonResult<CaptchaImageRespVO> captchaImage(){

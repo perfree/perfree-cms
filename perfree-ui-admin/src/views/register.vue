@@ -5,8 +5,8 @@
       <el-form ref="registerForm" :model="registerForm" :rules="registerRules" class="register-form">
         <h3 class="title">注册</h3>
         <el-form-item prop="username">
-          <el-input v-model="registerForm.username" type="text" auto-complete="off" placeholder="账号">
-            <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
+          <el-input v-model="registerForm.username" type="text" auto-complete="off" placeholder="账号" size="large" >
+            <template #prefix><svg-icon icon-class="user" class="el-input__icon input-icon" /></template>
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
@@ -15,9 +15,10 @@
             type="password"
             auto-complete="off"
             placeholder="密码"
-            @keyup.enter.native="handleRegister"
+            size="large" 
+            @keyup.enter="handleRegister"
           >
-            <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon" />
+            <template #prefix><svg-icon icon-class="password" class="el-input__icon input-icon" /></template>
           </el-input>
         </el-form-item>
         <el-form-item prop="confirmPassword">
@@ -26,9 +27,10 @@
             type="password"
             auto-complete="off"
             placeholder="确认密码"
-            @keyup.enter.native="handleRegister"
+            size="large" 
+            @keyup.enter="handleRegister"
           >
-            <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon" />
+            <template #prefix><svg-icon icon-class="password" class="el-input__icon input-icon" /></template>
           </el-input>
         </el-form-item>
         <el-form-item prop="code" v-if="captchaEnabled">
@@ -37,9 +39,10 @@
             auto-complete="off"
             placeholder="验证码"
             style="width: 63%"
-            @keyup.enter.native="handleRegister"
+            size="large" 
+            @keyup.enter="handleRegister"
           >
-            <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon" />
+            <template #prefix><svg-icon icon-class="validCode" class="el-input__icon input-icon" /></template>
           </el-input>
           <div class="register-code">
             <img :src="codeUrl" @click="getCode" class="register-code-img"/>
@@ -48,15 +51,15 @@
         <el-form-item style="width:100%;">
           <el-button
             :loading="loading"
-            size="medium"
+            size="large" 
             type="primary"
             style="width:100%;"
-            @click.native.prevent="handleRegister"
+            @click.prevent="handleRegister"
           >
             <span v-if="!loading">注 册</span>
             <span v-else>注 册 中...</span>
           </el-button>
-          <div style="position: relative;">
+          <div style="position: relative;width: 100%;">
             <router-link class="link-type" :to="'/login'">使用已有账户登录</router-link>
           </div>
         </el-form-item>

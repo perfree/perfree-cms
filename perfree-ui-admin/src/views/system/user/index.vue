@@ -1,26 +1,26 @@
 <template>
-  <div class="app-container">
-   用户
-  </div>
-</template>
-
-<script>
-import { getToken } from "@/utils/auth";
-
-export default {
-  name: "User",
-  data() {
-    return {
-    }
-  },
-  watch: {
-   
-  },
-  created() {
-  
-  },
-  methods: {
+   <div class="app-container">
+    用户
+   </div>
+ </template>
+ 
+ <script>
+ import { getToken } from "@/utils/auth";
+ 
+ export default {
+   name: "User",
+   data() {
+     return {
+     }
+   },
+   watch: {
     
-  }
-};
-</script>
+   },
+   created() {
+   
+   },
+   methods: {
+     
+   }
+ };
+ </script>

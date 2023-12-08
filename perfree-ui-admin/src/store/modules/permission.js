@@ -3,55 +3,57 @@ import router, { constantRoutes, dynamicRoutes } from '@/router'
 import { getRouters } from '@/api/menu'
 import Layout from '@/layout/index'
 import ParentView from '@/components/ParentView'
-import InnerLink from '@/layout/components/InnerLink'
 import {toCamelCase} from "@/utils";
 
-const permission = {
-  state: {
-    routes: [],
-    addRoutes: [],
-    defaultRoutes: [],
-    topbarRouters: [],
-    sidebarRouters: []
-  },
-  mutations: {
-    SET_ROUTES: (state, routes) => {
-      state.addRoutes = routes
-      state.routes = constantRoutes.concat(routes)
-    },
-    SET_DEFAULT_ROUTES: (state, routes) => {
-      state.defaultRoutes = constantRoutes.concat(routes)
-    },
-    SET_TOPBAR_ROUTES: (state, routes) => {
-      state.topbarRouters = routes
-    },
-    SET_SIDEBAR_ROUTERS: (state, routes) => {
-      state.sidebarRouters = routes
-    },
-  },
-  actions: {
-    // 生成路由
-    GenerateRoutes({ commit }) {
-      return new Promise(resolve => {
-        // 向后端请求路由数据
-        getRouters().then(res => {
-          const sdata = JSON.parse(JSON.stringify(res.data))
-          const rdata = JSON.parse(JSON.stringify(res.data))
-          const sidebarRoutes = filterAsyncRouter(sdata)
-          const rewriteRoutes = filterAsyncRouter(rdata, false, true)
-         // const asyncRoutes = filterDynamicRoutes(dynamicRoutes);
-          rewriteRoutes.push({ path: '*', redirect: '/404', hidden: true })
-          //router.addRoutes(asyncRoutes);
-          commit('SET_ROUTES', rewriteRoutes)
-          commit('SET_SIDEBAR_ROUTERS', constantRoutes.concat(sidebarRoutes))
-          commit('SET_DEFAULT_ROUTES', sidebarRoutes)
-          commit('SET_TOPBAR_ROUTES', sidebarRoutes)
-          resolve(rewriteRoutes)
+// 匹配views里面所有的.vue文件
+const modules = import.meta.glob('./../../views/**/*.vue')
+
+const usePermissionStore = defineStore(
+  'permission',
+  {
+    state: () => ({
+      routes: [],
+      addRoutes: [],
+      defaultRoutes: [],
+      topbarRouters: [],
+      sidebarRouters: []
+    }),
+    actions: {
+      setRoutes(routes) {
+        this.addRoutes = routes
+        this.routes = constantRoutes.concat(routes)
+      },
+      setDefaultRoutes(routes) {
+        this.defaultRoutes = constantRoutes.concat(routes)
+      },
+      setTopbarRoutes(routes) {
+        this.topbarRouters = routes
+      },
+      setSidebarRouters(routes) {
+        this.sidebarRouters = routes
+      },
+      generateRoutes(roles) {
+        return new Promise(resolve => {
+          // 向后端请求路由数据
+          getRouters().then(res => {
+            const sdata = JSON.parse(JSON.stringify(res.data))
+            const rdata = JSON.parse(JSON.stringify(res.data))
+            const defaultData = JSON.parse(JSON.stringify(res.data))
+            const sidebarRoutes = filterAsyncRouter(sdata)
+            const rewriteRoutes = filterAsyncRouter(rdata, false, true)
+            const defaultRoutes = filterAsyncRouter(defaultData)
+            // const asyncRoutes = filterDynamicRoutes(dynamicRoutes)
+            // asyncRoutes.forEach(route => { router.addRoute(route) })
+            this.setRoutes(rewriteRoutes)
+            this.setSidebarRouters(constantRoutes.concat(sidebarRoutes))
+            this.setDefaultRoutes(sidebarRoutes)
+            this.setTopbarRoutes(defaultRoutes)
+            resolve(rewriteRoutes)
+          })
         })
-      })
+      }
     }
-  }
-}
+  })
 
 // 遍历后台传来的路由字符串，转换为组件对象
 function filterAsyncRouter(asyncRouterMap, lastRouter = false, type = false) {
@@ -147,4 +149,4 @@ export const loadView = (view) => {
   return (resolve) => require([`@/views/${view}`], resolve)
 }
 
-export default permission
+export default usePermissionStore

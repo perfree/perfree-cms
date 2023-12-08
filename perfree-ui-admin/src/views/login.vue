@@ -2,16 +2,17 @@
   <div class="login">
     <div class="login-box">
       <div class="login-left"> </div>
-      <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form">
+      <el-form ref="loginRef" :model="loginForm" :rules="loginRules" class="login-form">
         <h3 class="title">登录</h3>
         <el-form-item prop="username">
           <el-input
             v-model="loginForm.username"
             type="text"
             auto-complete="off"
+            size="large"
             placeholder="账号"
           >
-            <svg-icon slot="prefix" icon-class="user" class="el-input__icon input-icon" />
+            <template #prefix><svg-icon icon-class="user" class="el-input__icon input-icon" /></template>
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
@@ -19,10 +20,11 @@
             v-model="loginForm.password"
             type="password"
             auto-complete="off"
+            size="large"
             placeholder="密码"
-            @keyup.enter.native="handleLogin"
+            @keyup.enter="handleLogin"
           >
-            <svg-icon slot="prefix" icon-class="password" class="el-input__icon input-icon" />
+            <template #prefix><svg-icon icon-class="password" class="el-input__icon input-icon" /></template>
           </el-input>
         </el-form-item>
         <el-form-item prop="code" v-if="captchaEnabled">
@@ -30,10 +32,11 @@
             v-model="loginForm.code"
             auto-complete="off"
             placeholder="验证码"
+            size="large"
             style="width: 63%"
-            @keyup.enter.native="handleLogin"
+            @keyup.enter="handleLogin"
           >
-            <svg-icon slot="prefix" icon-class="validCode" class="el-input__icon input-icon" />
+            <template #prefix><svg-icon icon-class="validCode" class="el-input__icon input-icon" /></template>
           </el-input>
           <div class="login-code">
             <img :src="codeUrl" @click="getCode" class="login-code-img"/>
@@ -43,15 +46,15 @@
         <el-form-item style="width:100%;">
           <el-button
             :loading="loading"
-            size="medium"
+            size="large"
             type="primary"
             style="width:100%;"
-            @click.native.prevent="handleLogin"
+            @click.prevent="handleLogin"
           >
             <span v-if="!loading">登 录</span>
             <span v-else>登 录 中...</span>
           </el-button>
-          <div style="position: relative;"> 
+          <div style="position: relative;width: 100%;"> 
             <a class="forget-password" href="javascript:;">忘记密码</a>
             <router-link class="link-type" :to="'/register'" v-if="register">立即注册</router-link>
           </div>
@@ -65,98 +68,102 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { getCodeImg } from "@/api/login";
 import Cookies from "js-cookie";
-import { encrypt, decrypt } from '@/utils/jsencrypt'
+import { encrypt, decrypt } from "@/utils/jsencrypt";
+import useUserStore from '@/store/modules/user'
 
-export default {
-  name: "Login",
-  data() {
-    return {
-      codeUrl: "",
-      loginForm: {
-        username: "",
-        password: "",
-        rememberMe: false,
-        code: "",
-        uuid: ""
-      },
-      loginRules: {
-        username: [
-          { required: true, trigger: "blur", message: "请输入您的账号" }
-        ],
-        password: [
-          { required: true, trigger: "blur", message: "请输入您的密码" }
-        ],
-        code: [{ required: true, trigger: "change", message: "请输入验证码" }]
-      },
-      loading: false,
-      // 验证码开关
-      captchaEnabled: true,
-      // 注册开关
-      register: true,
-      redirect: undefined
-    };
-  },
-  watch: {
-    $route: {
-      handler: function(route) {
-        this.redirect = route.query && route.query.redirect;
-      },
-      immediate: true
-    }
-  },
-  created() {
-    this.getCode();
-    this.getCookie();
-  },
-  methods: {
-    getCode() {
-      getCodeImg().then(res => {
-        this.captchaEnabled = res.captchaEnabled === undefined ? true : res.captchaEnabled;
-        if (this.captchaEnabled) {
-          this.codeUrl = "data:image/gif;base64," + res.data.img;
-          this.loginForm.uuid = res.data.uuid;
-        }
-      });
-    },
-    getCookie() {
-      const username = Cookies.get("username");
-      const password = Cookies.get("password");
-      const rememberMe = Cookies.get('rememberMe')
-      this.loginForm = {
-        username: username === undefined ? this.loginForm.username : username,
-        password: password === undefined ? this.loginForm.password : decrypt(password),
-        rememberMe: rememberMe === undefined ? false : Boolean(rememberMe)
-      };
-    },
-    handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true;
-          if (this.loginForm.rememberMe) {
-            Cookies.set("username", this.loginForm.username, { expires: 30 });
-            Cookies.set("password", encrypt(this.loginForm.password), { expires: 30 });
-            Cookies.set('rememberMe', this.loginForm.rememberMe, { expires: 30 });
-          } else {
-            Cookies.remove("username");
-            Cookies.remove("password");
-            Cookies.remove('rememberMe');
-          }
-          this.$store.dispatch("Login", this.loginForm).then(() => {
-            this.$router.push({ path: this.redirect || "/" }).catch(()=>{});
-          }).catch(() => {
-            this.loading = false;
-            if (this.captchaEnabled) {
-              this.getCode();
-            }
-          });
-        }
-      });
-    }
-  }
+const userStore = useUserStore()
+const route = useRoute();
+const router = useRouter();
+const { proxy } = getCurrentInstance();
+
+const loginForm = ref({
+  username: "",
+  password: "",
+  rememberMe: false,
+  code: "",
+  uuid: ""
+});
+
+const loginRules = {
+  username: [{ required: true, trigger: "blur", message: "请输入您的账号" }],
+  password: [{ required: true, trigger: "blur", message: "请输入您的密码" }],
+  code: [{ required: true, trigger: "change", message: "请输入验证码" }]
 };
+
+const codeUrl = ref("");
+const loading = ref(false);
+// 验证码开关
+const captchaEnabled = ref(true);
+// 注册开关
+const register = ref(true);
+const redirect = ref(undefined);
+
+watch(route, (newRoute) => {
+    redirect.value = newRoute.query && newRoute.query.redirect;
+}, { immediate: true });
+
+function handleLogin() {
+  proxy.$refs.loginRef.validate(valid => {
+    if (valid) {
+      loading.value = true;
+      // 勾选了需要记住密码设置在 cookie 中设置记住用户名和密码
+      if (loginForm.value.rememberMe) {
+        Cookies.set("username", loginForm.value.username, { expires: 30 });
+        Cookies.set("password", encrypt(loginForm.value.password), { expires: 30 });
+        Cookies.set("rememberMe", loginForm.value.rememberMe, { expires: 30 });
+      } else {
+        // 否则移除
+        Cookies.remove("username");
+        Cookies.remove("password");
+        Cookies.remove("rememberMe");
+      }
+      // 调用action的登录方法
+      userStore.login(loginForm.value).then(() => {
+        const query = route.query;
+        const otherQueryParams = Object.keys(query).reduce((acc, cur) => {
+          if (cur !== "redirect") {
+            acc[cur] = query[cur];
+          }
+          return acc;
+        }, {});
+        router.push({ path: redirect.value || "/", query: otherQueryParams });
+      }).catch(() => {
+        loading.value = false;
+        // 重新获取验证码
+        if (captchaEnabled.value) {
+          getCode();
+        }
+      });
+    }
+  });
+}
+
+function getCode() {
+  getCodeImg().then(res => {
+    captchaEnabled.value = res.captchaEnabled === undefined ? true : res.captchaEnabled;
+    if (captchaEnabled.value) {
+      codeUrl.value = "data:image/gif;base64," + res.data.img;
+      loginForm.value.uuid = res.data.uuid;
+    }
+  });
+}
+
+function getCookie() {
+  const username = Cookies.get("username");
+  const password = Cookies.get("password");
+  const rememberMe = Cookies.get("rememberMe");
+  loginForm.value = {
+    username: username === undefined ? loginForm.value.username : username,
+    password: password === undefined ? loginForm.value.password : decrypt(password),
+    rememberMe: rememberMe === undefined ? false : Boolean(rememberMe)
+  };
+}
+
+getCode();
+getCookie();
 </script>
 
 <style rel="stylesheet/scss" lang="scss">
@@ -181,7 +188,7 @@ export default {
   width: 400px;
   height: 500px;
   padding-top: 200px;
-  background-image: url(../assets/images/login-left.png);
+  background-image: url("../assets/images/login-left.png");
   background-repeat: no-repeat;
   background-size: cover;
   border-radius: 20px 0 0 20px;
