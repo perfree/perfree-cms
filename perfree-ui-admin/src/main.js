@@ -1,5 +1,5 @@
 import { createApp } from 'vue'
-
+import microApp from '@micro-zoe/micro-app'
 import Cookies from 'js-cookie'
 
 import ElementPlus from 'element-plus'
@@ -42,6 +42,10 @@ import ImagePreview from "@/components/ImagePreview"
 import TreeSelect from '@/components/TreeSelect'
 
 
+
+microApp.start({
+  'disable-memory-router': true, // 关闭虚拟路由
+})
 const app = createApp(App)
 
 // 全局方法挂载

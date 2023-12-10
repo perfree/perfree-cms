@@ -86,9 +86,9 @@ export const constantRoutes = [
         component: () => import('@/views/system/menu/index'),
         name: 'menu',
         meta: { title: '菜单管理'}
-      }
+      },
     ]
-  }
+  },
 ]
 
 // 动态路由，基于用户权限动态去加载

@@ -80,13 +80,19 @@ function filterAsyncRouter(asyncRouterMap, lastRouter = false, type = false) {
     }
     // 处理 component 属性
     if (route.children) { // 父节点
-      if (route.parentId === -1) {
+      if (route.parentId === '-1') {
         route.component = Layout
+      } else if (route.flag === 1) { //TODO 微前端应用
+        route.component = loadMicroView()
       } else {
         route.component = ParentView
       }
     } else { // 根节点
-      route.component = loadView(route.component)
+      if (route.flag === 1) { //TODO 微前端应用
+        console.log(route)
+      } else {
+        route.component = loadView(route.component)
+      }
     }
 
     // filterChildren
@@ -145,6 +151,9 @@ export function filterDynamicRoutes(routes) {
   return res
 }
 
+export const loadMicroView = () => {
+    return () => import('@/views/micro/index');
+}
 export const loadView = (view) => {
   return (resolve) => require([`@/views/${view}`], resolve)
 }
