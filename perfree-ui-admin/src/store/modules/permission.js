@@ -42,8 +42,6 @@ const usePermissionStore = defineStore(
             const sidebarRoutes = filterAsyncRouter(sdata)
             const rewriteRoutes = filterAsyncRouter(rdata, false, true)
             const defaultRoutes = filterAsyncRouter(defaultData)
-            // const asyncRoutes = filterDynamicRoutes(dynamicRoutes)
-            // asyncRoutes.forEach(route => { router.addRoute(route) })
             this.setRoutes(rewriteRoutes)
             this.setSidebarRouters(constantRoutes.concat(sidebarRoutes))
             this.setDefaultRoutes(sidebarRoutes)
@@ -63,9 +61,9 @@ function filterAsyncRouter(asyncRouterMap, lastRouter = false, type = false) {
     route.meta = {
       title: route.name,
       icon: route.icon,
-      noCache: !route.keepAlive,
+      noCache: route.isCache === 1,
     }
-    route.hidden = route.visible === '1'
+    route.hidden = route.visible === 1
     // 处理 name 属性
     if (route.componentName && route.componentName.length > 0) {
       route.name = route.componentName
@@ -82,13 +80,13 @@ function filterAsyncRouter(asyncRouterMap, lastRouter = false, type = false) {
     if (route.children) { // 父节点
       if (route.parentId === '-1') {
         route.component = Layout
-      } else if (route.flag === 1) { //TODO 微前端应用
+      } else if (route.isMicro === 1) { //TODO 微前端应用
         route.component = loadMicroView()
       } else {
         route.component = ParentView
       }
     } else { // 根节点
-      if (route.flag === 1) { //TODO 微前端应用
+      if (route.isMicro === 1) { //TODO 微前端应用
         console.log(route)
       } else {
         route.component = loadView(route.component)
@@ -132,23 +130,6 @@ function filterChildren(childrenMap, lastRouter = false) {
     children = children.concat(el)
   })
   return children
-}
-
-// 动态路由遍历，验证是否具备权限
-export function filterDynamicRoutes(routes) {
-  const res = []
-  routes.forEach(route => {
-    if (route.permissions) {
-      if (auth.hasPermiOr(route.permissions)) {
-        res.push(route)
-      }
-    } else if (route.roles) {
-      if (auth.hasRoleOr(route.roles)) {
-        res.push(route)
-      }
-    }
-  })
-  return res
 }
 
 export const loadMicroView = () => {

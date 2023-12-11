@@ -11,6 +11,9 @@ export function login(username, password, code, uuid) {
   return request({
     url: '/api/login',
     method: 'post',
+    headers: {
+      isToken: false
+    },
     data: data
   })
 }
@@ -39,6 +42,9 @@ export function getInfo() {
 export function logout() {
   return request({
     url: '/api/logout',
+    headers: {
+      isToken: false
+    },
     method: 'post'
   })
 }
