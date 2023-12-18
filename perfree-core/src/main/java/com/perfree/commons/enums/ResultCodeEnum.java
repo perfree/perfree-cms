@@ -11,6 +11,7 @@ import lombok.Getter;
 public enum ResultCodeEnum {
     SUCCESS(200,"成功"),
     FAIL(500,"失败"),
+    SC_UNAUTHORIZED(401,"无效的会话或登录已过期"),
     AUTH_FAIL(403,"认证失败");
 
     private final Integer code;
