@@ -20,7 +20,7 @@ const webpackConfig = {
   },
   output: {
     path: resolve("dist/core"),
-    publicPath: "./core/",
+    publicPath: "/core/",
     filename: "[name].[chunkhash].js",
     // libraryTarget: "var"
     library: {

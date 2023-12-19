@@ -95,7 +95,7 @@ exports.getDlls = function() {
     })
     const dllName = fileName.split('.')
     dllNames.push(
-      `./static/dll/${dllName[0]}/${dllName[0]}.${dllName[1]}.dll.js`
+      `/static/dll/${dllName[0]}/${dllName[0]}.${dllName[1]}.dll.js`
     )
   }
   return dllNames;

@@ -33,7 +33,7 @@ module.exports = merge(common, {
       "/api": "http://localhost:8888"
     },
     // history 模式
-    // historyApiFallback: true
+    historyApiFallback: true
   },
   plugins: [
     // HTML 模板
