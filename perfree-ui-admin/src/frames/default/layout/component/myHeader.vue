@@ -1,12 +1,25 @@
 <template>
  <div class="header">
    <div class="header-right">
-     xxx管理系统
+     <el-button type="primary" text  @click="changeMenu">
+       <el-icon><Fold /></el-icon>
+     </el-button >
    </div>
  </div>
 </template>
 <script setup>
+const props = defineProps({
+  menuIsCollapse: false
+})
+const emits = defineEmits(['update:menuIsCollapse'])
+function changeMenu() {
+  if (props.menuIsCollapse) {
+    emits('update:menuIsCollapse', false)
+  } else {
+    emits('update:menuIsCollapse', true)
+  }
 
+}
 </script>
 <style lang="less">
 .header{

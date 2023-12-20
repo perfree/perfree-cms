@@ -2,18 +2,21 @@
   <div class="common-layout">
     <el-container>
       <el-container>
-        <el-aside width="200px" class="side-container">
+        <el-aside class="side-container">
           <div class="header-logo">
-            xxx管理系统
+            <div class="header-logo-box">
+              <img src="../static/images/logo.png" class="header-logo-img">
+              <div  v-if="!menuIsCollapse" class="header-title">xxx管理系统</div>
+            </div>
           </div>
-          <el-menu active-text-color="rgb(64, 158, 255)"  background-color="#304156" class="el-menu-vertical-demo" default-active="2"
-                   text-color="#fff" :default-active="'/home'" router>
+          <el-menu active-text-color="rgb(64, 158, 255)"  background-color="#304156" class="side-menu"
+                   text-color="#fff" :default-active="currRouter" router :collapse="menuIsCollapse" :collapse-transition="false">
             <menu-tree :menu-list="menuList"></menu-tree>
           </el-menu>
         </el-aside>
         <el-container>
           <el-header>
-            <my-header></my-header>
+            <my-header v-model:menu-is-collapse="menuIsCollapse"></my-header>
           </el-header>
           <el-main>
             <transition name="fade">
@@ -29,12 +32,15 @@
 <script setup>
 import {useRouter} from "vue-router";
 import {useStore} from "vuex";
+import { ref } from 'vue';
 import MenuTree from "./component/menuTree.vue";
 import MyHeader from "@/frames/default/layout/component/myHeader.vue";
 
 const store = useStore();
 const router = useRouter();
+const currRouter = router.currentRoute.value.path;
 const menuList = store.getters.menus;
+let menuIsCollapse = ref(false);
 console.log(router.getRoutes())
 console.log(menuList)
 // router.replace('/elastic/ecs');
@@ -85,7 +91,27 @@ console.log(menuList)
   background: #304156;
 }
 .side-container{
-  width: 200px;
   box-shadow: 2px 0 6px rgba(0,21,41,.35);
+  width: auto;
+}
+.side-menu{
+  max-width: 200px;
+}
+.header-logo-box{
+  text-align: center;
+  line-height: 50px;
+  display: flex;
+  align-items: center;
+  height: 50px;
+}
+.header-logo-img{
+  margin-left: 12px;
+  margin-right: 12px;
+  width: 40px;
+}
+.header-title{
+  width: 136px;
+  text-align: left;
+  color: white;
 }
 </style>

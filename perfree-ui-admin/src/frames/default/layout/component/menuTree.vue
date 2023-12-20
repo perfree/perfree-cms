@@ -12,7 +12,7 @@
     <template v-else>
       <el-menu-item :index="menu.path" >
         <el-icon><component :is="menu.icon" /></el-icon>
-        <span>{{menu.name}}</span>
+        <template #title>{{menu.name}}</template>
       </el-menu-item>
     </template>
 
