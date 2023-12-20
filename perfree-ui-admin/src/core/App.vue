@@ -50,7 +50,6 @@ init().then(() => {
     router.replace('/login');
   } else {
     loadMenuAndModule(store, router).then(() => {
-      console.log(router.getRoutes())
       router.replace(router.currentRoute.value.path);
     }).catch(err => {
       console.log(err);

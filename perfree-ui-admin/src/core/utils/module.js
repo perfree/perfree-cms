@@ -17,7 +17,7 @@ async function assemblePuzzles(menus, childRouter, store, router) {
             return;
         }
         return _import("modules", menu.module,  menu.version)
-            .then(p => {
+            .then( p => {
                 // 需要生成路由的菜单
                 let menusRouter = [];
                 handleMenus(menu, menusRouter);
@@ -27,7 +27,7 @@ async function assemblePuzzles(menus, childRouter, store, router) {
                     .concat(p.routerStatic);
                 pages.push(...childRouter[0].children);
                 for (let childrenKey in childRouter[0].children) {
-                    router.addRoute("frame",childRouter[0].children[childrenKey]);
+                    router.addRoute("frame", childRouter[0].children[childrenKey]);
                 }
                 // Store
                 for (let name in p.store) {
