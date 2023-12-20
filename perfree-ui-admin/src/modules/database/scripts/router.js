@@ -1,18 +1,17 @@
-export default function(menusRouter, puzzleName) {
+export default function(menusRouter, moduleName) {
   let router = [];
-
   // 动态路由
   for (let item of menusRouter)
     router.push({
-      name: item.id,
-      path: "/" + puzzleName + item.page,
+      name: item.componentName,
+      path: item.path,
       component: () =>
-        import(
-          /* webpackChunkName: "views/[request]" */
-          `../views${item.page}`
-        ),
+          import(
+              /* webpackChunkName: "views/[request]" */
+              `../views/${item.component}`
+              ),
       meta: {
-        puzzleName: puzzleName,
+        moduleName: moduleName,
         name: item.name,
         resource: item.resource ? item.resource : []
       }

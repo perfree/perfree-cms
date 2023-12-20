@@ -1,5 +1,6 @@
 <template>
-  <div class="page">{{ moment().format("MMMM Do YYYY, h:mm:ss a") }}
+  <div class="page">
+    这是子模块database的polarDB页面
   </div>
  
 </template>

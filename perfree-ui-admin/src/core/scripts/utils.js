@@ -1,7 +1,14 @@
 // 处理菜单
 export function handleMenus(menus, result) {
-  for (let item of menus) {
-    if (item.leaf) result.push(item);
-    else if (item.children) handleMenus(item.children, result);
+  if (menus.children && menus.children.length > 0){
+    for (let item of menus.children) {
+      if (item.children && item.children.length > 0){
+        handleMenus(item.children, result)
+      } else {
+        result.push(item);
+      }
+    }
+  } else {
+    result.push(menus);
   }
 }

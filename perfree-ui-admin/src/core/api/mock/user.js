@@ -4,7 +4,6 @@ export default {
   // 使用基座
   frame: {
     name: "default",
-    version: "0.1.0",
-    host: "http://127.0.0.1/frames"
+    version: "0.1.0"
   }
 };

@@ -2,16 +2,23 @@ export default [
   {
     path: "/",
     component: () => import("../layout/Index"),
-    name: '111',
+    name: 'frame',
     children: [
       {
         path: "/",
         redirect: "/home"
-      },
-      {
-        path: "/home",
-        component: () => import("../views/Home")
       }
     ]
-  }
+  },
+  {
+    path: "/login",
+    component: () => import("../views/login"),
+    name: 'login'
+  },
+  //404页面捕获
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('../views/404')
+  },
 ];
