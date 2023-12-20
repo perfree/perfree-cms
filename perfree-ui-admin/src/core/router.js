@@ -1,5 +1,4 @@
-import {createWebHistory, createRouter, createWebHashHistory} from "vue-router";
-import {useStore} from "vuex";
+import {createRouter, createWebHistory} from "vue-router";
 import {CONSTANTS} from "@/core/utils/constants";
 
 // 创建一个路由器实例

@@ -40,10 +40,11 @@ import {useStore} from "vuex";
 
 const store = useStore();
 const router = useRouter();
-const menus = store.getters.menus;
 
-console.log(menus)
 // router.replace('/elastic/ecs');
+
+
+
 </script>
 
 <style lang="less">

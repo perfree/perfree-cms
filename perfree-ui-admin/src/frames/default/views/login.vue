@@ -8,13 +8,19 @@
   <script setup>
   import {useStore} from "vuex";
   import {useRouter} from "vue-router";
+  import {loadMenuAndModule} from "@/core/utils/module";
 
   const store = useStore();
   const router = useRouter();
 
   function login() {
     localStorage.setItem("user_info", JSON.stringify({id: 1, userName: 'admin', token: '1231256456456'}));
-    router.replace('/');
+    loadMenuAndModule(store, router).then(() => {
+      console.log(router.getRoutes())
+      router.replace('/');
+    }).catch(err => {
+      console.log(err);
+    })
   }
   </script>
   
