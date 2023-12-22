@@ -1,5 +1,5 @@
 <template>
-  <div class="block text-center">
+  <div class="container">
     登录页
     <el-button type="primary" @click="login">登录</el-button>
   </div>
@@ -25,23 +25,11 @@
   </script>
   
   <style lang="less" scoped>
-  .demonstration {
-    color: var(--el-text-color-secondary);
-  }
-
-  .el-carousel__item h3 {
-    color: #475669;
-    opacity: 0.75;
-    line-height: 150px;
-    margin: 0;
-    text-align: center;
-  }
-
-  .el-carousel__item:nth-child(2n) {
-    background-color: #99a9bf;
-  }
-
-  .el-carousel__item:nth-child(2n + 1) {
-    background-color: #d3dce6;
+  .container{
+    height: 100%;
+    width: 100%;
+    background-color: #e6ebf2;
+    background-image: url('./login-bg.png');
+    background-size: cover;
   }
   </style>

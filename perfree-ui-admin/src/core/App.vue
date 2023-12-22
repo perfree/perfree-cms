@@ -61,10 +61,17 @@ init().then(() => {
 </script>
 
 <style lang="less">
+:root{
+  --primary-color: var(--el-color-primary);
+  --side-background-color: #304156;
+}
 html,body,.full{
   height: 100%;
 }
 #app, .main{
   height: 100%;
+}
+#nprogress .bar {
+  background: var( --primary-color) !important; //自定义颜色
 }
 </style>

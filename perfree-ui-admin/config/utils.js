@@ -77,7 +77,7 @@ exports.requireContext = requireContext
 
 // 获取 dll
 exports.getDlls = function() {
-  let dlls = ["core", "perfree", 'element'];
+  let dlls = ["core", "perfree", 'element', 'NProgress'];
   let dllNames = [];
   for (let item of dlls) {
     // const dllName = require(`../static/dll/${item}.manifest.json`).name.split(

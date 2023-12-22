@@ -16,6 +16,8 @@
     "loadjs": "^4.2.0",
     "minireset.css": "^0.0.7",
     "moment": "^2.29.4",
+    "nprogress": "^0.2.0",
+    "screenfull": "^6.0.2",
     "vue": "^3.2.13",
     "vue-router": "^4.2.5",
     "vuex": "^4.0.2"
