@@ -44,14 +44,8 @@ public class MenuBaseVO {
     @Schema(description = "组件路径")
     private String component;
 
-    @Schema(description = "路由参数")
-    private String query;
-
     @Schema(description = "是否为外链（0是 1否）")
     private Integer isFrame;
-
-    @Schema(description = "否缓存（0缓存 1不缓存）")
-    private Integer isCache;
 
     @Schema(description = "菜单类型（0目录1菜单2按钮）")
     private Integer menuType;
@@ -65,9 +59,6 @@ public class MenuBaseVO {
     @Schema(description = "组件名称")
     private String componentName;
 
-    @Schema(description = "是否为微应用(0否,1是)")
-    private Integer isMicro;
-
-    @Schema(description = "微应用路径")
-    private String microPath;
+    @Schema(description = "模块")
+    private String module;
 }

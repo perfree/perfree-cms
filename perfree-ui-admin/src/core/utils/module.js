@@ -1,22 +1,30 @@
-import {getMenus} from "@/core/api";
 import _import from "@/core/scripts/_import";
 import {handleMenus} from "@/core/scripts/utils";
+import {menuList} from "@/frames/default/api/system";
+import {ElMessage} from "element-plus";
 
 export async function loadMenuAndModule(store, router) {
-    const [ menus] = await Promise.all([getMenus()]);
+    const [ menus] = await Promise.all([menuList().then((res) => {
+        if (res.code === 200) {
+            return res.data;
+        } else {
+            ElMessage.error(res.msg);
+            return null;
+        }
+    })]);
     store.commit("SET_MENUS", menus);
     // 组装模块
-    await assemblePuzzles(menus, store.getters.frameChildRouter, store, router);
+    await assemblePerfree(menus, store.getters.frameChildRouter, store, router);
 }
 
-async function assemblePuzzles(menus, childRouter, store, router) {
+async function assemblePerfree(menus, childRouter, store, router) {
     let pages = childRouter[0].children;
     // 尝试获取模块 / 异步获取
     const promises = menus.map(menu => {
         if (!menu.module || menu.module === '') {
             return;
         }
-        return _import("modules", menu.module,  menu.version)
+        return _import("modules", menu.module,  Date.now())
             .then( p => {
                 // 需要生成路由的菜单
                 let menusRouter = [];

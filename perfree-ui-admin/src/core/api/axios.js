@@ -1,11 +1,17 @@
 import Axios from "axios";
 import axios_config from "./axios_config";
 import { ElMessage } from 'element-plus'
+import {CONSTANTS} from "@/core/utils/constants";
 const axios = Axios.create(axios_config);
 
 // 请求拦截器
 axios.interceptors.request.use(
   function(config) {
+      let token_info = localStorage.getItem(CONSTANTS.STORAGE_TOKEN);
+      if (token_info) {
+          token_info = JSON.parse(token_info);
+          config.headers["Authorization"] = "Bearer " + token_info.accessToken;
+      }
     // Do something before request is sent
     return config;
   },
@@ -18,7 +24,13 @@ axios.interceptors.request.use(
 // 响应拦截器
 axios.interceptors.response.use(
   function(response) {
+      console.log(response)
       if (response.status === 200) {
+          if (response.data.code === 401) {
+              ElMessage.error("登录状态已过期，请重新登陆")
+              localStorage.removeItem(CONSTANTS.STORAGE_TOKEN);
+              router.push("/login")
+          }
           return response.data;
       }
       ElMessage.error('错误信息')

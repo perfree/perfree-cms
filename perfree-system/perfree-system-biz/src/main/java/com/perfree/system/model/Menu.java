@@ -66,14 +66,8 @@ public class Menu implements Serializable {
     /** 组件路径 */
     private String component;
 
-    /** 路由参数 */
-    private String query;
-
     /** 是否为外链（0是 1否） */
     private Integer isFrame;
-
-    /** 是否缓存（0缓存 1不缓存）*/
-    private Integer isCache;
 
     /** 菜单类型（0目录1菜单2按钮）*/
     private String menuType;
@@ -84,14 +78,11 @@ public class Menu implements Serializable {
     /** 权限字符串 */
     private String perms;
 
-    /** 组件名称 */
-    private String componentName;
+    /** 模块 */
+    private String module;
 
     /** 是否为微应用(0否,1是) */
     private Integer isMicro;
-
-    /** 微应用路径 */
-    private String microPath;
 
     /** 创建时间 */
     private Date createTime;

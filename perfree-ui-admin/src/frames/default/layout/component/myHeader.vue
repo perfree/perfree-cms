@@ -23,7 +23,7 @@
        <el-dropdown trigger="click" class="header-user-box">
         <span class="el-dropdown-link">
           <el-avatar  src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"/>
-          <span>admin</span>
+          <span>{{user.userName}}</span>
           <el-icon class="el-icon--right"><arrow-down /></el-icon>
         </span>
          <template #dropdown>
@@ -42,12 +42,14 @@ import { ref } from 'vue';
 import {useRouter, onBeforeRouteUpdate} from "vue-router";
 import screenfull from 'screenfull';
 import {CONSTANTS} from "@/core/utils/constants";
+import {userInfo} from "@/frames/default/api/system";
 
 const props = defineProps({
   menuIsCollapse: false
 });
 
 const router = useRouter();
+const user = ref({});
 
 const emits = defineEmits(['update:menuIsCollapse']);
 let levelList = ref(null);
@@ -62,6 +64,12 @@ onBeforeRouteUpdate((to) => {
   getBreadcrumb(to)
 });
 
+function getUserInfo() {
+  userInfo().then((res) => {
+    user.value = res.data;
+    localStorage.setItem(CONSTANTS.STORAGE_USER_INFO, JSON.stringify(res.data));
+  });
+}
 /**
  * 展开/缩放侧边栏
  */
@@ -117,6 +125,7 @@ function logout() {
   router.replace("/login")
 }
 
+getUserInfo();
 getBreadcrumb(router.currentRoute.value);
 </script>
 <style lang="less">

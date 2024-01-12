@@ -92,7 +92,7 @@
   import { ref, getCurrentInstance } from 'vue';
   import {useStore} from "vuex";
   import {useRouter} from "vue-router";
-  import {getCodeImg, login} from "@/frames/default/api/login";
+  import {getCodeImg, login} from "@/frames/default/api/system";
   import {ElMessage} from "element-plus";
   import {CONSTANTS} from "@/core/utils/constants";
   import {loadMenuAndModule} from "@/core/utils/module";
