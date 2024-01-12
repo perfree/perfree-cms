@@ -113,7 +113,7 @@ function fullScreen() {
  * 退出登录
  */
 function logout() {
-  localStorage.removeItem(CONSTANTS.STORAGE_USER_INFO);
+  localStorage.removeItem(CONSTANTS.STORAGE_TOKEN);
   router.replace("/login")
 }
 

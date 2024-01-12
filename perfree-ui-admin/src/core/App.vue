@@ -41,12 +41,12 @@ async function init() {
 }
 
 init().then(() => {
-  let userInfo = localStorage.getItem(CONSTANTS.STORAGE_USER_INFO);
-  if (userInfo) {
-    userInfo = JSON.parse(userInfo);
+  let token_info = localStorage.getItem(CONSTANTS.STORAGE_TOKEN);
+  if (token_info) {
+    token_info = JSON.parse(token_info);
   }
   // 判断是否登录
-  if (!userInfo || !userInfo.token || userInfo.token === '') {
+  if (!token_info || !token_info.accessToken || token_info.accessToken === '') {
     router.replace('/login');
   } else {
     loadMenuAndModule(store, router).then(() => {

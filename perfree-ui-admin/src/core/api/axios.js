@@ -1,6 +1,6 @@
 import Axios from "axios";
 import axios_config from "./axios_config";
-
+import { ElMessage } from 'element-plus'
 const axios = Axios.create(axios_config);
 
 // 请求拦截器
@@ -18,6 +18,10 @@ axios.interceptors.request.use(
 // 响应拦截器
 axios.interceptors.response.use(
   function(response) {
+      if (response.status === 200) {
+          return response.data;
+      }
+      ElMessage.error('错误信息')
     // Do something with response data
     return response;
   },

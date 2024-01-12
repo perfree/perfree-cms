@@ -22,12 +22,12 @@ NProgress.configure({
 // 路由守卫
 router.beforeEach((to, from, next) => {
   NProgress.start();
-  let userInfo = localStorage.getItem(CONSTANTS.STORAGE_USER_INFO);
-  if (userInfo) {
-    userInfo = JSON.parse(userInfo);
+  let token_info = localStorage.getItem(CONSTANTS.STORAGE_TOKEN);
+  if (token_info) {
+    token_info = JSON.parse(token_info);
   }
   // 判断是否登录
-  if (!userInfo || !userInfo.token || userInfo.token === '') {
+  if (!token_info || !token_info.accessToken || token_info.accessToken === '') {
     if (to.path === '/login') {
       next();
       return;
