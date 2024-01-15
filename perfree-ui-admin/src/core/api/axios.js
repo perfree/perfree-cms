@@ -24,12 +24,11 @@ axios.interceptors.request.use(
 // 响应拦截器
 axios.interceptors.response.use(
   function(response) {
-      console.log(response)
       if (response.status === 200) {
           if (response.data.code === 401) {
               ElMessage.error("登录状态已过期，请重新登陆")
               localStorage.removeItem(CONSTANTS.STORAGE_TOKEN);
-              router.push("/login")
+              router.replace("/login")
           }
           return response.data;
       }

@@ -60,7 +60,7 @@
     </div>
 
     <!-- 新增/修改 -->
-    <el-dialog v-model="open" :title="title">
+    <el-dialog v-model="open" :title="title" width="800px" draggable>
       <el-form
           ref="ruleFormRef"
           :model="addForm"
@@ -69,15 +69,111 @@
           class="demo-ruleForm"
           status-icon
       >
-        <el-form-item label="Activity name" prop="name">
-          <el-input v-model="addForm.name" />
+        <el-form-item label="父级菜单" prop="parentId">
+          <el-tree-select
+              v-model="addForm.partentId"
+              :data="tableData"
+              :props="treeSelectProps"
+              check-strictly
+              :render-after-expand="false"
+              style="width: 100%"
+          />
         </el-form-item>
-        <el-form-item label="Activity zone" prop="region">
-          <el-select v-model="addForm.region" placeholder="Activity zone">
-            <el-option label="Zone one" value="shanghai" />
-            <el-option label="Zone two" value="beijing" />
-          </el-select>
+        <el-form-item label="菜单类型" prop="type">
+          <el-radio-group v-model="addForm.type">
+            <el-radio :label="0">目录</el-radio>
+            <el-radio :label="1">菜单</el-radio>
+            <el-radio :label="2">按钮</el-radio>
+          </el-radio-group>
         </el-form-item>
+        <el-row>
+          <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" >
+            <el-form-item label="菜单名称" prop="name">
+              <el-input v-model="addForm.name" placeholder="请输入菜单名称"/>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" >
+            <el-form-item label="菜单分类" prop="type">
+              <el-radio-group v-model="addForm.type">
+                <el-radio :label="0">前台</el-radio>
+                <el-radio :label="1">后台</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" >
+            <el-form-item label="菜单图标" prop="icon">
+              <el-icon-picker v-model="addForm.icon"></el-icon-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" >
+            <el-form-item label="菜单排序" prop="seq">
+              <el-input-number
+                  v-model="addForm.seq"
+                  :min="0"
+                  :max="9999"
+                  controls-position="right"
+                  placeholder="菜单排序"
+              />
+            </el-form-item>
+          </el-col>
+
+          <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" >
+            <el-form-item label="菜单地址" prop="path">
+              <el-input v-model="addForm.path"  placeholder="请输入菜单地址"/>
+            </el-form-item>
+          </el-col>
+
+          <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" >
+            <el-form-item label="所属模块" prop="module">
+              <el-input v-model="addForm.module"  placeholder="请输入所属模块"/>
+            </el-form-item>
+          </el-col>
+
+          <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" >
+            <el-form-item label="组件名称" prop="componentName">
+              <el-input v-model="addForm.componentName"  placeholder="请输入组件名称"/>
+            </el-form-item>
+          </el-col>
+
+          <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" >
+            <el-form-item label="组件路径" prop="component">
+              <el-input v-model="addForm.component" placeholder="请输入组件路径"/>
+            </el-form-item>
+          </el-col>
+
+          <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" >
+            <el-form-item label="权限标识" prop="perms">
+              <el-input v-model="addForm.perms" placeholder="请输入权限标识"/>
+            </el-form-item>
+          </el-col>
+
+          <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" >
+            <el-form-item label="打开方式" prop="target">
+              <el-radio-group v-model="addForm.target">
+                <el-radio :label="0">本页</el-radio>
+                <el-radio :label="1">新窗口</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+
+          <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" >
+            <el-form-item label="是否外链" prop="isFrame">
+              <el-radio-group v-model="addForm.isFrame">
+                <el-radio :label="0">是</el-radio>
+                <el-radio :label="1">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+
+          <el-col :xs="24" :sm="24" :md="12" :lg="12" :xl="12" >
+            <el-form-item label="菜单状态" prop="status">
+              <el-radio-group v-model="addForm.status">
+                <el-radio :label="0">开启</el-radio>
+                <el-radio :label="1">关闭</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -101,6 +197,7 @@ import {
 import {ref,reactive} from "vue";
 import {list} from "@/modules/menu/scripts/api/menu";
 import {handleTree} from "@/core/utils/perfree";
+import ElIconPicker from "@/core/components/el-icon-picker.vue";
 
 const searchForm = reactive({
   // currentPage: 1,
@@ -109,9 +206,26 @@ const searchForm = reactive({
   name: '',
 });
 
+const treeSelectProps = reactive({
+  children: 'children',
+  label: 'name',
+  value: 'id',
+})
+
 const addForm = reactive({
+  seq: 0,
+  icon: '',
+  type: 0,
+  parentId: '',
   name: '',
-  region: ''
+  path: '',
+  module: '',
+  componentName: '',
+  component: '',
+  perms: '',
+  target: 0,
+  isFrame: 1,
+  status: 0
 });
 
 const addRule = reactive({
@@ -148,8 +262,12 @@ function initList() {
  * 新增
  */
 function handleAdd(row) {
+  console.log(row)
   title.value = "添加菜单";
   open.value = true;
+  if (row) {
+    addForm.parentId = row.id;
+  }
 }
 
 initList();
