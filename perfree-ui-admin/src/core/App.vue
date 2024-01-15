@@ -58,6 +58,26 @@ init().then(() => {
 }).catch(err => {
   console.log(err);
 })
+
+const debounce = (callback, delay) => {
+  let tid;
+  return function (...args) {
+    const ctx = self;
+    tid && clearTimeout(tid);
+    tid = setTimeout(() => {
+      callback.apply(ctx, args);
+    }, delay);
+  };
+};
+
+const _ = window.ResizeObserver;
+window.ResizeObserver = class ResizeObserver extends _ {
+  constructor(callback) {
+    callback = debounce(callback, 20);
+    super(callback);
+  }
+};
+
 </script>
 
 <style lang="less">
@@ -73,5 +93,12 @@ html,body,.full{
 }
 #nprogress .bar {
   background: var( --primary-color) !important; //自定义颜色
+}
+.table-box{
+  .el-pagination{
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
 }
 </style>
