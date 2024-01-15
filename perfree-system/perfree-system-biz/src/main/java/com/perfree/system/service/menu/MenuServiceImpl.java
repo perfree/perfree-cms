@@ -8,6 +8,7 @@ import com.perfree.security.vo.LoginUserVO;
 import com.perfree.system.convert.menu.MenuConvert;
 import com.perfree.system.mapper.MenuMapper;
 import com.perfree.system.model.Menu;
+import com.perfree.system.vo.menu.MenuListReqVO;
 import com.perfree.system.vo.system.MenuTreeListRespVO;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -43,6 +44,11 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
             buildChildMenu(menu, menuTreeListRespVOS);
         }
         return result;
+    }
+
+    @Override
+    public List<Menu> menuList(MenuListReqVO pageVO) {
+        return menuMapper.menuList(pageVO);
     }
 
     /**

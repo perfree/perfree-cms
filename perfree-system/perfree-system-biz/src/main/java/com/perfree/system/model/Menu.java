@@ -81,9 +81,6 @@ public class Menu implements Serializable {
     /** 模块 */
     private String module;
 
-    /** 是否为微应用(0否,1是) */
-    private Integer isMicro;
-
     /** 创建时间 */
     private Date createTime;
 

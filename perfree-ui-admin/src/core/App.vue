@@ -94,11 +94,34 @@ html,body,.full{
 #nprogress .bar {
   background: var( --primary-color) !important; //自定义颜色
 }
+.right-tool{
+  margin-left: auto;
+}
 .table-box{
+  margin-top: 8px;
   .el-pagination{
     display: flex;
     justify-content: flex-end;
     margin-top: 20px;
+  }
+  .el-table{
+    .el-table__header{
+      th{
+        word-break: break-word;
+        background-color: #f8f8f9!important;
+        color: #515a6e;
+        height: 40px;
+        font-size: 13px;
+      }
+    }
+    .el-table__cell{
+      .el-button{
+        padding: 5px 3px;
+      }
+      .el-button+.el-button{
+        margin-left: 3px;
+      }
+    }
   }
 }
 </style>
