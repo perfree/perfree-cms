@@ -20,6 +20,7 @@ module.exports = merge(common, {
   // 信息打印
   stats: "errors-only",
   devServer: {
+    port: 80,
     // 热重载
     hot: true,
     client: {
@@ -30,7 +31,7 @@ module.exports = merge(common, {
     open: false,
     // 代理
     proxy: {
-      "/api": "http://localhost:8888"
+      "/api": "http://localhost:8080"
     },
     // history 模式
     historyApiFallback: true
