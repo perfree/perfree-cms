@@ -1,9 +1,19 @@
 package com.perfree.system.service.role;
 
+import com.perfree.commons.common.PageResult;
+import com.perfree.system.mapper.RoleMenuMapper;
 import com.perfree.system.model.Role;
 import com.perfree.system.mapper.RoleMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.perfree.system.model.RoleMenu;
+import com.perfree.system.vo.role.RoleMenuReqVO;
+import com.perfree.system.vo.role.RolePageReqVO;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>
@@ -16,4 +26,35 @@ import org.springframework.stereotype.Service;
 @Service
 public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements RoleService {
 
+    @Resource
+    private RoleMapper roleMapper;
+
+    @Resource
+    private RoleMenuMapper roleMenuMapper;
+
+
+    @Override
+    public PageResult<Role> rolePage(RolePageReqVO pageVO) {
+        return roleMapper.selectPage(pageVO);
+    }
+
+    @Override
+    public List<RoleMenu> getRoleMenus(Integer id) {
+        return roleMenuMapper.selectByRoleId(id);
+    }
+
+    @Override
+    @Transactional
+    public Boolean assignRoleMenu(RoleMenuReqVO roleMenuReqVO) {
+        roleMenuMapper.deleteByRoleId(roleMenuReqVO.getRoleId());
+        List<RoleMenu> roleMenuList = new ArrayList<>();
+        for (String menuId : roleMenuReqVO.getMenuIds()) {
+            RoleMenu roleMenu = new RoleMenu();
+            roleMenu.setRoleId(roleMenuReqVO.getRoleId());
+            roleMenu.setMenuId(menuId);
+            roleMenuList.add(roleMenu);
+        }
+        roleMenuMapper.insertBatch(roleMenuList);
+        return true;
+    }
 }

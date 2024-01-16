@@ -1,8 +1,8 @@
 package com.perfree.system.mapper;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.perfree.commons.mapper.BaseMapperX;
 import com.perfree.system.model.Menu;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.perfree.system.vo.menu.MenuListReqVO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Mapper;
@@ -19,7 +19,7 @@ import java.util.List;
  * @since 2023-09-27
  */
 @Mapper
-public interface MenuMapper extends BaseMapper<Menu> {
+public interface MenuMapper extends BaseMapperX<Menu> {
 
     /**
      * 根据用户id和菜单类型获取菜单

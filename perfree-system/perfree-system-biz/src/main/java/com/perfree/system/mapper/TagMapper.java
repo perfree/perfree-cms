@@ -1,7 +1,7 @@
 package com.perfree.system.mapper;
 
+import com.perfree.commons.mapper.BaseMapperX;
 import com.perfree.system.model.Tag;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -13,6 +13,6 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2023-09-27
  */
 @Mapper
-public interface TagMapper extends BaseMapper<Tag> {
+public interface TagMapper extends BaseMapperX<Tag> {
 
 }

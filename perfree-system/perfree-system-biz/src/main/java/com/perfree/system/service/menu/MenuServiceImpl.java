@@ -17,6 +17,7 @@ import com.perfree.system.vo.system.MenuTreeListRespVO;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +63,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     }
 
     @Override
+    @Transactional
     public Menu addOrUpdate(MenuAddOrUpdateReqVO menuAddOrUpdateReqVO) {
         Menu menu = MenuConvert.INSTANCE.convertMenu(menuAddOrUpdateReqVO);
         if (StringUtils.isNotBlank(menu.getId())) {
@@ -74,6 +76,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     }
 
     @Override
+    @Transactional
     public Boolean del(String id) {
         List<Menu> menuList = menuMapper.getByParentId(id);
         if (!menuList.isEmpty()){
