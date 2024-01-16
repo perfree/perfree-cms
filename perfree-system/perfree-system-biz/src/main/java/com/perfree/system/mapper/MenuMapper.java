@@ -37,7 +37,17 @@ public interface MenuMapper extends BaseMapper<Menu> {
     default List<Menu> menuList(MenuListReqVO pageVO){
         return selectList(new LambdaQueryWrapper<Menu>()
                 .like(StringUtils.isNotBlank(pageVO.getName()), Menu::getName, pageVO.getName())
+                .eq(null != pageVO.getType(), Menu::getType, pageVO.getType())
                 .orderByAsc(Menu::getSeq));
     }
 
+    /**
+     * 根据父级id获取信息
+     * @param id id
+     * @return List<Menu
+     */
+    default List<Menu> getByParentId(String id){
+        return selectList(new LambdaQueryWrapper<Menu>()
+                .eq(Menu::getParentId, id));
+    }
 }

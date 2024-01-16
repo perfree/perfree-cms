@@ -87,4 +87,11 @@ public class GlobalExceptionHandler{
         LOGGER.error(exception.getMessage());
         return CommonResult.error(ResultCodeEnum.FAIL.getCode(), exception.getMessage());
     }
+
+    @ExceptionHandler(Exception.class)
+    @ResponseBody
+    public CommonResult<?> handleException(Exception exception) {
+        LOGGER.error(exception.getMessage());
+        return CommonResult.error(ResultCodeEnum.FAIL.getCode(), exception.getMessage());
+    }
 }

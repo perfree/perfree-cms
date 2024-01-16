@@ -9,7 +9,7 @@ import java.util.Date;
 @Schema(description = "管理后台 - 菜单列表RespVO")
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class MenuListRespVO extends MenuBaseVO {
+public class MenuRespVO extends MenuBaseVO {
     @Schema(description = "菜单id")
     private String id;
 

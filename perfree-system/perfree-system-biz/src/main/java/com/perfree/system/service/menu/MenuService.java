@@ -2,6 +2,7 @@ package com.perfree.system.service.menu;
 
 import com.perfree.system.model.Menu;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.perfree.system.vo.menu.MenuAddOrUpdateReqVO;
 import com.perfree.system.vo.menu.MenuListReqVO;
 import com.perfree.system.vo.system.MenuTreeListRespVO;
 
@@ -29,4 +30,17 @@ public interface MenuService extends IService<Menu> {
      */
     List<Menu> menuList(MenuListReqVO pageVO);
 
+    /**
+     * 添加或更新
+     * @param menuAddOrUpdateReqVO menuAddOrUpdateReqVO
+     * @return Menu
+     */
+    Menu addOrUpdate(MenuAddOrUpdateReqVO menuAddOrUpdateReqVO);
+
+    /**
+     * 删除菜单
+     * @param id id
+     * @return Boolean
+     */
+    Boolean del(String id);
 }

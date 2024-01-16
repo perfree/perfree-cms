@@ -8,7 +8,7 @@ import cn.hutool.core.util.IdUtil;
 import com.perfree.cache.CaptchaCacheService;
 import com.perfree.commons.common.CommonResult;
 import com.perfree.commons.constant.SystemConstants;
-import com.perfree.commons.enums.ErrorCode;
+import com.perfree.enums.ErrorCode;
 import com.perfree.system.service.menu.MenuService;
 import com.perfree.system.service.user.UserService;
 import com.perfree.system.vo.system.*;

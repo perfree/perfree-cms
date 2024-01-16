@@ -1,4 +1,4 @@
-package com.perfree.commons.enums;
+package com.perfree.enums;
 
 import lombok.Getter;
 
@@ -13,8 +13,8 @@ public enum ErrorCode {
     ACCOUNT_PASSWORD_ERROR(100000002,"账号或密码错误!"),
     CAPTCHA_IMAGE_ERROR(100000004,"验证码生成失败!"),
     CAPTCHA_EXPIRE(100000005,"验证码已过期!"),
-    CAPTCHA_VALID_ERROR(100000006,"验证码错误!");
-
+    CAPTCHA_VALID_ERROR(100000006,"验证码错误!"),
+    MENU_EXISTS_CHILDREN(100000007, "存在子菜单，无法删除!");
     private final Integer code;
 
     private final String msg;

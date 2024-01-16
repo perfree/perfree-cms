@@ -1,7 +1,8 @@
 package com.perfree.system.convert.menu;
 
 import com.perfree.system.model.Menu;
-import com.perfree.system.vo.menu.MenuListRespVO;
+import com.perfree.system.vo.menu.MenuAddOrUpdateReqVO;
+import com.perfree.system.vo.menu.MenuRespVO;
 import com.perfree.system.vo.system.MenuTreeListRespVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -14,5 +15,10 @@ public interface MenuConvert {
 
     List<MenuTreeListRespVO> convertTreeList(List<Menu> menuList);
 
-    List<MenuListRespVO> convertListVO(List<Menu> menuList);
+    List<MenuRespVO> convertListVO(List<Menu> menuList);
+
+    MenuRespVO convertRespVO(Menu menu);
+
+    Menu convertMenu(MenuAddOrUpdateReqVO menuAddOrUpdateReqVO);
+
 }

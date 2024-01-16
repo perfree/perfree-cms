@@ -3,7 +3,7 @@ package com.perfree.system.service.user;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.perfree.cache.CaptchaCacheService;
-import com.perfree.commons.enums.ErrorCode;
+import com.perfree.enums.ErrorCode;
 import com.perfree.commons.exception.ServiceException;
 import com.perfree.security.SecurityFrameworkUtils;
 import com.perfree.security.util.JwtUtil;

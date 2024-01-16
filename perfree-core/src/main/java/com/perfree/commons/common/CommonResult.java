@@ -1,6 +1,6 @@
 package com.perfree.commons.common;
 
-import com.perfree.commons.enums.ErrorCode;
+import com.perfree.enums.ErrorCode;
 import com.perfree.commons.enums.ResultCodeEnum;
 import lombok.Data;
 import org.springframework.util.Assert;

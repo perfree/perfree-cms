@@ -13,8 +13,7 @@ public class MenuBaseVO {
     @NotBlank(message = "菜单名不能为空")
     private String name;
 
-    @Schema(description = "菜单链接", requiredMode = Schema.RequiredMode.REQUIRED, example = "测试")
-    @NotBlank(message = "菜单链接不能为空")
+    @Schema(description = "菜单链接" )
     private String path;
 
     @Schema(description = "菜单图标")

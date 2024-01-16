@@ -1,6 +1,6 @@
 package com.perfree.commons.exception;
 
-import com.perfree.commons.enums.ErrorCode;
+import com.perfree.enums.ErrorCode;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
