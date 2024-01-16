@@ -66,6 +66,9 @@ public class Menu implements Serializable {
     /** 组件路径 */
     private String component;
 
+    /** 组件名称 */
+    private String componentName;
+
     /** 是否为外链（0是 1否） */
     private Integer isFrame;
 

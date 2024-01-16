@@ -37,7 +37,8 @@
           </template>
         </el-table-column>
         <el-table-column prop="seq" label="排序"  width="80"/>
-        <el-table-column prop="module" label="模块" min-width="150"/>
+        <el-table-column prop="module" label="所属模块" min-width="150"/>
+        <el-table-column prop="path" label="菜单地址" min-width="150"/>
         <el-table-column prop="component" label="组件路径" min-width="150"/>
         <el-table-column prop="componentName" label="组件名" min-width="150"/>
         <el-table-column prop="status" label="状态" width="80">
@@ -297,6 +298,7 @@ function handleAdd(row) {
   open.value = true;
   if (row && row.id) {
     addForm.value.parentId = row.id;
+    addForm.value.type = row.type;
   }
 }
 

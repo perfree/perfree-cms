@@ -43,6 +43,9 @@ public class MenuBaseVO {
     @Schema(description = "组件路径")
     private String component;
 
+    @Schema(description = "组件名称")
+    private String componentName;
+
     @Schema(description = "是否为外链（0是 1否）")
     private Integer isFrame;
 
@@ -54,9 +57,6 @@ public class MenuBaseVO {
 
     @Schema(description = "权限字符串")
     private String perms;
-
-    @Schema(description = "组件名称")
-    private String componentName;
 
     @Schema(description = "模块")
     private String module;
