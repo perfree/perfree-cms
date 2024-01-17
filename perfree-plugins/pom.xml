@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.perfree</groupId>
         <artifactId>perfree-cms</artifactId>
-        <version>${revision}</version>
+        <version>4.0.0</version>
     </parent>
     <modules>
         <module>perfree-plugins-exam</module>
@@ -22,7 +22,7 @@
             <dependency>
                 <groupId>com.perfree</groupId>
                 <artifactId>perfree-core</artifactId>
-                <version>${revision}</version>
+                <version>4.0.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.perfree</groupId>
         <artifactId>perfree-plugins</artifactId>
-        <version>${revision}</version>
+        <version>4.0.0</version>
     </parent>
 
     <artifactId>perfree-plugins-exam</artifactId>
@@ -21,4 +21,19 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

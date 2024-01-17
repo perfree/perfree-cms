@@ -6,7 +6,7 @@
 
     <groupId>com.perfree</groupId>
     <artifactId>perfree-cms</artifactId>
-    <version>${revision}</version>
+    <version>4.0.0</version>
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
@@ -38,6 +38,7 @@
         <knife4j.version>4.3.0</knife4j.version>
         <jwt.version>0.11.5</jwt.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <maven-invoker.version>3.0.1</maven-invoker.version>
     </properties>
 
     <dependencyManagement>
@@ -48,6 +49,12 @@
                 <version>${spring.boot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven.shared</groupId>
+                <artifactId>maven-invoker</artifactId>
+                <version>${maven-invoker.version}</version>
             </dependency>
 
             <dependency>
@@ -133,7 +140,6 @@
     </dependencyManagement>
 
     <build>
-        <pluginManagement>
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -165,7 +171,6 @@
                     </configuration>
                 </plugin>
             </plugins>
-        </pluginManagement>
     </build>
 
 

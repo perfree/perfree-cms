@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.perfree</groupId>
         <artifactId>perfree-cms</artifactId>
-        <version>${revision}</version>
+        <version>4.0.0</version>
     </parent>
 
     <artifactId>perfree-core</artifactId>
@@ -19,6 +19,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-invoker</artifactId>
         </dependency>
 
         <dependency>
@@ -105,7 +110,7 @@
         <dependency>
             <groupId>com.perfree</groupId>
             <artifactId>perfree-system-api</artifactId>
-            <version>${revision}</version>
+            <version>4.0.0</version>
         </dependency>
     </dependencies>
 </project>

@@ -19,6 +19,6 @@ public class TestController {
     @GetMapping("hello")
     public String hello(){
         LOGGER.info("测试日志~");
-        return "Hello";
+        return "Hello2222";
     }
 }
