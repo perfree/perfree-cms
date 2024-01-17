@@ -1,12 +1,12 @@
 package com.perfree.system.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 import lombok.Getter;
@@ -22,8 +22,8 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@TableName("p_plugin")
-public class Plugin implements Serializable {
+@TableName("p_plugins")
+public class Plugins implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -47,6 +47,7 @@ public class Plugin implements Serializable {
     /**
      * 插件描述
      */
+    @TableField(value = "`desc`")
     private String desc;
 
     /**
