@@ -74,15 +74,6 @@
         </el-table-column>
       </el-table>
 
-<!--      <el-pagination-->
-<!--          v-model:current-page="searchForm.currentPage"-->
-<!--          v-model:page-size="searchForm.pageSize"-->
-<!--          :page-sizes="[10, 20, 30, 50]"-->
-<!--          layout="total,sizes,prev, pager, next, jumper"-->
-<!--          background-->
-<!--          small-->
-<!--          :total="searchForm.total"-->
-<!--      />-->
     </div>
 
     <!-- 新增/修改 -->
@@ -229,9 +220,6 @@ import ElIconPicker from "@/core/components/el-icon-picker.vue";
 import {ElMessage} from "element-plus";
 
 const searchForm = ref({
-  // currentPage: 1,
-  // pageSize: 20,
-  // total: 21,
   name: '',
   type: ''
 });
@@ -356,6 +344,7 @@ function submitForm() {
       }
       addOrUpdate(addForm.value).then((res) => {
         if (res.code === 200) {
+          ElMessage.success('操作成功');
           open.value = false;
           resetForm();
           initList();
@@ -373,7 +362,7 @@ function submitForm() {
  */
 function handleDelete(row) {
   del(row.id).then((res) => {
-    if (res.code === 200) {
+    if (res.code === 200 && res.data) {
       ElMessage.success('删除成功');
       initList();
     } else {

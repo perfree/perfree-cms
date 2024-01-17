@@ -3,11 +3,14 @@ package com.perfree.system.controller;
 
 import com.perfree.commons.common.CommonResult;
 import com.perfree.commons.common.PageResult;
+import com.perfree.system.convert.role.RoleConvert;
 import com.perfree.system.model.Role;
 import com.perfree.system.model.RoleMenu;
 import com.perfree.system.service.role.RoleService;
+import com.perfree.system.vo.role.RoleAddOrUpdateReqVO;
 import com.perfree.system.vo.role.RoleMenuReqVO;
 import com.perfree.system.vo.role.RolePageReqVO;
+import com.perfree.system.vo.role.RoleRespVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -35,8 +38,9 @@ public class RoleController {
 
     @PostMapping("/page")
     @Operation(summary = "角色分页列表")
-    public CommonResult<PageResult<Role>> page(@RequestBody RolePageReqVO pageVO) {
-        return success(roleService.rolePage(pageVO));
+    public CommonResult<PageResult<RoleRespVO>> page(@RequestBody RolePageReqVO pageVO) {
+        PageResult<Role> rolePageResult = roleService.rolePage(pageVO);
+        return success(RoleConvert.INSTANCE.convertPageResultVO(rolePageResult));
     }
 
     @GetMapping("/getRoleMenus")
@@ -54,5 +58,23 @@ public class RoleController {
     @Operation(summary = "设置角色菜单权限")
     public CommonResult<Boolean> assignRoleMenu(@RequestBody @Valid RoleMenuReqVO roleMenuReqVO) {
         return success(roleService.assignRoleMenu(roleMenuReqVO));
+    }
+
+    @GetMapping("/get")
+    @Operation(summary = "获取角色")
+    public CommonResult<RoleRespVO> get(@RequestParam(value = "id") Integer id) {
+        return success(RoleConvert.INSTANCE.convertRespVO(roleService.get(id)));
+    }
+
+    @PostMapping("/addOrUpdate")
+    @Operation(summary = "添加或更新")
+    public CommonResult<RoleRespVO> addOrUpdate(@RequestBody @Valid RoleAddOrUpdateReqVO roleAddOrUpdateReqVO) {
+        return success(RoleConvert.INSTANCE.convertRespVO(roleService.addOrUpdate(roleAddOrUpdateReqVO)));
+    }
+
+    @DeleteMapping("/del")
+    @Operation(summary = "删除角色")
+    public CommonResult<Boolean> del(@RequestParam(value = "id") Integer id) {
+        return success(roleService.del(id));
     }
 }

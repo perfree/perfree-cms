@@ -4,8 +4,10 @@ import com.perfree.commons.common.PageResult;
 import com.perfree.system.model.Role;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.perfree.system.model.RoleMenu;
+import com.perfree.system.vo.role.RoleAddOrUpdateReqVO;
 import com.perfree.system.vo.role.RoleMenuReqVO;
 import com.perfree.system.vo.role.RolePageReqVO;
+import com.perfree.system.vo.role.RoleRespVO;
 
 import java.util.List;
 
@@ -40,4 +42,26 @@ public interface RoleService extends IService<Role> {
      * @return Boolean
      */
     Boolean assignRoleMenu(RoleMenuReqVO roleMenuReqVO);
+
+    /**
+     * 获取角色信息
+     * @param id id
+     * @return Role
+     */
+    Role get(Integer id);
+
+    /**
+     * 添加或更新
+     * @param roleAddOrUpdateReqVO roleAddOrUpdateReqVO
+     * @return Role
+     */
+    Role addOrUpdate(RoleAddOrUpdateReqVO roleAddOrUpdateReqVO);
+
+    /**
+     * 删除角色
+     * @param id id
+     * @return Boolean
+     */
+    Boolean del(Integer id);
+
 }

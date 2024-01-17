@@ -1,13 +1,16 @@
 package com.perfree.system.service.role;
 
 import com.perfree.commons.common.PageResult;
+import com.perfree.system.convert.role.RoleConvert;
 import com.perfree.system.mapper.RoleMenuMapper;
 import com.perfree.system.model.Role;
 import com.perfree.system.mapper.RoleMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.perfree.system.model.RoleMenu;
+import com.perfree.system.vo.role.RoleAddOrUpdateReqVO;
 import com.perfree.system.vo.role.RoleMenuReqVO;
 import com.perfree.system.vo.role.RolePageReqVO;
+import com.perfree.system.vo.role.RoleRespVO;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +58,29 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
             roleMenuList.add(roleMenu);
         }
         roleMenuMapper.insertBatch(roleMenuList);
+        return true;
+    }
+
+    @Override
+    public Role get(Integer id) {
+        return roleMapper.selectById(id);
+    }
+
+    @Override
+    public Role addOrUpdate(RoleAddOrUpdateReqVO roleAddOrUpdateReqVO) {
+        Role role = RoleConvert.INSTANCE.convertAddOrUpdate(roleAddOrUpdateReqVO);
+        if (null != role.getId()) {
+            roleMapper.updateById(role);
+        } else {
+            roleMapper.insert(role);
+        }
+        return role;
+    }
+
+    @Override
+    public Boolean del(Integer id) {
+        roleMenuMapper.deleteByRoleId(id);
+        roleMapper.deleteById(id);
         return true;
     }
 }
