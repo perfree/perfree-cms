@@ -2,6 +2,7 @@ package com.perfree.config;
 
 import com.perfree.plugin.PluginDevManager;
 import com.perfree.plugin.PluginManager;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,10 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class AppInit implements ApplicationRunner {
+
+    @Value("${server.port}")
+    private String port;
+
 
     private final PluginManager pluginManager;
 
@@ -31,5 +36,23 @@ public class AppInit implements ApplicationRunner {
             // 源码运行,加载本地插件
             pluginDevManager.initPlugins();
         }
+        String banner = """
+                ----------------------------------------------------------------------------------
+                                         __                     \s
+                                        / _|                    \s
+                  _ __     ___   _ __  | |_   _ __    ___    ___\s
+                 | '_ \\   / _ \\ | '__| |  _| | '__|  / _ \\  / _ \\
+                 | |_) | |  __/ | |    | |   | |    |  __/ |  __/
+                 | .__/   \\___| |_|    |_|   |_|     \\___|  \\___|
+                 | |                                            \s
+                 |_|                                            \s
+                 
+                 Successfully started!
+                 access port: %s
+                ----------------------------------------------------------------------------------
+                """.formatted(port);
+
+        System.out.println(banner);
+
     }
 }
