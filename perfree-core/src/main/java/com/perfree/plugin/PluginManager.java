@@ -68,7 +68,7 @@ public class PluginManager implements ApplicationContextAware {
             JarClassLoader jarClassLoader = ClassLoaderUtil.getJarClassLoader(pluginJarFile);
             PluginClassLoaderHolder.addPluginJarClassLoader(pluginId, jarClassLoader);
             pluginInfo.setClassList(getClassList(pluginJarFile,jarClassLoader));
-
+            pluginInfo.setPluginPath(pluginJarFile.getAbsolutePath());
             // 加载插件专属AnnotationConfigApplicationContext
             AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
             annotationConfigApplicationContext.setParent(applicationContext);

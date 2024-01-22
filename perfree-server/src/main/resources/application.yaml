@@ -30,8 +30,8 @@ spring:
       load-on-startup: 1
   datasource:
     username: root
-    url: jdbc:mysql://127.0.0.1:3306/perfree?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&nullCatalogMeansCurrent=true
-    password: 215607..
+    url: jdbc:mysql://153.153.234.13:3306/perfree?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&nullCatalogMeansCurrent=true
+    password: xwt@123
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
@@ -78,7 +78,7 @@ springdoc:
   group-configs:
     - group: 'default'
       paths-to-match: '/**'
-      packages-to-scan: com.perfree
+      packages-to-scan: com
 # knife4j的增强配置
 knife4j:
   enable: true

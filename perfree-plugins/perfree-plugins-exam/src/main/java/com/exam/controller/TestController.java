@@ -47,7 +47,7 @@ public class TestController {
     @GetMapping("/list")
     @Operation(summary = "获取所有")
     public CommonResult<List<TestRespVO>> hello(){
-        LOGGER.info("测试2日志~");
+        LOGGER.info("测试日志~");
         return success(TestConvert.INSTANCE.convertRespListVO(testService.test()));
     }
 
@@ -67,6 +67,13 @@ public class TestController {
     @Operation(summary = "删除角色")
     public CommonResult<Boolean> del(@RequestParam(value = "id") Integer id) {
         return success(testService.removeById(id));
+    }
+
+
+    @GetMapping("/queryByMapperXml")
+    @Operation(summary = "mapperXml查询")
+    public CommonResult<List<TestRespVO>> queryByMapperXml(){
+        return success(TestConvert.INSTANCE.convertRespListVO(testService.queryByMapperXml()));
     }
 
 }

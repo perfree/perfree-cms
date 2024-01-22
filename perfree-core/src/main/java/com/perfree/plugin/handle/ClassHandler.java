@@ -1,22 +1,37 @@
 package com.perfree.plugin.handle;
 
+import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.perfree.plugin.PluginApplicationContextHolder;
+import com.perfree.plugin.PluginClassLoaderHolder;
 import com.perfree.plugin.PluginInfo;
 import com.perfree.plugin.annotation.InterceptPath;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.builder.xml.XMLMapperBuilder;
+import org.apache.ibatis.executor.ErrorContext;
+import org.apache.ibatis.io.Resources;
+import org.apache.ibatis.session.SqlSessionFactory;
+import org.mybatis.spring.mapper.MapperFactoryBean;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ClassUtils;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.File;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.regex.Pattern;
 
 /**
  * @author Perfree
@@ -35,6 +50,8 @@ public class ClassHandler implements BasePluginRegistryHandler{
 
     @Override
     public void registry(PluginInfo pluginInfo) throws Exception {
+        // mybatis-plus实现一系列框架自定义bean,必须先注册mapper接口,否则会报错
+        registerMapper(pluginInfo);
         // 此处逻辑: 只要类里包含REGISTER_ANNO中任意一个注解,就注册进入Bean容器中
         List<Class<?>> pluginClassList = pluginInfo.getClassList().stream().filter(item -> !item.isInterface()).toList();
         if(!pluginClassList.isEmpty()) {
@@ -53,8 +70,53 @@ public class ClassHandler implements BasePluginRegistryHandler{
         }
     }
 
+
+    /**
+     * 注册mapper接口
+     * @param pluginInfo pluginInfo
+     */
+    private void registerMapper(PluginInfo pluginInfo) {
+        List<Class<?>> mapperClassList = getMapperList(pluginInfo);
+        if (mapperClassList.isEmpty()) return;
+
+        //注册mapper
+        for (Class<?> mapperClass : mapperClassList) {
+            GenericBeanDefinition definition = new GenericBeanDefinition();
+            definition.getConstructorArgumentValues().addGenericArgumentValue(mapperClass);
+            definition.setBeanClass(MapperFactoryBean.class);
+            definition.getPropertyValues().add("addToConfig", true);
+            definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
+
+            PluginApplicationContextHolder.getApplicationContext(pluginInfo.getPluginId()).registerBeanDefinition(mapperClass.getName(), definition);
+        }
+
+    }
+
+    /**
+     * @description 获取所有Mapper接口
+     * @author Perfree
+     * @date 2021/11/13 8:31
+     */
+    private List<Class<?>> getMapperList(PluginInfo plugin){
+        List<Class<?>> mapperClassList = new ArrayList<>();
+
+        for (Class<?> aClass : plugin.getClassList()) {
+            Mapper annotation = aClass.getAnnotation(Mapper.class);
+            if (annotation != null) {
+                mapperClassList.add(aClass);
+            }
+        }
+        return mapperClassList;
+    }
+
     @Override
     public void unRegistry(PluginInfo pluginInfo) throws Exception {
+        // 取消注册mapper接口
+        List<Class<?>> mapperClassList = getMapperList(pluginInfo);
+        if (mapperClassList.isEmpty()) return;
 
+        for (Class<?> mapperClass : mapperClassList) {
+            PluginApplicationContextHolder.getApplicationContext(pluginInfo.getPluginId()).removeBeanDefinition(mapperClass.getName());
+        }
     }
 }

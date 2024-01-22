@@ -16,4 +16,6 @@ public interface TestService extends IService<Test> {
 
     Test addOrUpdate(TestAddOrUpdateReqVO testAddOrUpdateReqVO);
 
+    List<Test> queryByMapperXml();
+
 }

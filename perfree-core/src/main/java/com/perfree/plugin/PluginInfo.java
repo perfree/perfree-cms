@@ -17,4 +17,7 @@ public class PluginInfo {
 
     // 插件内Class集合
     private List<Class<?>> classList;
+
+    // 插件安装路径
+    private String pluginPath;
 }

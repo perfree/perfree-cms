@@ -4,7 +4,7 @@ import com.perfree.plugin.PluginInfo;
 import com.perfree.plugin.handle.BasePluginRegistryHandler;
 import com.perfree.plugin.handle.ClassHandler;
 import com.perfree.plugin.handle.ControllerHandler;
-import com.perfree.plugin.handle.MapperHandle;
+import com.perfree.plugin.handle.MapperXmlHandle;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -31,8 +31,8 @@ public class PluginHandle implements BasePluginRegistryHandler, ApplicationConte
     @Override
     public void initialize() throws Exception {
         pluginRegisterList.clear();
-        pluginRegisterList.add(new MapperHandle());
         pluginRegisterList.add(new ClassHandler());
+        pluginRegisterList.add(new MapperXmlHandle());
 
         pluginRegisterList.add(new ControllerHandler(this.applicationContext));
         for (BasePluginRegistryHandler pluginHandle : pluginRegisterList) {

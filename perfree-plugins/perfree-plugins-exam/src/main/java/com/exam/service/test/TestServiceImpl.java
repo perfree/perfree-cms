@@ -38,4 +38,9 @@ public class TestServiceImpl extends ServiceImpl<TestMapper, Test> implements Te
         }
         return test;
     }
+
+    @Override
+    public List<Test> queryByMapperXml() {
+        return testMapper.queryByMapperXml();
+    }
 }

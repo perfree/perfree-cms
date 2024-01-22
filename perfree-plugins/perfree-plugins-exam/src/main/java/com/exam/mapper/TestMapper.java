@@ -8,6 +8,8 @@ import com.perfree.commons.mapper.BaseMapperX;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface TestMapper extends BaseMapperX<Test> {
 
@@ -15,4 +17,6 @@ public interface TestMapper extends BaseMapperX<Test> {
         return selectPage(pageVO, new LambdaQueryWrapper<Test>()
                 .like(StringUtils.isNotBlank(pageVO.getName()), Test::getName, pageVO.getName()));
     }
+
+    List<Test> queryByMapperXml();
 }
