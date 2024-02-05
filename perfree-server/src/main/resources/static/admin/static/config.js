@@ -1,0 +1,1 @@
+window.PERFREE_CONFIG={appName:"PERFREE DEMO",api:{frame:"/api"}};
