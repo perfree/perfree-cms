@@ -1,10 +1,12 @@
 package com.perfree.system.convert.user;
 
+import com.perfree.commons.common.PageResult;
 import com.perfree.system.api.user.dto.UserRespDTO;
 import com.perfree.system.model.User;
 import com.perfree.system.vo.system.LoginUserInfoRespVO;
 import com.perfree.system.vo.system.LoginUserReqVO;
 import com.perfree.system.vo.system.LoginUserRespVO;
+import com.perfree.system.vo.user.UserRespVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -29,5 +31,7 @@ public interface UserConvert {
     LoginUserInfoRespVO convertLoginInfo(User loginUser);
 
     UserRespDTO convertDto(User byAccount);
+
+    PageResult<UserRespVO> convertPageResultVO(PageResult<User> userPageResult);
 
 }

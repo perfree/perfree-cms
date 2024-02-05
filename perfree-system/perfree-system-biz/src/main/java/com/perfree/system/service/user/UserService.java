@@ -1,10 +1,12 @@
 package com.perfree.system.service.user;
 
+import com.perfree.commons.common.PageResult;
 import com.perfree.system.model.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.perfree.system.vo.system.LoginUserInfoRespVO;
 import com.perfree.system.vo.system.LoginUserReqVO;
 import com.perfree.system.vo.system.LoginUserRespVO;
+import com.perfree.system.vo.user.UserPageReqVO;
 
 /**
  * <p>
@@ -39,5 +41,12 @@ public interface UserService extends IService<User> {
      * @return LoginUserInfoRespVO
      */
     LoginUserInfoRespVO userInfo();
+
+    /**
+     * 用户分页列表
+     * @param pageVO pageVO
+     * @return PageResult<User>
+     */
+    PageResult<User> userPage(UserPageReqVO pageVO);
 
 }

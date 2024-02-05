@@ -3,6 +3,7 @@ package com.perfree.system.service.user;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.perfree.cache.CaptchaCacheService;
+import com.perfree.commons.common.PageResult;
 import com.perfree.enums.ErrorCode;
 import com.perfree.commons.exception.ServiceException;
 import com.perfree.security.SecurityFrameworkUtils;
@@ -17,6 +18,7 @@ import com.perfree.system.vo.system.LoginUserInfoRespVO;
 import com.perfree.system.vo.system.LoginUserReqVO;
 import com.perfree.system.vo.system.LoginUserRespVO;
 import com.perfree.security.SecurityConstants;
+import com.perfree.system.vo.user.UserPageReqVO;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -94,5 +96,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         LoginUserInfoRespVO loginUserInfoRespVO = UserConvert.INSTANCE.convertLoginInfo(user);
         loginUserInfoRespVO.getRoles().add(role.getCode());
         return loginUserInfoRespVO;
+    }
+
+    @Override
+    public PageResult<User> userPage(UserPageReqVO pageVO) {
+        return userMapper.selectPage(pageVO);
     }
 }
