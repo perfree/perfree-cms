@@ -136,7 +136,7 @@
             // 加载模块及菜单
             loadMenuAndModule(store, router).then(() => {
               loading.value = false;
-              router.replace('/');
+              router.replace("/admin");
             }).catch(err => {
               loading.value = false;
               console.log(err);

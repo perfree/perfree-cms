@@ -17,17 +17,24 @@ logging:
     root: info
 
 spring:
+  web:
+    resources:
+      static-locations: classpath:/static/
   aop:
     proxy-target-class: true
   servlet:
     multipart:
       max-file-size: -1
       max-request-size: -1
+  thymeleaf:
+    suffix: .html
+    cache: false
+    mode: HTML5
+    prefix: classpath:/static/
   mvc:
-    view:
-      prefix: /
     servlet:
       load-on-startup: 1
+    static-path-pattern: /static/**
   datasource:
     username: root
     url: jdbc:mysql://153.153.234.13:3306/perfree?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&nullCatalogMeansCurrent=true

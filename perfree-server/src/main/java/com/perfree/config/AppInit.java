@@ -1,11 +1,15 @@
 package com.perfree.config;
 
 import com.perfree.plugin.PluginDevManager;
+import com.perfree.plugin.PluginInfo;
+import com.perfree.plugin.PluginInfoHolder;
 import com.perfree.plugin.PluginManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @author Perfree
@@ -36,6 +40,9 @@ public class AppInit implements ApplicationRunner {
             // 源码运行,加载本地插件
             pluginDevManager.initPlugins();
         }
+        List<PluginInfo> pluginInfoList = PluginInfoHolder.getAllPluginInfo();
+        StringBuilder successPluginStr = new StringBuilder();
+        pluginInfoList.forEach(pluginInfo -> successPluginStr.append("Success Load Plugin -> ").append(pluginInfo.getPluginPath()).append("\n"));
         String banner = """
                 ----------------------------------------------------------------------------------
                                          __                     \s
@@ -47,12 +54,11 @@ public class AppInit implements ApplicationRunner {
                  | |                                            \s
                  |_|                                            \s
                  
+                 %s
                  Successfully started!
                  access port: %s
                 ----------------------------------------------------------------------------------
-                """.formatted(port);
-
+                """.formatted(successPluginStr, port);
         System.out.println(banner);
-
     }
 }

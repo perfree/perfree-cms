@@ -77,9 +77,9 @@ public class PluginManager implements ApplicationContextAware {
             LOGGER.info("plugin  ----->  plugin msg load complete: {}", pluginInfo);
             pluginHandle.initialize();
             pluginHandle.registry(pluginInfo);
+            PluginInfoHolder.addPluginInfo(pluginInfo.getPluginId(), pluginInfo);
             LOGGER.info("plugin  ----->  start success: {}", pluginInfo);
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.error("plugin  ----->  start error:{}", e.getMessage(), e);
         }
     }
@@ -104,9 +104,9 @@ public class PluginManager implements ApplicationContextAware {
             PluginApplicationContextHolder.removePluginApplicationContext(pluginId);
             // 移除插件JarClassLoader
             PluginClassLoaderHolder.removePluginJarClassLoader(pluginId);
+            PluginInfoHolder.removePluginInfo(pluginId);
             LOGGER.info("plugin  ----->  stop success: {}", pluginInfo);
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.error("plugin  ----->  stop error:{}", e.getMessage(), e);
         }
     }
@@ -133,7 +133,6 @@ public class PluginManager implements ApplicationContextAware {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.error("plugin -> initClassNameList error: {}", e.getMessage(), e);
         }
         return classList;

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "webpack-dev-server --config config/webpack.dev.js",
-    "build": "node config/webpack.prod.js",
+    "build": "node config/webpack.prod.js --mode production",
     "dll": "webpack --config config/webpack.build.dll.js --mode production"
   },
   "dependencies": {

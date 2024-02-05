@@ -54,6 +54,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST,  "/api/captchaImage").permitAll()
 
                         .requestMatchers(
+                                "/admin/**",
+                                "/admin**",
+                                "/static/**",
                                 "/api/v1/auth/**",
                                 "/api/v1/test/**",
                                 "/v2/api-docs",
@@ -68,7 +71,7 @@ public class SecurityConfig {
                                 "/webjars/**",
                                 "/swagger-ui.html",
                                 "/favicon.ico",
-                                "api/plugin/**").permitAll()
+                                "/api/plugin/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 //  配置跨域

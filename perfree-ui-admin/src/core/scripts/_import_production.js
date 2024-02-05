@@ -2,7 +2,7 @@ var loadjs = require("loadjs");
 
 export default (type, name, version) =>
   new Promise((resolve, reject) => {
-    loadjs(`/${type}/${name}/${name}.js?v=${version}`, {
+    loadjs(`/static/admin/${type}/${name}/${name}.js?v=${version}`, {
       success: () => {
         window.PERFREE_SUCCESS = window.PERFREE_SUCCESS || [];
         window.PERFREE_SUCCESS.push(name);

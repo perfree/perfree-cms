@@ -1,9 +1,12 @@
 const inquirer = require("inquirer");
-const { getAllDirs } = require("./utils");
+const { getAllDirs, resolve, getDlls} = require("./utils");
 const webpackPromise = require("./utils").webpackPromise;
-
-const _core = require("./webpack.build.core");
-const _common = require("./webpack.build.common");
+const { merge } = require("webpack-merge");
+const _common = require("./webpack.build.common.prod");
+const {CleanWebpackPlugin} = require("clean-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const common = require("./webpack.common");
 
 const promptList = [
   {
@@ -13,7 +16,7 @@ const promptList = [
     choices: getAllDirs("./src/frames"),
     validate: function(val) {
       var done = this.async();
-      if (val.length == 0) {
+      if (val.length === 0) {
         done("请至少选择一个！");
         return;
       }
@@ -27,7 +30,7 @@ const promptList = [
     choices: getAllDirs("./src/modules"),
     validate: function(val) {
       var done = this.async();
-      if (val.length == 0) {
+      if (val.length === 0) {
         done("请至少选择一个！");
         return;
       }
@@ -43,7 +46,58 @@ const promptList = [
 
   // 打包核心
   console.log("\n--------------- BUILD CORE ---------------");
-  await webpackPromise(_core);
+  const webpackCoreConfig = {
+    mode: "production",
+    entry: {
+      core: "./src/core/"
+    },
+    performance: {
+      hints:false
+    },
+    output: {
+      path: resolve("../perfree-server/src/main/resources/static/admin/core"),
+      publicPath: "/static/admin/core/",
+      filename: "[name].[chunkhash].js",
+      // libraryTarget: "var"
+      library: {
+        type: "var",
+        name: "[name]_perfree"
+      }
+    },
+    // devtool: "source-map",
+    plugins: [
+      new CleanWebpackPlugin(),
+      // 纯静态资源复制
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: resolve("static"),
+            to: resolve("../perfree-server/src/main/resources/static/admin/static"),
+            globOptions: {
+              ignore: [".*"]
+            }
+          },
+          {
+            from: resolve("public/static/"),
+            to: resolve("../perfree-server/src/main/resources/static/admin/static/")
+          },
+          {
+            from: resolve("public/favicon.ico"),
+            to: resolve("../perfree-server/src/main/resources/static/admin/favicon.ico")
+          }
+        ]
+      }),
+      // HTML 模板
+      new HtmlWebpackPlugin({
+        basePath: "/static/admin",
+        template: "public/index.html",
+        filename: "../index.html",
+        dlls: getDlls(),
+      })
+    ]
+  };
+  await webpackPromise(merge(common, webpackCoreConfig));
+
 
   // 打包架构
   console.log("\n--------------- BUILD FRAMES ---------------");

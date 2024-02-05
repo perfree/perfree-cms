@@ -39,6 +39,7 @@ module.exports = merge(common, {
   plugins: [
     // HTML 模板
     new HtmlWebpackPlugin({
+      basePath: "",
       template: "public/index.html",
       dlls: getDlls()
     }),
