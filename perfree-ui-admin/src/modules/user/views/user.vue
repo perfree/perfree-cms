@@ -225,17 +225,19 @@ function handleRestPassword(row) {
     inputPlaceholder: '请输入新密码',
     inputErrorMessage: '请输入新密码',
   }).then(({ value }) => {
+    console.log(11111)
     resetPassword({id: row.id, password: value}).then((d) => {
       if (d.code === 200) {
         ElMessage.success('重置成功');
       } else {
         ElMessage.error(d.msg);
       }
-    });
-  })
+    })
+  }).catch(() => {});
 }
 
 function resetPasswordValidator( value) {
+  console.log(11111)
   if (!value) {
     return false;
   }
