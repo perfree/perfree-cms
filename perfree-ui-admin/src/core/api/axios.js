@@ -28,7 +28,7 @@ axios.interceptors.response.use(
           if (response.data.code === 401) {
               ElMessage.error("登录状态已过期，请重新登陆")
               localStorage.removeItem(CONSTANTS.STORAGE_TOKEN);
-              router.replace("/login")
+              window.location.href = "/login";
           }
           return response.data;
       }
