@@ -3,6 +3,7 @@ package com.perfree.system.service.role;
 import com.perfree.commons.common.PageResult;
 import com.perfree.system.convert.role.RoleConvert;
 import com.perfree.system.mapper.RoleMenuMapper;
+import com.perfree.system.mapper.UserRoleMapper;
 import com.perfree.system.model.Role;
 import com.perfree.system.mapper.RoleMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -82,5 +83,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         roleMenuMapper.deleteByRoleId(id);
         roleMapper.deleteById(id);
         return true;
+    }
+
+    @Override
+    public List<Role> getByUserId(Integer userId) {
+        return roleMapper.getByUserId(userId);
     }
 }

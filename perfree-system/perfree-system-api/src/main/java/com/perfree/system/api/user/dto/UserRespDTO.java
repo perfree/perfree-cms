@@ -49,11 +49,6 @@ public class UserRespDTO {
     private String avatar;
 
     /**
-     * 角色ID
-     */
-    private Long roleId;
-
-    /**
      * 邮箱
      */
     private String email;

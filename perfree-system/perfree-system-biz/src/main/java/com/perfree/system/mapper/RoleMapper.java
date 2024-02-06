@@ -8,6 +8,9 @@ import com.perfree.system.model.Role;
 import com.perfree.system.vo.role.RolePageReqVO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * <p>
@@ -24,5 +27,7 @@ public interface RoleMapper extends BaseMapperX<Role> {
         return selectPage(pageVO, new LambdaQueryWrapper<Role>()
                 .like(StringUtils.isNotBlank(pageVO.getName()), Role::getName, pageVO.getName()));
     }
+
+    List<Role> getByUserId(@Param("userId") Integer userId);
 
 }

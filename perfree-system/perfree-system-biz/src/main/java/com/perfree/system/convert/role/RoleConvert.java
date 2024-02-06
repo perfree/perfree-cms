@@ -9,15 +9,20 @@ import com.perfree.system.vo.role.RoleRespVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface RoleConvert {
     RoleConvert INSTANCE = Mappers.getMapper(RoleConvert.class);
-
-    RoleRespDTO convertDto(Role byId);
 
     RoleRespVO convertRespVO(Role role);
 
     PageResult<RoleRespVO> convertPageResultVO(PageResult<Role> rolePageResult);
 
     Role convertAddOrUpdate(RoleAddOrUpdateReqVO roleAddOrUpdateReqVO);
+
+    List<RoleRespDTO> convertListDTO(List<Role> roleList);
+
+    List<RoleRespVO> convertRespListVO(List<Role> list);
+
 }

@@ -82,7 +82,7 @@
           ref="ruleFormRef"
           :model="addForm"
           :rules="addRule"
-          label-width="120px"
+          label-width="100px"
           class="demo-ruleForm"
           status-icon
       >

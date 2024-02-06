@@ -10,6 +10,9 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class UserPageReqVO extends PageParam {
-    @Schema(description = "用户名")
+    @Schema(description = "昵称")
     private String userName;
+
+    @Schema(description = "账户")
+    private String account;
 }

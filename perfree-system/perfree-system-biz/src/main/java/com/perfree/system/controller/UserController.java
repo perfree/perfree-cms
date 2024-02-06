@@ -2,22 +2,15 @@ package com.perfree.system.controller;
 
 import com.perfree.commons.common.CommonResult;
 import com.perfree.commons.common.PageResult;
-import com.perfree.system.convert.role.RoleConvert;
 import com.perfree.system.convert.user.UserConvert;
-import com.perfree.system.model.Role;
 import com.perfree.system.model.User;
 import com.perfree.system.service.user.UserService;
-import com.perfree.system.vo.role.RolePageReqVO;
-import com.perfree.system.vo.role.RoleRespVO;
-import com.perfree.system.vo.user.UserPageReqVO;
-import com.perfree.system.vo.user.UserRespVO;
+import com.perfree.system.vo.user.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
 
 import static com.perfree.commons.common.CommonResult.success;
 
@@ -40,4 +33,47 @@ public class UserController {
         PageResult<User> userPageResult = userService.userPage(pageVO);
         return success(UserConvert.INSTANCE.convertPageResultVO(userPageResult));
     }
+
+    @GetMapping("/get")
+    @Operation(summary = "获取用户")
+    public CommonResult<UserRespVO> get(@RequestParam(value = "id") Integer id) {
+        return success(UserConvert.INSTANCE.convertRespVO(userService.get(id)));
+    }
+
+    @PostMapping("/add")
+    @Operation(summary = "添加")
+    public CommonResult<UserRespVO> add(@RequestBody @Valid UserAddReqVO userAddReqVO) {
+        return success(UserConvert.INSTANCE.convertRespVO(userService.addUser(userAddReqVO)));
+    }
+
+    @PostMapping("/update")
+    @Operation(summary = "更新")
+    public CommonResult<UserRespVO> update(@RequestBody @Valid UserUpdateReqVO userUpdateReqVO) {
+        return success(UserConvert.INSTANCE.convertRespVO(userService.updateUser(userUpdateReqVO)));
+    }
+
+    @DeleteMapping("/del")
+    @Operation(summary = "删除用户")
+    public CommonResult<Boolean> del(@RequestParam(value = "id") Integer id) {
+        return success(userService.del(id));
+    }
+
+    @PostMapping("/updateUserRole")
+    @Operation(summary = "更新用户角色")
+    public CommonResult<Boolean> updateUserRole(@RequestBody @Valid UserRoleReqVO userRoleReqVO) {
+        return success(userService.updateUserRole(userRoleReqVO));
+    }
+
+    @GetMapping("/getUserRole")
+    @Operation(summary = "获取用户角色id集合")
+    public CommonResult<UserRoleRespVO> getUserRole(@RequestParam(value = "id") Integer id) {
+        return success(userService.getUserRole(id));
+    }
+
+    @PostMapping("/resetPassword")
+    @Operation(summary = "重置密码")
+    public CommonResult<Boolean> resetPassword(@RequestBody @Valid UserResetPasswordReqVO resetPasswordReqVO) {
+        return success(userService.resetPassword(resetPasswordReqVO));
+    }
+
 }

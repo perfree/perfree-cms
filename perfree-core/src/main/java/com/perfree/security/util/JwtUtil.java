@@ -111,19 +111,19 @@ public class JwtUtil {
         try {
             claims = getTokenBody(token);
         } catch (ExpiredJwtException e) {
-            e.printStackTrace();
             claims = e.getClaims();
         }
-        //  获取用户角色 TODO 老数据为单角色不分权限,这里在考虑要不要升级为多角色加权限的方式
+        //  获取用户
         UserRespDTO byAccount = userApi.findByAccount(claims.getSubject());
         LoginUserVO loginUser = new LoginUserVO();
         loginUser.setId(byAccount.getId());
         loginUser.setAccount(byAccount.getAccount());
-        loginUser.setRoleId(byAccount.getRoleId());
-        RoleRespDTO role = roleApi.getById(loginUser.getRoleId());
+        // 获取角色
+        List<RoleRespDTO> roleList = roleApi.getByUserId(byAccount.getId());
         List<String> roles = new ArrayList<>();
-        //  roles.add(role.getCode().startsWith("ROLE_") ? role.getCode(): "ROLE_" + role.getCode());
-        roles.add(role.getCode());
+        for (RoleRespDTO roleRespDTO : roleList) {
+            roles.add(roleRespDTO.getCode());
+        }
         List<SimpleGrantedAuthority> authorities = roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
         return new UsernamePasswordAuthenticationToken(loginUser, token, authorities);
     }

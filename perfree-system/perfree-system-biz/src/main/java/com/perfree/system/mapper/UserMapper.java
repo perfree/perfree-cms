@@ -27,6 +27,8 @@ public interface UserMapper extends BaseMapperX<User> {
 
     default PageResult<User> selectPage(UserPageReqVO pageVO) {
         return selectPage(pageVO, new LambdaQueryWrapper<User>()
-                .like(StringUtils.isNotBlank(pageVO.getUserName()), User::getUserName, pageVO.getUserName()));
+                .like(StringUtils.isNotBlank(pageVO.getUserName()), User::getUserName, pageVO.getUserName())
+                .like(StringUtils.isNotBlank(pageVO.getAccount()), User::getAccount, pageVO.getAccount())
+        );
     }
 }

@@ -7,14 +7,16 @@ import com.perfree.system.service.role.RoleService;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class RoleApiImpl implements RoleApi {
     @Resource
     private RoleService roleService;
 
     @Override
-    public RoleRespDTO getById(Long roleId) {
-        Role byId = roleService.getById(roleId);
-        return RoleConvert.INSTANCE.convertDto(byId);
+    public List<RoleRespDTO> getByUserId(Integer userId) {
+        List<Role> roleList = roleService.getByUserId(userId);
+        return RoleConvert.INSTANCE.convertListDTO(roleList);
     }
 }

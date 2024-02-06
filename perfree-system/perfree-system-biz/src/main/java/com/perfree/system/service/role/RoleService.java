@@ -64,4 +64,5 @@ public interface RoleService extends IService<Role> {
      */
     Boolean del(Integer id);
 
+    List<Role> getByUserId(Integer userId);
 }

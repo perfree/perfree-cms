@@ -69,7 +69,7 @@
       <el-form
           ref="menuFormRef"
           :model="menuForm"
-          label-width="120px"
+          label-width="80px"
           class="demo-ruleForm"
           status-icon
       >
@@ -108,7 +108,7 @@
       <el-form
           ref="addFormRef"
           :model="addForm"
-          label-width="120px"
+          label-width="80px"
           status-icon
           :rules="addRule"
       >

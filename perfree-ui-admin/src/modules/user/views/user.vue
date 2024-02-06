@@ -2,8 +2,11 @@
   <div class="page">
     <div class="search-box">
       <el-form :inline="true" :model="searchForm" class="demo-form-inline" ref="searchFormRef">
-        <el-form-item label="用户名称">
-          <el-input v-model="searchForm.name" placeholder="请输入用户名称" clearable/>
+        <el-form-item label="昵称">
+          <el-input v-model="searchForm.userName" placeholder="请输入昵称" clearable/>
+        </el-form-item>
+        <el-form-item label="账户">
+          <el-input v-model="searchForm.account" placeholder="请输入账户" clearable/>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="initList" :icon="Search">查询</el-button>
@@ -40,15 +43,17 @@
             <span>{{ parseTime(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="240" fixed="right">
+        <el-table-column label="操作" width="280" fixed="right">
           <template v-slot="scope">
             <el-button size="small" type="primary" link :icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
+            <el-button size="small" type="primary" link :icon="Filter" @click="handleUserRole(scope.row)">分配角色</el-button>
+            <el-button size="small" type="primary" link :icon="RefreshLeft" @click="handleRestPassword(scope.row)">重置密码</el-button>
             <el-popconfirm
                 confirm-button-text="确认"
                 cancel-button-text="取消"
                 :icon="InfoFilled"
                 icon-color="#626AEF"
-                title="确定要删除该角色吗?"
+                title="确定要删除该用户吗?"
                 @confirm="handleDelete(scope.row)"
             >
               <template #reference>
@@ -71,25 +76,73 @@
                 :total="searchForm.total"
             />
     </div>
+    <el-dialog v-model="userRoleOpen" :title="title" width="600px" draggable>
+      <el-form
+          ref="userRoleFormRef"
+          :model="userRoleForm"
+          label-width="80px"
+          status-icon
+      >
+        <el-form-item label="昵称" prop="userName">
+          <el-input v-model="userRoleForm.userName" disabled placeholder="请输入昵称" />
+        </el-form-item>
+
+        <el-form-item label="账户" prop="account">
+          <el-input v-model="userRoleForm.account" disabled placeholder="请输入账户" />
+        </el-form-item>
+
+        <el-form-item label="角色" prop="roles">
+          <el-select
+              v-model="userRoleForm.roles"
+              clearable
+              multiple
+              placeholder="请选择角色"
+              style="width: 100%"
+          >
+            <el-option
+                v-for="item in roleList"
+                :key="item.id"
+                :label="item.name"
+                :value="item.id"
+            />
+          </el-select>
+        </el-form-item>
+      </el-form>
+
+      <template #footer>
+        <span class="dialog-footer">
+              <el-button type="primary" @click="submitUserRoleForm">确 定</el-button>
+              <el-button @click="userRoleOpen = false; resetUserRoleForm()">取 消</el-button>
+        </span>
+      </template>
+    </el-dialog>
 
     <el-dialog v-model="open" :title="title" width="600px" draggable>
       <el-form
           ref="addFormRef"
           :model="addForm"
-          label-width="120px"
+          label-width="80px"
           status-icon
           :rules="addRule"
       >
-        <el-form-item label="角色名称" prop="name">
-          <el-input v-model="addForm.name" placeholder="请输入角色名称" />
+        <el-form-item label="昵称" prop="userName">
+          <el-input v-model="addForm.userName" placeholder="请输入昵称" />
         </el-form-item>
 
-        <el-form-item label="角色编码" prop="code">
-          <el-input v-model="addForm.code" placeholder="请输入角色编码" />
+        <el-form-item label="账户" prop="account">
+          <el-input v-model="addForm.account" placeholder="请输入账户" />
         </el-form-item>
 
-        <el-form-item label="描述" prop="description">
-          <el-input v-model="addForm.description" placeholder="请输入角色描述"  :autosize="{ minRows: 3, maxRows: 6 }" type="textarea"/>
+        <el-form-item label="密码" prop="password" v-if="!isUpdate">
+          <el-input v-model="addForm.password" type="password" show-password placeholder="请输入密码" />
+        </el-form-item>
+
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="addForm.email" placeholder="请输入邮箱地址" />
+        </el-form-item>
+
+        <el-form-item label="网站" prop="website">
+          <el-input v-model="addForm.website" placeholder="请输入网站地址" />
         </el-form-item>
       </el-form>
 
@@ -105,48 +158,102 @@
 </template>
 
 <script setup>
-import {addOrUpdate, assignRoleMenu, del, getRole, getRoleMenus, page} from "@/modules/user/scripts/api/user";
+import {
+  delUser,
+  getUser,
+  pageUser,
+  updateUser,
+  addUser,
+  updateUserRole,
+  getUserRole,
+  resetPassword
+} from "@/modules/user/scripts/api/user";
 import {reactive, ref} from "vue";
-import {Delete, Edit, Filter, InfoFilled, Plus, Refresh, Search} from "@element-plus/icons-vue";
-import {handleTree, parseTime} from "@/core/utils/perfree";
-import {ElMessage} from "element-plus";
+import {Delete, Edit, Filter, InfoFilled, Plus, Refresh, Search, RefreshLeft} from "@element-plus/icons-vue";
+import {parseTime} from "@/core/utils/perfree";
+import {ElMessage, ElMessageBox} from "element-plus";
+import {roleListAll} from "@/modules/user/scripts/api/role";
 
 
 const searchForm = ref({
   pageNo: 1,
   pageSize: 20,
   total: 0,
-  name: ''
+  userName: '',
+  account: ''
 })
 const addForm = ref({
   id: '',
-  name: '',
-  code: '',
-  description: ''
+  userName: '',
+  account: '',
+  password: '',
+  email: '',
+  website: ''
+});
+const userRoleForm = ref({
+  id: '',
+  userName: '',
+  account: '',
+  roles: '',
 });
 const addRule = reactive({
-  name: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
-  code: [{ required: true, message: '请输入角色编码', trigger: 'blur' }],
+  userName: [{ required: true, message: '请输入昵称', trigger: 'blur' }],
+  account: [{ required: true, message: '请输入账户', trigger: 'blur' }],
+  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
 });
 
 const searchFormRef = ref();
 const addFormRef = ref();
+const userRoleFormRef = ref();
 let open = ref(false);
+let userRoleOpen = ref(false);
 let title = ref('');
 let tableData = ref([]);
 let loading = ref(false);
+let isUpdate = ref(false);
+let roleList = ref([]);
+
 
 /**
- * 添加提交
+ * 重置密码
  */
-function submitAddForm() {
-  addFormRef.value.validate(valid => {
+function handleRestPassword(row) {
+  ElMessageBox.prompt('请输入[' + row.userName + ']的新密码', '提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    inputValidator: resetPasswordValidator,
+    inputPlaceholder: '请输入新密码',
+    inputErrorMessage: '请输入新密码',
+  }).then(({ value }) => {
+    resetPassword({id: row.id, password: value}).then((d) => {
+      if (d.code === 200) {
+        ElMessage.success('重置成功');
+      } else {
+        ElMessage.error(d.msg);
+      }
+    });
+  })
+}
+
+function resetPasswordValidator( value) {
+  if (!value) {
+    return false;
+  }
+  return true;
+}
+
+
+/**
+ * 分配角色提交
+ */
+function submitUserRoleForm() {
+  userRoleFormRef.value.validate(valid => {
     if (valid) {
-      addOrUpdate(addForm.value).then((res) => {
+      updateUserRole(userRoleForm.value).then((res) => {
         if (res.code === 200) {
           ElMessage.success('操作成功');
-          open.value = false;
-          resetAddForm();
+          userRoleOpen.value = false;
+          resetUserRoleForm();
           initList();
         } else {
           ElMessage.error(res.msg);
@@ -157,21 +264,71 @@ function submitAddForm() {
 }
 
 /**
+ * 重置分配角色表单
+ */
+function resetUserRoleForm() {
+  userRoleForm.value = {
+    id: '',
+    userName: '',
+    account: '',
+    roles: '',
+  }
+  userRoleFormRef.value.resetFields();
+}
+
+/**
+ * 添加提交
+ */
+function submitAddForm() {
+  addFormRef.value.validate(valid => {
+    if (valid) {
+      if (addForm.value.id) {
+        addForm.value.password = null;
+        updateUser(addForm.value).then((res) => {
+          if (res.code === 200) {
+            ElMessage.success('更新成功');
+            open.value = false;
+            resetAddForm();
+            initList();
+          } else {
+            ElMessage.error(res.msg);
+          }
+        })
+      } else {
+        addUser(addForm.value).then((res) => {
+          if (res.code === 200) {
+            ElMessage.success('添加成功');
+            open.value = false;
+            resetAddForm();
+            initList();
+          } else {
+            ElMessage.error(res.msg);
+          }
+        })
+      }
+    }
+  })
+}
+
+/**
  * 新增
  */
 function handleAdd() {
-  title.value = '添加角色';
+  title.value = '添加用户';
   open.value = true;
+  isUpdate.value = false;
 }
 
 /**
  * 修改
  */
 function handleUpdate(row) {
-  title.value = '修改角色';
+  title.value = '修改用户';
   open.value = true;
-  getRole(row.id).then((res) => {
+  isUpdate.value = true;
+  getUser(row.id).then((res) => {
     addForm.value = res.data;
+    addForm.value.password = '';
   })
 }
 
@@ -180,7 +337,7 @@ function handleUpdate(row) {
  * @param row
  */
 function handleDelete(row) {
-  del(row.id).then((res) => {
+  delUser(row.id).then((res) => {
     if (res.code === 200 && res.data) {
       ElMessage.success('删除成功');
       initList();
@@ -195,7 +352,7 @@ function handleDelete(row) {
  */
 function initList() {
   loading.value = true;
-  page(searchForm.value).then((res) => {
+  pageUser(searchForm.value).then((res) => {
     tableData.value = res.data.list;
     searchForm.value.total = res.data.total;
     loading.value = false;
@@ -207,7 +364,8 @@ function initList() {
  */
 function resetSearchForm() {
   searchForm.value = {
-    name: ''
+    userName: '',
+    account: ''
   }
   searchFormRef.value.resetFields();
 }
@@ -218,11 +376,30 @@ function resetSearchForm() {
 function resetAddForm() {
   addForm.value = {
     id: '',
-    name: '',
-    code: '',
-    description: ''
+    userName: '',
+    account: '',
+    password: '',
+    email: '',
+    website: ''
   }
   addFormRef.value.resetFields();
+}
+
+/**
+ * 分配角色
+ */
+function handleUserRole(row) {
+  userRoleForm.value.id = row.id;
+  userRoleForm.value.userName = row.userName;
+  userRoleForm.value.account = row.account;
+  roleListAll().then((res) => {
+    roleList.value = res.data;
+    getUserRole(row.id).then((d) => {
+      userRoleForm.value.roles = d.data.roles;
+    });
+  })
+  title.value = '分配角色';
+  userRoleOpen.value = true;
 }
 
 initList();

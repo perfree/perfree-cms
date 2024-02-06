@@ -2,16 +2,18 @@ package com.perfree.system.api.role;
 
 import com.perfree.system.api.role.dto.RoleRespDTO;
 
+import java.util.List;
+
 /**
  * 角色相关
  */
 public interface RoleApi {
 
     /**
-     * 根据角色id获取角色信息
-     * @param roleId roleId
-     * @return RoleRespDTO
+     * 根据用户id获取角色列表
+     * @param userId 用户id
+     * @return List<RoleRespDTO>
      */
-    RoleRespDTO getById(Long roleId);
+    List<RoleRespDTO> getByUserId(Integer userId);
 
 }

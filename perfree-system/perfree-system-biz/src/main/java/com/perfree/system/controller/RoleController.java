@@ -66,6 +66,12 @@ public class RoleController {
         return success(RoleConvert.INSTANCE.convertRespVO(roleService.get(id)));
     }
 
+    @GetMapping("/listAll")
+    @Operation(summary = "获取所有角色")
+    public CommonResult<List<RoleRespVO>> listAll() {
+        return success(RoleConvert.INSTANCE.convertRespListVO(roleService.list()));
+    }
+
     @PostMapping("/addOrUpdate")
     @Operation(summary = "添加或更新")
     public CommonResult<RoleRespVO> addOrUpdate(@RequestBody @Valid RoleAddOrUpdateReqVO roleAddOrUpdateReqVO) {

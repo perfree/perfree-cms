@@ -6,7 +6,9 @@ import com.perfree.system.model.User;
 import com.perfree.system.vo.system.LoginUserInfoRespVO;
 import com.perfree.system.vo.system.LoginUserReqVO;
 import com.perfree.system.vo.system.LoginUserRespVO;
+import com.perfree.system.vo.user.UserAddReqVO;
 import com.perfree.system.vo.user.UserRespVO;
+import com.perfree.system.vo.user.UserUpdateReqVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -33,5 +35,11 @@ public interface UserConvert {
     UserRespDTO convertDto(User byAccount);
 
     PageResult<UserRespVO> convertPageResultVO(PageResult<User> userPageResult);
+
+    UserRespVO convertRespVO(User user);
+
+    User convertAddVO(UserAddReqVO userAddReqVO);
+
+    User convertUpdateVO(UserUpdateReqVO userUpdateReqVO);
 
 }

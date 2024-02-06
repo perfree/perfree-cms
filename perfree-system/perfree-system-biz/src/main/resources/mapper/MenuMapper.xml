@@ -5,8 +5,8 @@
     <select id="menuListByUserId" resultType="com.perfree.system.model.Menu">
         SELECT pm.* FROM p_menu pm
         INNER JOIN p_role_menu prm ON pm.id = prm.menuId
-        INNER JOIN p_user pu ON prm.roleId = pu.roleId
-        WHERE pm.type = #{type,jdbcType=INTEGER} AND pu.id = #{userId,jdbcType=INTEGER} AND pm.status = 0
+        INNER JOIN p_user_role pur ON prm.roleId = pur.roleId
+        WHERE pm.type = #{type,jdbcType=INTEGER} AND pur.userId = #{userId,jdbcType=INTEGER}
         order by pm.seq asc
     </select>
 </mapper>

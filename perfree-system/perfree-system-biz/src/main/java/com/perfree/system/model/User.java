@@ -1,8 +1,6 @@
 package com.perfree.system.model;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -69,11 +67,6 @@ public class User implements Serializable {
     private String avatar;
 
     /**
-     * 角色ID
-     */
-    private Long roleId;
-
-    /**
      * 邮箱
      */
     private String email;
@@ -83,7 +76,9 @@ public class User implements Serializable {
      */
     private String website;
 
+    @TableField(fill = FieldFill.INSERT)
     private Date createTime;
 
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 }

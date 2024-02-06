@@ -14,7 +14,10 @@ public enum ErrorCode {
     CAPTCHA_IMAGE_ERROR(100000004,"验证码生成失败!"),
     CAPTCHA_EXPIRE(100000005,"验证码已过期!"),
     CAPTCHA_VALID_ERROR(100000006,"验证码错误!"),
-    MENU_EXISTS_CHILDREN(100000007, "存在子菜单，无法删除!");
+    MENU_EXISTS_CHILDREN(100000007, "存在子菜单，无法删除!"),
+    USER_PASSWORD_NOT_EMPTY(100000008, "密码不能为空!"),
+    ACCOUNT_EXIST(100000009, "账户已存在!"),
+    ;
     private final Integer code;
 
     private final String msg;

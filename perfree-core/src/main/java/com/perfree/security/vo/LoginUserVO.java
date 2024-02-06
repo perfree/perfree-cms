@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 
 @Getter
@@ -23,9 +24,4 @@ public class LoginUserVO implements Serializable {
      * 用户账号
      */
     private String account;
-
-    /**
-     * 角色ID
-     */
-    private Long roleId;
 }

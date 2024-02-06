@@ -1,12 +1,12 @@
 package com.perfree.system.service.user;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.perfree.commons.common.PageResult;
 import com.perfree.system.model.User;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.perfree.system.vo.system.LoginUserInfoRespVO;
 import com.perfree.system.vo.system.LoginUserReqVO;
 import com.perfree.system.vo.system.LoginUserRespVO;
-import com.perfree.system.vo.user.UserPageReqVO;
+import com.perfree.system.vo.user.*;
 
 /**
  * <p>
@@ -48,5 +48,54 @@ public interface UserService extends IService<User> {
      * @return PageResult<User>
      */
     PageResult<User> userPage(UserPageReqVO pageVO);
+
+    /**
+     * 获取用户
+     * @param id id
+     * @return User
+     */
+    User get(Integer id);
+
+    /**
+     * 删除用户
+     * @param id id
+     * @return Boolean
+     */
+    Boolean del(Integer id);
+
+    /**
+     * 添加用户
+     * @param userAddReqVO userAddReqVO
+     * @return User
+     */
+    User addUser(UserAddReqVO userAddReqVO);
+
+    /**
+     * 更新用户
+     * @param userUpdateReqVO userUpdateReqVO
+     * @return User
+     */
+    User updateUser(UserUpdateReqVO userUpdateReqVO);
+
+    /**
+     * 获取用户角色id集合
+     * @param id id
+     * @return UserRoleRespVO
+     */
+    UserRoleRespVO getUserRole(Integer id);
+
+    /**
+     * 设置用户角色
+     * @param userRoleReqVO userRoleReqVO
+     * @return Boolean
+     */
+    Boolean updateUserRole(UserRoleReqVO userRoleReqVO);
+
+    /**
+     * 重置密码
+     * @param resetPasswordReqVO resetPasswordReqVO
+     * @return Boolean
+     */
+    Boolean resetPassword(UserResetPasswordReqVO resetPasswordReqVO);
 
 }
