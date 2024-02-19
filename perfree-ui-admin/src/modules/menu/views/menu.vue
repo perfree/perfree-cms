@@ -57,18 +57,7 @@
           <template v-slot="scope">
             <el-button size="small" type="primary" link :icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
             <el-button size="small" type="primary" link :icon="Plus" @click="handleAdd(scope.row)" >新增</el-button>
-            <el-popconfirm
-                confirm-button-text="确认"
-                cancel-button-text="取消"
-                :icon="InfoFilled"
-                icon-color="#626AEF"
-                title="确定要删除该菜单吗?"
-                @confirm="handleDelete(scope.row)"
-            >
-              <template #reference>
-                <el-button size="small" type="primary" link :icon="Delete" >删除</el-button>
-              </template>
-            </el-popconfirm>
+            <el-button size="small" type="primary" link :icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
 
           </template>
         </el-table-column>
@@ -205,19 +194,12 @@
 </template>
 
 <script setup>
-import {
-  Search,
-  InfoFilled,
-  Plus,
-  Refresh,
-  Delete,
-  Edit,
-} from '@element-plus/icons-vue'
-import {ref,reactive} from "vue";
-import {list, get, addOrUpdate, del} from "@/modules/menu/scripts/api/menu";
+import {Delete, Edit, Plus, Refresh, Search,} from '@element-plus/icons-vue'
+import {reactive, ref} from "vue";
+import {addOrUpdate, del, get, list} from "@/modules/menu/scripts/api/menu";
 import {handleTree} from "@/core/utils/perfree";
 import ElIconPicker from "@/core/components/el-icon-picker.vue";
-import {ElMessage} from "element-plus";
+import {ElMessage, ElMessageBox} from "element-plus";
 
 const searchForm = ref({
   name: '',
@@ -361,14 +343,20 @@ function submitForm() {
  * @param row
  */
 function handleDelete(row) {
-  del(row.id).then((res) => {
-    if (res.code === 200 && res.data) {
-      ElMessage.success('删除成功');
-      initList();
-    } else {
-      ElMessage.error(res.msg);
-    }
-  });
+  ElMessageBox.confirm('确定要删除[' + row.name + ']吗？', '提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    del(row.id).then((res) => {
+      if (res.code === 200 && res.data) {
+        ElMessage.success('删除成功');
+        initList();
+      } else {
+        ElMessage.error(res.msg);
+      }
+    });
+  }).catch(() => {})
 }
 
 /**

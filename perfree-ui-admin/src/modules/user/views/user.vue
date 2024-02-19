@@ -48,18 +48,7 @@
             <el-button size="small" type="primary" link :icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
             <el-button size="small" type="primary" link :icon="Filter" @click="handleUserRole(scope.row)">分配角色</el-button>
             <el-button size="small" type="primary" link :icon="RefreshLeft" @click="handleRestPassword(scope.row)">重置密码</el-button>
-            <el-popconfirm
-                confirm-button-text="确认"
-                cancel-button-text="取消"
-                :icon="InfoFilled"
-                icon-color="#626AEF"
-                title="确定要删除该用户吗?"
-                @confirm="handleDelete(scope.row)"
-            >
-              <template #reference>
-                <el-button size="small" type="primary" link :icon="Delete" >删除</el-button>
-              </template>
-            </el-popconfirm>
+            <el-button size="small" type="primary" link :icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
 
           </template>
         </el-table-column>
@@ -121,7 +110,7 @@
       <el-form
           ref="addFormRef"
           :model="addForm"
-          label-width="80px"
+          label-width="60px"
           status-icon
           :rules="addRule"
       >
@@ -159,17 +148,17 @@
 
 <script setup>
 import {
+  addUser,
   delUser,
   getUser,
-  pageUser,
-  updateUser,
-  addUser,
-  updateUserRole,
   getUserRole,
-  resetPassword
+  pageUser,
+  resetPassword,
+  updateUser,
+  updateUserRole
 } from "@/modules/user/scripts/api/user";
 import {reactive, ref} from "vue";
-import {Delete, Edit, Filter, InfoFilled, Plus, Refresh, Search, RefreshLeft} from "@element-plus/icons-vue";
+import {Delete, Edit, Filter, InfoFilled, Plus, Refresh, RefreshLeft, Search} from "@element-plus/icons-vue";
 import {parseTime} from "@/core/utils/perfree";
 import {ElMessage, ElMessageBox} from "element-plus";
 import {roleListAll} from "@/modules/user/scripts/api/role";
@@ -197,9 +186,18 @@ const userRoleForm = ref({
   roles: '',
 });
 const addRule = reactive({
-  userName: [{ required: true, message: '请输入昵称', trigger: 'blur' }],
-  account: [{ required: true, message: '请输入账户', trigger: 'blur' }],
-  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+  userName: [
+    { required: true, message: '请输入昵称', trigger: 'blur' },
+    { min: 2, max: 20, message: '昵称必须在2-20字之间', trigger: 'blur' }
+  ],
+  account: [
+    { required: true, message: '请输入账户', trigger: 'blur' },
+    { min: 5, max: 16, message: '账户必须在5-16字之间', trigger: 'blur' }
+  ],
+  password: [
+      { required: true, message: '请输入密码', trigger: 'blur' },
+      { min: 5, max: 16, message: '密码必须在5-16字之间', trigger: 'blur' }
+  ],
 });
 
 const searchFormRef = ref();
@@ -337,14 +335,20 @@ function handleUpdate(row) {
  * @param row
  */
 function handleDelete(row) {
-  delUser(row.id).then((res) => {
-    if (res.code === 200 && res.data) {
-      ElMessage.success('删除成功');
-      initList();
-    } else {
-      ElMessage.error(res.msg);
-    }
-  });
+  ElMessageBox.confirm('确定要删除[' + row.userName + ']吗？', '提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    delUser(row.id).then((res) => {
+      if (res.code === 200 && res.data) {
+        ElMessage.success('删除成功');
+        initList();
+      } else {
+        ElMessage.error(res.msg);
+      }
+    });
+  }).catch(() => {})
 }
 
 /**
