@@ -30,6 +30,10 @@ axios.interceptors.response.use(
               localStorage.removeItem(CONSTANTS.STORAGE_TOKEN);
               window.location.href = "/login";
           }
+          if (response.data.code === 403) {
+              ElMessage.error(response.data.msg)
+              return Promise.reject(new Error(response.data.msg));
+          }
           return response.data;
       }
       ElMessage.error('错误信息')

@@ -1,11 +1,9 @@
 package com.perfree.security.util;
 
 import com.perfree.security.SecurityConstants;
-import com.perfree.system.api.role.RoleApi;
-import com.perfree.system.api.role.dto.RoleRespDTO;
+import com.perfree.security.vo.LoginUserVO;
 import com.perfree.system.api.user.UserApi;
 import com.perfree.system.api.user.dto.UserRespDTO;
-import com.perfree.security.vo.LoginUserVO;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -15,13 +13,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Perfree
@@ -36,12 +30,9 @@ public class JwtUtil {
     private static final byte[] refreshKey = DatatypeConverter.parseBase64Binary(SecurityConstants.JWT_REFRESH_KEY);
 
     private static UserApi userApi;
-    private static RoleApi roleApi;
-
     @Autowired
-    public JwtUtil(UserApi userApi, RoleApi roleApi) {
+    public JwtUtil(UserApi userApi) {
         JwtUtil.userApi = userApi;
-        JwtUtil.roleApi = roleApi;
     }
 
     /**
@@ -118,14 +109,7 @@ public class JwtUtil {
         LoginUserVO loginUser = new LoginUserVO();
         loginUser.setId(byAccount.getId());
         loginUser.setAccount(byAccount.getAccount());
-        // 获取角色
-        List<RoleRespDTO> roleList = roleApi.getByUserId(byAccount.getId());
-        List<String> roles = new ArrayList<>();
-        for (RoleRespDTO roleRespDTO : roleList) {
-            roles.add(roleRespDTO.getCode());
-        }
-        List<SimpleGrantedAuthority> authorities = roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
-        return new UsernamePasswordAuthenticationToken(loginUser, token, authorities);
+        return new UsernamePasswordAuthenticationToken(loginUser, token, null);
     }
 
     /**

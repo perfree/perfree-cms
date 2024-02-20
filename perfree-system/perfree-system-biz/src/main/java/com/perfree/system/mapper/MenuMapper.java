@@ -50,4 +50,20 @@ public interface MenuMapper extends BaseMapperX<Menu> {
         return selectList(new LambdaQueryWrapper<Menu>()
                 .eq(Menu::getParentId, id));
     }
+
+    /**
+     * 根据用户id获取权限
+     * @param userId 用户id
+     * @return List<String>
+     */
+    List<String> getPermissionByUserId(@Param("userId") Integer userId, @Param("type") Integer type);
+
+
+    /**
+     * 获取管理员菜单
+     * @param type 菜单类型
+     * @return List<Menu>
+     */
+    List<Menu> menuListByAdmin(@Param("type") Integer type);
+
 }

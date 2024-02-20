@@ -6,6 +6,7 @@ import com.perfree.commons.exception.ServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.converter.HttpMessageConversionException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -86,6 +87,13 @@ public class GlobalExceptionHandler{
     public CommonResult<?> handleServiceException(Exception exception) {
         LOGGER.error(exception.getMessage());
         return CommonResult.error(ResultCodeEnum.FAIL.getCode(), exception.getMessage());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseBody
+    public CommonResult<?> handleAccessDeniedException(Exception exception) {
+        LOGGER.error(exception.getMessage());
+        return CommonResult.error(ResultCodeEnum.AUTH_FORBIDDEN.getCode(), ResultCodeEnum.AUTH_FORBIDDEN.getMsg());
     }
 
     @ExceptionHandler(Exception.class)

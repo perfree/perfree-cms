@@ -1,4 +1,5 @@
-package com.perfree.security;
+package com.perfree.security.handle;
+
 
 import cn.hutool.http.ContentType;
 import cn.hutool.json.JSONUtil;
@@ -14,16 +15,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-/**
- * @author Perfree
- * @description 定义 SecurityAccessDeniedHandler
- * @date 15:37 2023/9/28
- */
 @Component
-public class SecurityAccessDeniedHandler implements AuthenticationEntryPoint {
+public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         WebUtils.renderString(HttpServletResponse.SC_FORBIDDEN, ContentType.JSON.getValue(), response,
-                JSONUtil.toJsonStr(CommonResult.error(ResultCodeEnum.AUTH_FAIL.getCode(), ResultCodeEnum.AUTH_FAIL.getMsg())));
+                JSONUtil.toJsonStr(CommonResult.error(ResultCodeEnum.AUTH_UNAUTHORIZED.getCode(), ResultCodeEnum.AUTH_UNAUTHORIZED.getMsg())));
     }
 }

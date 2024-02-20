@@ -12,7 +12,8 @@ public enum ResultCodeEnum {
     SUCCESS(200,"成功"),
     FAIL(500,"失败"),
     SC_UNAUTHORIZED(401,"无效的会话或登录已过期"),
-    AUTH_FAIL(403,"认证失败");
+    AUTH_UNAUTHORIZED(401,"账号未登录"),
+    AUTH_FORBIDDEN(403,"没有该操作权限");
 
     private final Integer code;
 

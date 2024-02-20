@@ -2,7 +2,6 @@ package com.perfree.system.convert.role;
 
 
 import com.perfree.commons.common.PageResult;
-import com.perfree.system.api.role.dto.RoleRespDTO;
 import com.perfree.system.model.Role;
 import com.perfree.system.vo.role.RoleAddOrUpdateReqVO;
 import com.perfree.system.vo.role.RoleRespVO;
@@ -20,8 +19,6 @@ public interface RoleConvert {
     PageResult<RoleRespVO> convertPageResultVO(PageResult<Role> rolePageResult);
 
     Role convertAddOrUpdate(RoleAddOrUpdateReqVO roleAddOrUpdateReqVO);
-
-    List<RoleRespDTO> convertListDTO(List<Role> roleList);
 
     List<RoleRespVO> convertRespListVO(List<Role> list);
 

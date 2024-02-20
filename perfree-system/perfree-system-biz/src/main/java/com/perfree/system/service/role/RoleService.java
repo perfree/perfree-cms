@@ -1,13 +1,12 @@
 package com.perfree.system.service.role;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.perfree.commons.common.PageResult;
 import com.perfree.system.model.Role;
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.perfree.system.model.RoleMenu;
 import com.perfree.system.vo.role.RoleAddOrUpdateReqVO;
 import com.perfree.system.vo.role.RoleMenuReqVO;
 import com.perfree.system.vo.role.RolePageReqVO;
-import com.perfree.system.vo.role.RoleRespVO;
 
 import java.util.List;
 
@@ -64,5 +63,10 @@ public interface RoleService extends IService<Role> {
      */
     Boolean del(Integer id);
 
+    /**
+     * 根据用户id获取角色列表
+     * @param userId userId
+     * @return List<Role>
+     */
     List<Role> getByUserId(Integer userId);
 }

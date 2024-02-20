@@ -31,7 +31,7 @@
 
       <el-table :data="tableData" style="width: 100%;height:100%;" row-key="id" v-loading="loading">
         <el-table-column prop="name" label="菜单名称" width="240" />
-        <el-table-column prop="icon" label="图标" width="180">
+        <el-table-column prop="icon" label="图标" width="100">
           <template #default="scope">
             <el-icon v-if="scope.row.icon"><component :is="scope.row.icon" /></el-icon>
           </template>
@@ -40,7 +40,7 @@
         <el-table-column prop="module" label="所属模块" min-width="150"/>
         <el-table-column prop="path" label="菜单地址" min-width="150"/>
         <el-table-column prop="component" label="组件路径" min-width="150"/>
-        <el-table-column prop="componentName" label="组件名" min-width="150"/>
+        <el-table-column prop="perms" label="权限标识" min-width="150"/>
         <el-table-column prop="status" label="状态" width="80">
           <template #default="scope">
             <el-tag class="ml-2" type="success" v-if="scope.row.status === 0">开启</el-tag>
@@ -196,7 +196,7 @@
 <script setup>
 import {Delete, Edit, Plus, Refresh, Search,} from '@element-plus/icons-vue'
 import {reactive, ref} from "vue";
-import {addOrUpdate, del, get, list} from "@/modules/menu/scripts/api/menu";
+import {add, del, get, list, update} from "@/modules/menu/scripts/api/menu";
 import {handleTree} from "@/core/utils/perfree";
 import ElIconPicker from "@/core/components/el-icon-picker.vue";
 import {ElMessage, ElMessageBox} from "element-plus";
@@ -254,6 +254,7 @@ let treeData = ref([]);
 function initList() {
   loading.value = true;
   list(searchForm.value).then((res) => {
+    console.log(res)
     tableData.value = handleTree(res.data, "id", "parentId",'children', '-1');
     treeData.value = [{id: '-1', name: '主类目', children: tableData.value}];
     loading.value = false;
@@ -324,16 +325,29 @@ function submitForm() {
       if (!addForm.value.parentId) {
         addForm.value.parentId = '-1';
       }
-      addOrUpdate(addForm.value).then((res) => {
-        if (res.code === 200) {
-          ElMessage.success('操作成功');
-          open.value = false;
-          resetForm();
-          initList();
-        } else {
-          ElMessage.error(res.msg);
-        }
-      })
+      if (addForm.value.id) {
+        update(addForm.value).then((res) => {
+          if (res.code === 200) {
+            ElMessage.success('修改成功');
+            open.value = false;
+            resetForm();
+            initList();
+          } else {
+            ElMessage.error(res.msg);
+          }
+        })
+      } else {
+        add(addForm.value).then((res) => {
+          if (res.code === 200) {
+            ElMessage.success('添加成功');
+            open.value = false;
+            resetForm();
+            initList();
+          } else {
+            ElMessage.error(res.msg);
+          }
+        })
+      }
     }
   })
 }

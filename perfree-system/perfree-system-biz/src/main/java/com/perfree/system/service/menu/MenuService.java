@@ -43,4 +43,12 @@ public interface MenuService extends IService<Menu> {
      * @return Boolean
      */
     Boolean del(String id);
+
+    /**
+     * 根据用户id获取用户权限
+     * @param userId userId
+     * @return List<String>
+     */
+    List<String> getPermissionByUserId(Integer userId);
+
 }

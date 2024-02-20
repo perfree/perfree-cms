@@ -1,6 +1,9 @@
 package com.perfree.security;
 
 import com.perfree.security.filter.JwtAuthorizationFilter;
+import com.perfree.security.service.SecurityFrameworkService;
+import com.perfree.security.service.SecurityFrameworkServiceImpl;
+import com.perfree.system.api.permission.PermissionApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,7 +39,10 @@ public class SecurityConfig {
 
     private final JwtAuthorizationFilter jwtAuthorizationFilter;
 
-    private final SecurityAccessDeniedHandler securityAccessDeniedHandler;
+    @Bean("ss") // 使用 Spring Security 的缩写，方便使用
+    public SecurityFrameworkService securityFrameworkService(PermissionApi permissionApi) {
+        return new SecurityFrameworkServiceImpl(permissionApi);
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -77,8 +83,7 @@ public class SecurityConfig {
                 //  配置跨域
                 .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
                 //  将配置交由JWT
-                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(except -> except.authenticationEntryPoint(securityAccessDeniedHandler));
+                .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

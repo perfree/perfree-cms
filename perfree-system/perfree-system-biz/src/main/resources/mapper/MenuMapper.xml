@@ -6,7 +6,18 @@
         SELECT pm.* FROM p_menu pm
         INNER JOIN p_role_menu prm ON pm.id = prm.menuId
         INNER JOIN p_user_role pur ON prm.roleId = pur.roleId
-        WHERE pm.type = #{type,jdbcType=INTEGER} AND pur.userId = #{userId,jdbcType=INTEGER}
+        WHERE pm.type = #{type,jdbcType=INTEGER} AND pur.userId = #{userId,jdbcType=INTEGER} AND pm.menuType in(0, 1)
+        order by pm.seq asc
+    </select>
+    <select id="getPermissionByUserId" resultType="java.lang.String">
+        SELECT pm.perms FROM p_menu pm
+        INNER JOIN p_role_menu prm ON pm.id = prm.menuId
+        INNER JOIN p_user_role pur ON prm.roleId = pur.roleId
+        WHERE pm.menuType = #{type,jdbcType=INTEGER} AND pur.userId = #{userId,jdbcType=INTEGER}
+    </select>
+    <select id="menuListByAdmin" resultType="com.perfree.system.model.Menu">
+        SELECT pm.* FROM p_menu pm
+        WHERE pm.type = #{type,jdbcType=INTEGER} AND pm.menuType in(0, 1)
         order by pm.seq asc
     </select>
 </mapper>

@@ -288,6 +288,10 @@ function resetMenuForm() {
  * 菜单权限
  */
 function handleRoleMenu(row) {
+  if (row.code === 'admin') {
+    ElMessage.warning('admin角色默认拥有所有权限,不可修改');
+    return;
+  }
   roleMenuOpen.value = true;
   menuForm.value.name = row.name;
   menuForm.value.code = row.code;

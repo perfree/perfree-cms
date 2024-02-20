@@ -5,12 +5,16 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.perfree.commons.constant.SystemConstants;
 import com.perfree.commons.enums.MenuTypeEnum;
 import com.perfree.commons.exception.ServiceException;
+import com.perfree.enums.MenuEnum;
+import com.perfree.enums.RoleEnum;
 import com.perfree.security.SecurityFrameworkUtils;
 import com.perfree.security.vo.LoginUserVO;
 import com.perfree.system.convert.menu.MenuConvert;
 import com.perfree.system.mapper.MenuMapper;
 import com.perfree.system.mapper.RoleMenuMapper;
 import com.perfree.system.model.Menu;
+import com.perfree.system.model.Role;
+import com.perfree.system.service.role.RoleService;
 import com.perfree.system.vo.menu.MenuAddOrUpdateReqVO;
 import com.perfree.system.vo.menu.MenuListReqVO;
 import com.perfree.system.vo.system.MenuTreeListRespVO;
@@ -41,11 +45,27 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     @Resource
     private RoleMenuMapper roleMenuMapper;
 
+    @Resource
+    private RoleService roleService;
+
     @Override
     public List<MenuTreeListRespVO> menuAdminListByLoginUser() {
         LoginUserVO loginUser = SecurityFrameworkUtils.getLoginUser();
         assert loginUser != null;
-        List<Menu> menuList = menuMapper.menuListByUserId(loginUser.getId(), MenuTypeEnum.ADMIN.getType());
+        List<Role> roles = roleService.getByUserId(loginUser.getId());
+        boolean isAdmin = false;
+        for (Role role : roles) {
+            if (role.getCode().equals(RoleEnum.ADMIN_CODE.getCode())) {
+                isAdmin = true;
+                break;
+            }
+        }
+        List<Menu> menuList;
+        if (isAdmin) {
+            menuList = menuMapper.menuListByAdmin(MenuTypeEnum.ADMIN.getType());
+        } else {
+            menuList = menuMapper.menuListByUserId(loginUser.getId(), MenuTypeEnum.ADMIN.getType());
+        }
         List<MenuTreeListRespVO> menuTreeListRespVOS = MenuConvert.INSTANCE.convertTreeList(menuList);
         // 获取所有跟节点
         List<MenuTreeListRespVO> result = menuTreeListRespVOS.stream().filter(menu -> menu.getParentId().equals(SystemConstants.ROOT_MENU_CODE)).toList();
@@ -85,6 +105,11 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         menuMapper.deleteById(id);
         roleMenuMapper.deleteByMenuId(id);
         return true;
+    }
+
+    @Override
+    public List<String> getPermissionByUserId(Integer userId) {
+        return menuMapper.getPermissionByUserId(userId, MenuEnum.MENU_TYPE_PERMISSION.getCode());
     }
 
     /**

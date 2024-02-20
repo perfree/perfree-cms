@@ -25,7 +25,7 @@ module.exports = merge(common, {
     hot: true,
     client: {
       // 错误显示在页面中
-      overlay: true,
+      overlay: false,
     },
     // 自动打开
     open: false,
