@@ -92,7 +92,7 @@
   import { ref, getCurrentInstance } from 'vue';
   import {useStore} from "vuex";
   import {useRouter} from "vue-router";
-  import {getCodeImg, login} from "@/frames/default/api/system";
+  import {getCodeImg, login, userInfo} from "@/frames/default/api/system";
   import {ElMessage} from "element-plus";
   import {CONSTANTS} from "@/core/utils/constants";
   import {loadMenuAndModule} from "@/core/utils/module";
@@ -133,14 +133,14 @@
         login(loginForm.value).then((res) => {
           if (res.code === 200) {
             localStorage.setItem(CONSTANTS.STORAGE_TOKEN, JSON.stringify(res.data));
-            // 加载模块及菜单
-            loadMenuAndModule(store, router).then(() => {
+            Promise.all([loadMenuAndModule(store, router), userInfo()]).then(([menuAndModuleRes, userInfoRes]) => {
               loading.value = false;
+              localStorage.setItem(CONSTANTS.STORAGE_USER_INFO, JSON.stringify(userInfoRes.data));
               router.replace("/admin");
             }).catch(err => {
               loading.value = false;
               console.log(err);
-            })
+            });
           } else {
             ElMessage.error(res.msg);
             loginForm.value.code = "";

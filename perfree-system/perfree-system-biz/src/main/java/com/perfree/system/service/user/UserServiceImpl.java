@@ -7,6 +7,7 @@ import com.perfree.cache.CaptchaCacheService;
 import com.perfree.commons.common.PageResult;
 import com.perfree.commons.exception.ServiceException;
 import com.perfree.enums.ErrorCode;
+import com.perfree.enums.RoleEnum;
 import com.perfree.security.SecurityConstants;
 import com.perfree.security.SecurityFrameworkUtils;
 import com.perfree.security.util.JwtUtil;
@@ -18,6 +19,7 @@ import com.perfree.system.mapper.UserRoleMapper;
 import com.perfree.system.model.Role;
 import com.perfree.system.model.User;
 import com.perfree.system.model.UserRole;
+import com.perfree.system.service.menu.MenuService;
 import com.perfree.system.vo.system.LoginUserInfoRespVO;
 import com.perfree.system.vo.system.LoginUserReqVO;
 import com.perfree.system.vo.system.LoginUserRespVO;
@@ -57,6 +59,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Resource
     private CaptchaCacheService captchaCacheService;
+
+
+    @Resource
+    private MenuService menuService;
 
     @Override
     public LoginUserRespVO login(LoginUserReqVO loginUserVO) {
@@ -104,10 +110,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setPassword(null);
         user.setSalt(null);
         LoginUserInfoRespVO loginUserInfoRespVO = UserConvert.INSTANCE.convertLoginInfo(user);
+        loginUserInfoRespVO.setAdmin(false);
         List<Role> roleList = roleMapper.getByUserId(loginUser.getId());
         for (Role role : roleList) {
             loginUserInfoRespVO.getRoles().add(role.getCode());
+            if (role.getCode().equals(RoleEnum.ADMIN_CODE.getCode())) {
+                loginUserInfoRespVO.setAdmin(true);
+            }
         }
+        List<String> permissionByUserId = menuService.getPermissionByUserId(loginUser.getId());
+        loginUserInfoRespVO.setPermissions(permissionByUserId);
         return loginUserInfoRespVO;
     }
 

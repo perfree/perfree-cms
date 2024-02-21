@@ -11,6 +11,7 @@ import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 const app = createApp(App);
 // 接口
 import axios from "./api/axios";
+import {hasPermission} from "@/core/directive/permission/hasPermission";
 window.axios = axios;
 
 if (process.env.NODE_ENV === "development") {
@@ -29,5 +30,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.config.globalProperties.$icons.push(key)
   app.component(key, component)
 }
+
+app.directive('hasPermission', hasPermission)
 app.mount('#app')
 

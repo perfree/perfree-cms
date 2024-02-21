@@ -38,11 +38,10 @@
  </div>
 </template>
 <script setup>
-import { ref } from 'vue';
-import {useRouter, onBeforeRouteUpdate} from "vue-router";
+import {ref} from 'vue';
+import {onBeforeRouteUpdate, useRouter} from "vue-router";
 import screenfull from 'screenfull';
 import {CONSTANTS} from "@/core/utils/constants";
-import {userInfo} from "@/frames/default/api/system";
 
 const props = defineProps({
   menuIsCollapse: false
@@ -65,10 +64,8 @@ onBeforeRouteUpdate((to) => {
 });
 
 function getUserInfo() {
-  userInfo().then((res) => {
-    user.value = res.data;
-    localStorage.setItem(CONSTANTS.STORAGE_USER_INFO, JSON.stringify(res.data));
-  });
+  const userJson = localStorage.getItem(CONSTANTS.STORAGE_USER_INFO);
+  user.value = JSON.parse(userJson);
 }
 /**
  * 展开/缩放侧边栏

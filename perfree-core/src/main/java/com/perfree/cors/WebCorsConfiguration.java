@@ -28,6 +28,8 @@ public class WebCorsConfiguration implements WebMvcConfigurer {
         registry.addResourceHandler("/img/**").addResourceLocations("classpath:/dist/img/");
         registry.addResourceHandler("/js/**").addResourceLocations("classpath:/dist/js/");
         registry.addResourceHandler("/**").addResourceLocations("classpath:/dist/");*/
+        registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
         WebMvcConfigurer.super.addResourceHandlers(registry);
     }
 

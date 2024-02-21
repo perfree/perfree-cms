@@ -16,6 +16,9 @@ public class LoginUserInfoRespVO extends UserBaseVO {
     @Schema(description = "用户id")
     private Integer id;
 
+    @Schema(description = "是否为管理员")
+    private Boolean admin;
+
     @Schema(description = "角色编码集合")
     private List<String> roles = new ArrayList<>();
 
