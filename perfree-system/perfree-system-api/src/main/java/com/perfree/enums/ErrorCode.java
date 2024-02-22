@@ -17,6 +17,8 @@ public enum ErrorCode {
     MENU_EXISTS_CHILDREN(100000007, "存在子菜单，无法删除!"),
     USER_PASSWORD_NOT_EMPTY(100000008, "密码不能为空!"),
     ACCOUNT_EXIST(100000009, "账户已存在!"),
+    CAPTCHA_IS_NOT_EMPTY(100000010,"请输入验证码!"),
+    FILE_HANDLE_ERROR(100000011,"文件上传出错!"),
     ;
     private final Integer code;
 

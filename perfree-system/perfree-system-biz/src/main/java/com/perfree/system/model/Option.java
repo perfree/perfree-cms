@@ -1,6 +1,7 @@
 package com.perfree.system.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 
@@ -34,10 +35,12 @@ public class Option implements Serializable {
     /**
      * key
      */
+    @TableField(value = "`key`")
     private String key;
 
     /**
      * value
      */
+    @TableField(value = "`value`")
     private String value;
 }

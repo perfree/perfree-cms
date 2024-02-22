@@ -1,7 +1,13 @@
 package com.perfree.system.mapper;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.perfree.commons.common.PageResult;
 import com.perfree.commons.mapper.BaseMapperX;
 import com.perfree.system.model.Attach;
+import com.perfree.system.model.Role;
+import com.perfree.system.vo.attach.AttachPageReqVO;
+import com.perfree.system.vo.role.RolePageReqVO;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -14,5 +20,15 @@ import org.apache.ibatis.annotations.Mapper;
  */
 @Mapper
 public interface AttachMapper extends BaseMapperX<Attach> {
+
+    /**
+     * 分页查询
+     * @param pageVO pageVO
+     * @return PageResult<Attach>
+     */
+    default PageResult<Attach> selectPage(AttachPageReqVO pageVO) {
+        return selectPage(pageVO, new LambdaQueryWrapper<Attach>()
+                .like(StringUtils.isNotBlank(pageVO.getName()), Attach::getName, pageVO.getName()));
+    }
 
 }

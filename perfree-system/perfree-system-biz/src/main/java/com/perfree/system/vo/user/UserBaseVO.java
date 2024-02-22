@@ -1,10 +1,7 @@
 package com.perfree.system.vo.user;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 
 @Data
@@ -13,6 +10,7 @@ public class UserBaseVO {
     @Schema(description = "用户账号")
     @NotBlank(message = "用户账号不能为空")
     @Size(min = 5, max = 16, message = "账户必须在5-16字之间")
+    @Pattern(regexp = "^[A-Za-z0-9]+$", message = "账号格式为数字以及字母")
     private String account;
 
     @Schema(description = "昵称")

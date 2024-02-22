@@ -4,14 +4,18 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.digest.DigestUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.perfree.cache.CaptchaCacheService;
+import com.perfree.cache.OptionCacheService;
 import com.perfree.commons.common.PageResult;
 import com.perfree.commons.exception.ServiceException;
+import com.perfree.constant.OptionConstant;
 import com.perfree.enums.ErrorCode;
+import com.perfree.enums.OptionEnum;
 import com.perfree.enums.RoleEnum;
 import com.perfree.security.SecurityConstants;
 import com.perfree.security.SecurityFrameworkUtils;
 import com.perfree.security.util.JwtUtil;
 import com.perfree.security.vo.LoginUserVO;
+import com.perfree.system.api.option.dto.OptionCacheDTO;
 import com.perfree.system.convert.user.UserConvert;
 import com.perfree.system.mapper.RoleMapper;
 import com.perfree.system.mapper.UserMapper;
@@ -60,19 +64,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Resource
     private CaptchaCacheService captchaCacheService;
 
+    @Resource
+    private OptionCacheService optionCacheService;
 
     @Resource
     private MenuService menuService;
 
     @Override
     public LoginUserRespVO login(LoginUserReqVO loginUserVO) {
-        String captcha = captchaCacheService.getCaptcha(loginUserVO.getUuid());
-        if (StringUtils.isBlank(captcha)){
-            throw new ServiceException(ErrorCode.CAPTCHA_EXPIRE);
-        }
-        captchaCacheService.removeCaptcha(loginUserVO.getUuid());
-        if (!captcha.equals(loginUserVO.getCode())) {
-            throw new ServiceException(ErrorCode.CAPTCHA_VALID_ERROR);
+        OptionCacheDTO option = optionCacheService.getOption(OptionEnum.LOGIN_CAPTCHA_ENABLE.getKey());
+        if (null == option || option.getValue().equals(OptionConstant.OPTION_PUBLIC_TRUE)) {
+            if (StringUtils.isBlank(loginUserVO.getUuid()) || StringUtils.isBlank(loginUserVO.getCode())) {
+                throw new ServiceException(ErrorCode.CAPTCHA_IS_NOT_EMPTY);
+            }
+            String captcha = captchaCacheService.getCaptcha(loginUserVO.getUuid());
+            if (StringUtils.isBlank(captcha)){
+                throw new ServiceException(ErrorCode.CAPTCHA_EXPIRE);
+            }
+            captchaCacheService.removeCaptcha(loginUserVO.getUuid());
+            if (!captcha.equals(loginUserVO.getCode())) {
+                throw new ServiceException(ErrorCode.CAPTCHA_VALID_ERROR);
+            }
         }
         User user = userMapper.findByAccount(loginUserVO.getUsername());
         if (null == user) {

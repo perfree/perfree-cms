@@ -1,9 +1,16 @@
 package com.perfree.config;
 
+import com.perfree.cache.OptionCacheService;
 import com.perfree.plugin.PluginDevManager;
 import com.perfree.plugin.PluginInfo;
 import com.perfree.plugin.PluginInfoHolder;
 import com.perfree.plugin.PluginManager;
+import com.perfree.system.api.option.dto.OptionCacheDTO;
+import com.perfree.system.convert.option.OptionConvert;
+import com.perfree.system.model.Option;
+import com.perfree.system.service.option.OptionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -19,21 +26,29 @@ import java.util.List;
 @Component
 public class AppInit implements ApplicationRunner {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationRunner.class);
+
     @Value("${server.port}")
     private String port;
-
 
     private final PluginManager pluginManager;
 
     private final PluginDevManager pluginDevManager;
 
-    public AppInit(PluginManager pluginManager, PluginDevManager pluginDevManager) {
+    private final OptionService optionService;
+
+    private final OptionCacheService optionCacheService;
+
+    public AppInit(PluginManager pluginManager, PluginDevManager pluginDevManager, OptionService optionService, OptionCacheService optionCacheService) {
         this.pluginManager = pluginManager;
         this.pluginDevManager = pluginDevManager;
+        this.optionService = optionService;
+        this.optionCacheService = optionCacheService;
     }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        initOptions();
         pluginManager.initPlugins();
         String command = System.getProperty("sun.java.command");
         if (command != null && !command.contains(".jar")) {
@@ -60,5 +75,18 @@ public class AppInit implements ApplicationRunner {
                 ----------------------------------------------------------------------------------
                 """.formatted(successPluginStr, port);
         System.out.println(banner);
+    }
+
+    /**
+     * 初始化配置
+     */
+    private void initOptions() {
+        LOGGER.info("start init option");
+        List<Option> optionList = optionService.getAllOption();
+        List<OptionCacheDTO> options = OptionConvert.INSTANCE.convertCacheDTO(optionList);
+        for (OptionCacheDTO option : options) {
+            optionCacheService.putOption(option.getKey(), option);
+        }
+        LOGGER.info("init option success");
     }
 }

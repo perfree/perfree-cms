@@ -2,6 +2,7 @@ package com.perfree.cache;
 
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
@@ -26,6 +27,9 @@ public class CaptchaCacheService {
     }
 
     public String getCaptcha(String key) {
+        if (StringUtils.isBlank(key)) {
+            return null;
+        }
         return verificationCodeCache.getIfPresent(key);
     }
 

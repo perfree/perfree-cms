@@ -2,6 +2,8 @@ package com.perfree.plugin;
 
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -45,6 +47,15 @@ public abstract class PluginApplicationContextHolder {
 	 */
 	public static AnnotationConfigApplicationContext getApplicationContext(Integer pluginId) {
 		return pluginApplicationMap.get(pluginId);
+	}
+
+
+	public static List<AnnotationConfigApplicationContext> getAllPluginApplicationContext() {
+		List<AnnotationConfigApplicationContext> result = new ArrayList<>();
+		for (Integer id : pluginApplicationMap.keySet()) {
+			result.add(pluginApplicationMap.get(id));
+		}
+		return result;
 	}
 
 }
