@@ -122,5 +122,10 @@
             <artifactId>perfree-system-api</artifactId>
             <version>4.0.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>io.minio</groupId>
+            <artifactId>minio</artifactId>
+        </dependency>
     </dependencies>
 </project>

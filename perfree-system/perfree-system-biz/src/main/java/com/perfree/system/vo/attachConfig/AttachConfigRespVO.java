@@ -1,4 +1,5 @@
-package com.perfree.system.vo.attach;
+package com.perfree.system.vo.attachConfig;
+
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -6,10 +7,11 @@ import lombok.EqualsAndHashCode;
 
 import java.util.Date;
 
-@Schema(description = "管理后台 - 附件RespVO")
+@Schema(description = "管理后台 - 附件配置RespVO")
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class AttachRespVO extends AttachBaseVO {
+public class AttachConfigRespVO extends AttachConfigBaseVO{
+
     @Schema(description = "id")
     private Integer id;
 

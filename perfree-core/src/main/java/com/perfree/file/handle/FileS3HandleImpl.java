@@ -1,15 +1,18 @@
-package com.exam.file;
+package com.perfree.file.handle;
 
-import com.perfree.file.handle.BaseFileHandle;
 import com.perfree.system.api.attach.dto.AttachFileDTO;
 import com.perfree.system.api.attach.dto.AttachUploadDTO;
+import io.minio.MinioClient;
 import org.springframework.stereotype.Service;
 
 /**
  * 代理文件上传服务(案例)
  */
 @Service
-public class FileAliHandleImpl implements BaseFileHandle {
+public class FileS3HandleImpl implements BaseFileHandle {
+
+    private MinioClient client;
+
     @Override
     public AttachFileDTO upload(AttachUploadDTO attachUploadDTO) {
         System.out.println("上传到阿里云");

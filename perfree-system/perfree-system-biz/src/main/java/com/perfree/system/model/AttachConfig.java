@@ -1,14 +1,12 @@
 package com.perfree.system.model;
 
 import com.baomidou.mybatisplus.annotation.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
-
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * <p>
@@ -20,8 +18,8 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-@TableName("p_attach")
-public class Attach implements Serializable {
+@TableName("p_attach_config")
+public class AttachConfig implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -33,45 +31,24 @@ public class Attach implements Serializable {
     private Integer id;
 
     /**
-     * 附件名
+     * 配置名
      */
     private String name;
 
     /**
-     * 附件描述
+     * 存储器
      */
-    @TableField(value = "`desc`")
-    private String desc;
+    private Integer storage;
 
     /**
-     * 附件路径
+     * 备注
      */
-    private String path;
+    private String remark;
 
     /**
-     * 附件后缀
+     * 存储配置
      */
-    private String suffix;
-
-    /**
-     * 标识
-     */
-    private String flag;
-
-    /**
-     * 文件类型
-     */
-    private String type;
-
-    /**
-     * 存储方式
-     */
-    private String saveType;
-
-    /**
-     * fileKey
-     */
-    private String fileKey;
+    private String config;
 
     /**
      * 创建时间
