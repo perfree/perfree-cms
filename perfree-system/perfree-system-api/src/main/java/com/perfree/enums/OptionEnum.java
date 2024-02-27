@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 public enum OptionEnum {
     LOGIN_CAPTCHA_ENABLE("LOGIN_CAPTCHA_ENABLE","是否开启登录验证码"),
-    DEFAULT_FILE_HANDLE("DEFAULT_FILE_HANDLE","默认文件处理器"),
+    DEFAULT_ADMIN_FRAME("DEFAULT_ADMIN_FRAME","默认的管理后台基础界面"),
     ;
     private final String key;
 

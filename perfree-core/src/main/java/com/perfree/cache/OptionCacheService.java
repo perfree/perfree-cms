@@ -6,6 +6,9 @@ import com.perfree.system.api.option.dto.OptionCacheDTO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author Perfree
  * @description 配置缓存相关
@@ -32,5 +35,9 @@ public class OptionCacheService {
 
     public void removeOption(String key) {
         optionCache.invalidate(key);
+    }
+
+    public List<OptionCacheDTO> getAllOption() {
+        return optionCache.asMap().values().stream().toList();
     }
 }

@@ -51,6 +51,11 @@ public class AttachConfig implements Serializable {
     private String config;
 
     /**
+     * 是否为主配置
+     */
+    private Boolean master;
+
+    /**
      * 创建时间
      */
     @TableField(fill = FieldFill.INSERT)

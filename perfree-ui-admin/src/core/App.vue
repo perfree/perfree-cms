@@ -5,12 +5,15 @@
 </template>
 
 <script setup>
-import { getUser, getMenus } from "./api";
 import _import from "./scripts/_import";
-import { loadMenuAndModule } from "./utils/module";
-import { useRouter } from 'vue-router';
-import { useStore } from 'vuex';
+import {loadMenuAndModule} from "./utils/module";
+import {useRouter} from 'vue-router';
+import {useStore} from 'vuex';
 import {CONSTANTS} from "@/core/utils/constants";
+import {getOptionByNoAuth} from "@/core/api/system";
+import {getOptionByKey, OPTION_KEY} from "@/core/utils/option";
+import {getAllOption} from "@/frames/default/api/system";
+
 const router = useRouter();
 const store = useStore();
 
@@ -31,11 +34,25 @@ async function  assembleFrame(info) {
 
 async function init() {
   document.title = PERFREE_CONFIG.appName;
+  let frame;
+  getOptionByNoAuth().then(async (res) => {
+    let options = {};
+    res.data.forEach(item => {
+      options[item.key] = item;
+    })
+    store.commit("SET_OPTIONS", options);
+    frame = {
+      name: getOptionByKey(OPTION_KEY.DEFAULT_ADMIN_FRAME).value,
+      version: "1.0.0"
+    }
+    let childRouter = await assembleFrame(frame);
+    store.commit("SET_FRAME_CHILD_ROUTER", childRouter);
+  });
   // 获取数据
-  const [user] = await Promise.all([getUser()]);
-  store.commit("SET_USER", user);
+  const [options] = await Promise.all([getOptionByNoAuth()]);
+  store.commit("SET_USER", options);
   // 组装基座并获取基座嵌套路由
-  let childRouter = await assembleFrame(user.frame);
+  let childRouter = await assembleFrame(frame);
   store.commit("SET_FRAME_CHILD_ROUTER", childRouter);
 
 }
@@ -49,7 +66,12 @@ init().then(() => {
   if (!token_info || !token_info.accessToken || token_info.accessToken === '') {
     router.replace('/login');
   } else {
-    loadMenuAndModule(store, router).then(() => {
+    Promise.all([loadMenuAndModule(store, router), getAllOption()]).then(([menuAndModuleRes, optionRes]) => {
+      let options = {};
+      optionRes.data.forEach(item => {
+        options[item.key] = item;
+      })
+      store.commit("SET_OPTIONS", options);
       router.replace(router.currentRoute.value.path);
     }).catch(err => {
       console.log(err);

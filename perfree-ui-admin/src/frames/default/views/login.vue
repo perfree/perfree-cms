@@ -92,14 +92,17 @@
   import { ref, getCurrentInstance } from 'vue';
   import {useStore} from "vuex";
   import {useRouter} from "vue-router";
-  import {getCodeImg, login, userInfo} from "@/frames/default/api/system";
+  import {getAllOption, getCodeImg, login, userInfo} from "@/frames/default/api/system";
   import {ElMessage} from "element-plus";
   import {CONSTANTS} from "@/core/utils/constants";
   import {loadMenuAndModule} from "@/core/utils/module";
+  import {getOptionByKey, OPTION_KEY} from "@/core/utils/option";
 
   const store = useStore();
   const router = useRouter();
   const { proxy } = getCurrentInstance();
+  // 验证码开关
+  let captchaEnabled = false;
 
   const loginForm = ref({
     username: "",
@@ -119,8 +122,7 @@
   const loading = ref(false);
   // 注册开关
   const register = ref(false);
-  // 验证码开关
-  const captchaEnabled = ref(true);
+
 
   /**
    * 登录
@@ -133,7 +135,12 @@
         login(loginForm.value).then((res) => {
           if (res.code === 200) {
             localStorage.setItem(CONSTANTS.STORAGE_TOKEN, JSON.stringify(res.data));
-            Promise.all([loadMenuAndModule(store, router), userInfo()]).then(([menuAndModuleRes, userInfoRes]) => {
+            Promise.all([loadMenuAndModule(store, router), userInfo(), getAllOption()]).then(([menuAndModuleRes, userInfoRes, optionRes]) => {
+              let options = {};
+              optionRes.data.forEach(item => {
+                options[item.key] = item;
+              })
+              store.commit("SET_OPTIONS", options);
               loading.value = false;
               localStorage.setItem(CONSTANTS.STORAGE_USER_INFO, JSON.stringify(userInfoRes.data));
               router.replace("/admin");
@@ -158,13 +165,13 @@
    * 获取验证码
    */
   function getCode() {
-    getCodeImg().then(res => {
-      captchaEnabled.value = res.captchaEnabled === undefined ? true : res.captchaEnabled;
-      if (captchaEnabled.value) {
+    captchaEnabled = getOptionByKey(OPTION_KEY.LOGIN_CAPTCHA_ENABLE).value === '0';
+    if (captchaEnabled){
+      getCodeImg().then(res => {
         codeUrl.value = "data:image/gif;base64," + res.data.img;
         loginForm.value.uuid = res.data.uuid;
-      }
-    });
+      });
+    }
   }
 
   getCode();

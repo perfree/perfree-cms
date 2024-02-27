@@ -1,18 +1,14 @@
 package com.perfree.file;
 
-import com.perfree.cache.OptionCacheService;
+import com.perfree.cache.AttachConfigCacheService;
 import com.perfree.commons.exception.ServiceException;
-import com.perfree.commons.utils.SpringBeanUtil;
-import com.perfree.enums.OptionEnum;
+import com.perfree.enums.ErrorCode;
 import com.perfree.file.handle.BaseFileHandle;
-import com.perfree.file.handle.FileLocalHandleImpl;
-import com.perfree.plugin.PluginApplicationContextHolder;
-import com.perfree.system.api.option.dto.OptionCacheDTO;
+import com.perfree.system.api.attachConfig.dto.AttachConfigCacheDTO;
 import jakarta.annotation.Resource;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * 文件处理器
@@ -20,30 +16,28 @@ import java.util.List;
  */
 @Service
 public class FileHandleService {
-
+    private final static Logger LOGGER = LoggerFactory.getLogger(FileHandleService.class);
     @Resource
-    private OptionCacheService optionCacheService;
+    private AttachConfigCacheService attachConfigCacheService;
 
     /**
      * 获取文件处理器
      * @return BaseFileHandle
      */
-    public BaseFileHandle getFileHandle() {
-        OptionCacheDTO option = optionCacheService.getOption(OptionEnum.DEFAULT_FILE_HANDLE.getKey());
-        if (null == option) {
-            return SpringBeanUtil.context.getBean(FileLocalHandleImpl.class);
+    public BaseFileHandle getFileHandle(Integer attachConfigID) {
+        AttachConfigCacheDTO masterAttachConfig;
+        if (null != attachConfigID) {
+            masterAttachConfig = attachConfigCacheService.getAttachConfig(attachConfigID);
+        } else {
+            masterAttachConfig = attachConfigCacheService.getMasterAttachConfig();
         }
-        boolean masterHasBean = SpringBeanUtil.context.containsBean(option.getValue());
-        if (masterHasBean) {
-            return (BaseFileHandle) SpringBeanUtil.context.getBean(option.getValue());
+        if (null == masterAttachConfig) {
+            LOGGER.error("master attach config is empty");
+            throw new ServiceException(ErrorCode.MASTER_ATTACH_CONFIG_EMPTY);
         }
-        // 如果主程序未匹配到,去尝试匹配插件的文件处理器
-        List<AnnotationConfigApplicationContext> allPluginApplicationContext = PluginApplicationContextHolder.getAllPluginApplicationContext();
-        for (AnnotationConfigApplicationContext annotationConfigApplicationContext : allPluginApplicationContext) {
-            boolean pluginHasBean = annotationConfigApplicationContext.containsBean(option.getValue());
-            if (pluginHasBean) {
-                return (BaseFileHandle) annotationConfigApplicationContext.getBean(option.getValue());
-            }
+        BaseFileHandle fileHandleStorage = FileHandleStorageHolder.getFileHandleStorage(masterAttachConfig.getStorage());
+        if (null != fileHandleStorage) {
+            return fileHandleStorage;
         }
        throw new ServiceException(500, "未匹配到文件处理器,请检查文件处配置!");
     }

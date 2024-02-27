@@ -3,6 +3,7 @@ package com.perfree.system.convert.option;
 
 import com.perfree.system.api.option.dto.OptionCacheDTO;
 import com.perfree.system.model.Option;
+import com.perfree.system.vo.option.OptionRespVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
@@ -14,4 +15,5 @@ public interface OptionConvert {
 
     List<OptionCacheDTO> convertCacheDTO(List<Option> optionList);
 
+    List<OptionRespVO> convertCacheDTO2RespListVO(List<OptionCacheDTO> optionCacheDTOList);
 }

@@ -1,12 +1,20 @@
 package com.perfree.config;
 
+import com.perfree.cache.AttachConfigCacheService;
 import com.perfree.cache.OptionCacheService;
+import com.perfree.file.FileHandleStorageHolder;
+import com.perfree.file.handle.FileLocalHandleImpl;
+import com.perfree.file.handle.FileS3HandleImpl;
 import com.perfree.plugin.PluginDevManager;
 import com.perfree.plugin.PluginInfo;
 import com.perfree.plugin.PluginInfoHolder;
 import com.perfree.plugin.PluginManager;
+import com.perfree.system.api.attachConfig.dto.AttachConfigCacheDTO;
 import com.perfree.system.api.option.dto.OptionCacheDTO;
+import com.perfree.system.convert.attachConfig.AttachConfigConvert;
 import com.perfree.system.convert.option.OptionConvert;
+import com.perfree.system.mapper.AttachConfigMapper;
+import com.perfree.system.model.AttachConfig;
 import com.perfree.system.model.Option;
 import com.perfree.system.service.option.OptionService;
 import org.slf4j.Logger;
@@ -35,20 +43,29 @@ public class AppInit implements ApplicationRunner {
 
     private final PluginDevManager pluginDevManager;
 
+    private final AttachConfigMapper attachConfigMapper;
+
     private final OptionService optionService;
 
     private final OptionCacheService optionCacheService;
 
-    public AppInit(PluginManager pluginManager, PluginDevManager pluginDevManager, OptionService optionService, OptionCacheService optionCacheService) {
+    private final AttachConfigCacheService attachConfigCacheService;
+
+    public AppInit(PluginManager pluginManager, PluginDevManager pluginDevManager, OptionService optionService,
+                   OptionCacheService optionCacheService, AttachConfigMapper attachConfigMapper,AttachConfigCacheService attachConfigCacheService) {
         this.pluginManager = pluginManager;
         this.pluginDevManager = pluginDevManager;
         this.optionService = optionService;
         this.optionCacheService = optionCacheService;
+        this.attachConfigMapper = attachConfigMapper;
+        this.attachConfigCacheService = attachConfigCacheService;
     }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        initFileHandle();
         initOptions();
+        initAttachConfig();
         pluginManager.initPlugins();
         String command = System.getProperty("sun.java.command");
         if (command != null && !command.contains(".jar")) {
@@ -78,15 +95,34 @@ public class AppInit implements ApplicationRunner {
     }
 
     /**
+     * 初始化文件上传处理类
+     */
+    private void initFileHandle() {
+        FileHandleStorageHolder.putFileHandleStorage(0, new FileLocalHandleImpl());
+        FileHandleStorageHolder.putFileHandleStorage(1, new FileS3HandleImpl());
+    }
+
+    /**
+     * 初始化附件配置
+     */
+    private void initAttachConfig() {
+        List<AttachConfig> all = attachConfigMapper.getAll();
+        List<AttachConfigCacheDTO> attachConfigCacheDTOS = AttachConfigConvert.INSTANCE.convertCacheListDTO(all);
+        for (AttachConfigCacheDTO attachConfig : attachConfigCacheDTOS) {
+            attachConfigCacheService.putAttachConfig(attachConfig.getId(), attachConfig);
+        }
+    }
+
+    /**
      * 初始化配置
      */
     private void initOptions() {
-        LOGGER.info("start init option");
+        LOGGER.info("start init option cache");
         List<Option> optionList = optionService.getAllOption();
         List<OptionCacheDTO> options = OptionConvert.INSTANCE.convertCacheDTO(optionList);
         for (OptionCacheDTO option : options) {
             optionCacheService.putOption(option.getKey(), option);
         }
-        LOGGER.info("init option success");
+        LOGGER.info("init option cache success");
     }
 }

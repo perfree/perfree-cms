@@ -6,11 +6,16 @@ import cn.hutool.captcha.generator.RandomGenerator;
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.util.IdUtil;
 import com.perfree.cache.CaptchaCacheService;
+import com.perfree.cache.OptionCacheService;
 import com.perfree.commons.common.CommonResult;
 import com.perfree.commons.constant.SystemConstants;
 import com.perfree.enums.ErrorCode;
+import com.perfree.enums.OptionEnum;
+import com.perfree.system.api.option.dto.OptionCacheDTO;
+import com.perfree.system.convert.option.OptionConvert;
 import com.perfree.system.service.menu.MenuService;
 import com.perfree.system.service.user.UserService;
+import com.perfree.system.vo.option.OptionRespVO;
 import com.perfree.system.vo.system.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,6 +49,9 @@ public class SystemController {
     @Resource
     private CaptchaCacheService captchaCacheService;
 
+    @Resource
+    private OptionCacheService optionCacheService;
+
 
     @PostMapping("login")
     @Operation(summary = "使用账号密码登录")
@@ -55,6 +64,21 @@ public class SystemController {
     @Operation(summary = "获取当前账号拥有的菜单")
     public CommonResult<List<MenuTreeListRespVO>> menuList(){
         return CommonResult.success(menuService.menuAdminListByLoginUser());
+    }
+
+    @GetMapping("getOptionByNoAuth")
+    @Operation(summary = "获取未登录时可拥有的配置信息")
+    public CommonResult<List<OptionRespVO>> getOptionByNoAuth(){
+        List<OptionCacheDTO> optionCacheDTOList = new ArrayList<>();
+        optionCacheDTOList.add(optionCacheService.getOption(OptionEnum.DEFAULT_ADMIN_FRAME.getKey()));
+        optionCacheDTOList.add(optionCacheService.getOption(OptionEnum.LOGIN_CAPTCHA_ENABLE.getKey()));
+        return CommonResult.success(OptionConvert.INSTANCE.convertCacheDTO2RespListVO(optionCacheDTOList));
+    }
+
+    @GetMapping("getAllOption")
+    @Operation(summary = "获取所有配置信息")
+    public CommonResult<List<OptionRespVO>> getAllOption(){
+        return CommonResult.success(OptionConvert.INSTANCE.convertCacheDTO2RespListVO(optionCacheService.getAllOption()));
     }
 
     @GetMapping("userInfo")

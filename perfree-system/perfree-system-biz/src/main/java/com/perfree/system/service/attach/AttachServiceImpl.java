@@ -37,6 +37,7 @@ public class AttachServiceImpl extends ServiceImpl<AttachMapper, Attach> impleme
     @Resource
     private FileHandleService fileHandleService;
 
+
     @Override
     public PageResult<Attach> attachPage(AttachPageReqVO pageVO) {
         return attachMapper.selectPage(pageVO);
@@ -45,7 +46,7 @@ public class AttachServiceImpl extends ServiceImpl<AttachMapper, Attach> impleme
     @Override
     @Transactional
     public Attach create(AttachUploadVO attachUploadVO) {
-        BaseFileHandle fileHandle = fileHandleService.getFileHandle();
+        BaseFileHandle fileHandle = fileHandleService.getFileHandle(attachUploadVO.getAttachConfigId());
         AttachFileDTO upload = fileHandle.upload(AttachConvert.INSTANCE.convertAttachUploadDTO(attachUploadVO));
         Attach attach = AttachConvert.INSTANCE.convertAttachFileDTO(upload);
         if (null == attach) {
@@ -60,12 +61,12 @@ public class AttachServiceImpl extends ServiceImpl<AttachMapper, Attach> impleme
     @Transactional
     public Boolean del(Integer id) {
         Attach attach = attachMapper.selectById(id);
-        BaseFileHandle fileHandle = fileHandleService.getFileHandle();
-        boolean result = fileHandle.delete(AttachConvert.INSTANCE.convertToAttachFileDTO(attach));
-        if (!result) {
-            return false;
-        }
-        attachMapper.deleteById(id);
+//        BaseFileHandle fileHandle = fileHandleService.getFileHandle();
+//        boolean result = fileHandle.delete(AttachConvert.INSTANCE.convertToAttachFileDTO(attach));
+//        if (!result) {
+//            return false;
+//        }
+//        attachMapper.deleteById(id);
         return true;
     }
 }

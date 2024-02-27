@@ -63,12 +63,33 @@
           status-icon
           :rules="addRule"
       >
-        <el-form-item label="附件名称" prop="name">
-          <el-input v-model="addForm.name" placeholder="请输入附件名称" />
+        <el-form-item label="存储策略" prop="name">
+          <el-select v-model="addForm.attachConfigId" placeholder="请选择存储策略" >
+            <el-option :key="3" :label="'本地磁盘'" :value="3" />
+            <el-option :key="1" :label="'S3对象存储'" :value="1" />
+          </el-select>
         </el-form-item>
 
         <el-form-item label="附件描述" prop="name">
-          <el-input v-model="addForm.name" placeholder="请输入附件描述" :autosize="{ minRows: 3, maxRows: 6 }" type="textarea"/>
+          <el-upload
+              class="upload-demo"
+              drag
+              :headers="headers"
+              :action="serverBaseUrl + '/api/attach/upload'"
+              multiple
+              style="width: 100%"
+              :data="{attachConfigId: addForm.attachConfigId}"
+          >
+            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+            <div class="el-upload__text">
+              Drop file here or <em>click to upload</em>
+            </div>
+            <template #tip>
+              <div class="el-upload__tip">
+                jpg/png files with a size less than 500kb
+              </div>
+            </template>
+          </el-upload>
         </el-form-item>
       </el-form>
     </el-dialog>
@@ -77,27 +98,30 @@
 </template>
 
 <script setup>
-import {Delete, Edit, Download, UploadFilled, Refresh, Search, Tools} from "@element-plus/icons-vue";
+import {Delete, Edit, Download, UploadFilled, Refresh, Search } from "@element-plus/icons-vue";
 import {reactive, ref} from "vue";
 import {parseTime} from "@/core/utils/perfree";
 import {page} from "@/modules/attach/scripts/api/attach";
+import axios_config from "@/core/api/axios_config";
+import {CONSTANTS} from "@/core/utils/constants";
 
+let token_info = localStorage.getItem(CONSTANTS.STORAGE_TOKEN);
+let serverBaseUrl = axios_config.baseURL;
 let tableData = ref([]);
 let loading = ref(false);
 const searchFormRef = ref();
 let open = ref(false);
 let title = ref('');
+let  headers = {
+  Authorization: "Bearer " + JSON.parse(token_info).accessToken,
+};
 const addFormRef = ref();
 
 const addForm = ref({
-  id: '',
-  name: '',
-  code: '',
-  description: ''
+  attachConfigId: '',
 });
 const addRule = reactive({
-  name: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
-  code: [{ required: true, message: '请输入角色编码', trigger: 'blur' }],
+  attachConfigId: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
 });
 
 

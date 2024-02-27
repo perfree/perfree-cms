@@ -2,6 +2,7 @@ package com.perfree.system.convert.attachConfig;
 
 
 import com.perfree.commons.common.PageResult;
+import com.perfree.system.api.attachConfig.dto.AttachConfigCacheDTO;
 import com.perfree.system.model.AttachConfig;
 import com.perfree.system.vo.attachConfig.AttachConfigCreateVO;
 import com.perfree.system.vo.attachConfig.AttachConfigRespVO;
@@ -24,5 +25,9 @@ public interface AttachConfigConvert {
     AttachConfig convertUpdateVO(AttachConfigUpdateVO attachConfigUpdateVO);
 
     PageResult<AttachConfigRespVO> convertPageResultVO(PageResult<AttachConfig> attachPage);
+
+    List<AttachConfigCacheDTO> convertCacheListDTO(List<AttachConfig> all);
+
+    AttachConfigCacheDTO convertCacheDTO(AttachConfig attachConfig);
 
 }

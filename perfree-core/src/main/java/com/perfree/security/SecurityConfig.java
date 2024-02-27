@@ -53,7 +53,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers(HttpMethod.GET, "/", "index.html", "/favicon.ico", "/auth/code").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/", "index.html", "/favicon.ico", "/auth/code", "/api/getOptionByNoAuth").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/auth/refresh").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/logout").permitAll()

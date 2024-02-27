@@ -6,10 +6,7 @@ import com.perfree.commons.common.PageResult;
 import com.perfree.system.convert.attachConfig.AttachConfigConvert;
 import com.perfree.system.model.AttachConfig;
 import com.perfree.system.service.attachConfig.AttachConfigService;
-import com.perfree.system.vo.attachConfig.AttachConfigCreateVO;
-import com.perfree.system.vo.attachConfig.AttachConfigPageReqVO;
-import com.perfree.system.vo.attachConfig.AttachConfigRespVO;
-import com.perfree.system.vo.attachConfig.AttachConfigUpdateVO;
+import com.perfree.system.vo.attachConfig.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -54,6 +51,12 @@ public class AttachConfigController {
     @Operation(summary = "修改配置")
     public CommonResult<Boolean> update(@RequestBody @Valid AttachConfigUpdateVO attachConfigUpdateVO) {
         return CommonResult.success(attachConfigService.updateAttachConfig(attachConfigUpdateVO));
+    }
+
+    @PutMapping("/updateMaster")
+    @Operation(summary = "修改配置")
+    public CommonResult<Boolean> updateMaster(@RequestBody @Valid AttachConfigUpdateMasterVO attachConfigUpdateMasterVO) {
+        return CommonResult.success(attachConfigService.updateMaster(attachConfigUpdateMasterVO));
     }
 
 

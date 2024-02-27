@@ -1,16 +1,16 @@
 const app = {
   state: {
-    user: {},
+    options: {},
     menus: [],
     frameChildRouter: []
   },
   mutations: {
-    SET_USER: (state, user) => (state.user = user),
+    SET_OPTIONS: (state, options) => (state.options = options),
     SET_MENUS: (state, menus) => (state.menus = menus),
     SET_FRAME_CHILD_ROUTER: (state, frameChildRouter) => (state.frameChildRouter = frameChildRouter),
   },
   getters: {
-    user: state => state.user,
+    options: state => state.options,
     menus: state => state.menus,
     frameChildRouter: state => state.frameChildRouter,
   }

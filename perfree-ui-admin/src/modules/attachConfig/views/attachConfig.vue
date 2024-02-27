@@ -25,10 +25,20 @@
 
       <el-table :data="tableData" style="width: 100%;height:100%;" row-key="id" v-loading="loading">
         <el-table-column label="序号" min-width="80" type="index" />
-        <el-table-column prop="name" label="配置名称" min-width="150" />
-        <el-table-column prop="path" label="存储器" min-width="150" />
-        <el-table-column prop="desc" label="备注" min-width="240" />
-        <el-table-column prop="desc" label="默认配置" min-width="240" />
+        <el-table-column prop="name" label="配置名称" min-width="240" />
+        <el-table-column prop="storage" label="存储器类型" min-width="240">
+          <template v-slot="scope">
+            <span v-if="scope.row.storage === 0">本地磁盘</span>
+            <span v-if="scope.row.storage === 1">S3对象存储</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="remark" label="备注" min-width="240" />
+        <el-table-column prop="master" label="默认配置" min-width="100">
+          <template v-slot="scope">
+            <el-tag type="success" v-if="scope.row.master">是</el-tag>
+            <el-tag type="danger" v-else>否</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="createTime" label="创建时间" min-width="120" >
           <template v-slot="scope">
             <span>{{ parseTime(scope.row.createTime) }}</span>
@@ -36,8 +46,8 @@
         </el-table-column>
         <el-table-column label="操作" width="240" fixed="right">
           <template v-slot="scope">
-            <el-button size="small" type="primary" link :icon="Download" @click="handleDelete(scope.row)">下载</el-button>
             <el-button size="small" type="primary" link :icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
+            <el-button size="small" type="primary" link :icon="Discount" @click="handleUpdateMaster(scope.row)">默认配置</el-button>
             <el-button size="small" type="primary" link :icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
 
           </template>
@@ -65,43 +75,43 @@
           status-icon
           :rules="addRule"
       >
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="addForm.name" placeholder="请输入名称" />
+        <el-form-item label="配置名称" prop="name">
+          <el-input v-model="addForm.name" placeholder="请输入配置名称" />
         </el-form-item>
 
-        <el-form-item label="备注" prop="name">
-          <el-input v-model="addForm.name" placeholder="请输入备注" />
+        <el-form-item label="备注" prop="remark">
+          <el-input v-model="addForm.remark" placeholder="请输入备注" />
         </el-form-item>
 
-        <el-form-item label="存储器" prop="name">
-          <el-select v-model="addForm.storage" placeholder="请选择存储器" >
+        <el-form-item label="存储器类型" prop="storage">
+          <el-select v-model="addForm.storage" placeholder="请选择存储器类型" >
             <el-option :key="0" :label="'本地磁盘'" :value="0" />
             <el-option :key="1" :label="'S3对象存储'" :value="1" />
           </el-select>
         </el-form-item>
-
-        <el-form-item label="存储路径" prop="name" v-if="addForm.storage === 0">
-          <el-input v-model="addForm.name" placeholder="请输入存储路径" />
+        <el-form-item label="存储路径" prop="basePath" v-if="addForm.storage === 0">
+          <el-input v-model="addForm.basePath" placeholder="请输入存储路径" />
         </el-form-item>
 
-        <el-form-item label="节点地址" prop="name" v-if="addForm.storage === 1">
-          <el-input v-model="addForm.name" placeholder="请输入节点地址" />
+        <el-form-item label="节点地址" prop="endpoint" v-if="addForm.storage === 1">
+          <el-input v-model="addForm.endpoint" placeholder="请输入节点地址" />
         </el-form-item>
 
-        <el-form-item label="存储bucket" prop="name" v-if="addForm.storage === 1">
-          <el-input v-model="addForm.name" placeholder="请输入存储bucket" />
+        <el-form-item label="存储bucket" prop="bucket" v-if="addForm.storage === 1">
+          <el-input v-model="addForm.bucket" placeholder="请输入存储bucket" />
         </el-form-item>
 
-        <el-form-item label="accessKey" prop="name" v-if="addForm.storage === 1">
-          <el-input v-model="addForm.name" placeholder="请输入accessKey" />
+        <el-form-item label="accessKey" prop="accessKey" v-if="addForm.storage === 1">
+          <el-input v-model="addForm.accessKey" placeholder="请输入accessKey" />
         </el-form-item>
 
-        <el-form-item label="accessSecret" prop="name" v-if="addForm.storage === 1">
-          <el-input v-model="addForm.name" placeholder="请输入accessSecret" />
+        <el-form-item label="accessSecret" prop="accessSecret" v-if="addForm.storage === 1">
+          <el-input v-model="addForm.accessSecret" placeholder="请输入accessSecret" />
         </el-form-item>
 
-        <el-form-item label="访问域名" prop="name" v-if="addForm.storage === 1">
-          <el-input v-model="addForm.name" placeholder="请输入访问域名" />
+        <el-form-item label="访问域名" prop="domain" v-if="addForm.storage === 1">
+          <el-input v-model="addForm.domain" placeholder="请输入访问域名" />
+          <el-text class="mx-1" type="info">如未配置访问域名,将采用节点地址 + 存储bucket的形式作为访问域名</el-text>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -116,10 +126,11 @@
 </template>
 
 <script setup>
-import {Delete, Edit, Download, Plus, Refresh, Search, Tools} from "@element-plus/icons-vue";
+import {Delete, Edit, Discount, Plus, Refresh, Search, Tools} from "@element-plus/icons-vue";
 import {reactive, ref} from "vue";
 import {parseTime} from "@/core/utils/perfree";
-import {page} from "@/modules/attach/scripts/api/attach";
+import {add, del, getAttachConfig, page, update, updateMaster} from "@/modules/attachConfig/scripts/api/attachConfig";
+import {ElMessage, ElMessageBox} from "element-plus";
 
 let tableData = ref([]);
 let loading = ref(false);
@@ -131,13 +142,24 @@ const addFormRef = ref();
 const addForm = ref({
   id: '',
   name: '',
-  code: '',
+  remark: '',
   storage: undefined,
-  description: ''
+  basePath: '',
+  endpoint: '',
+  bucket: '',
+  accessKey: '',
+  accessSecret: '',
+  domain: '',
+
 });
 const addRule = reactive({
-  name: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
-  code: [{ required: true, message: '请输入角色编码', trigger: 'blur' }],
+  name: [{ required: true, message: '请输入配置名称', trigger: 'blur' }],
+  storage: [{ required: true, message: '请选择存储器类型', trigger: 'blur' }],
+  basePath: [{ required: true, message: '请输入存储路径', trigger: 'blur' }],
+  endpoint: [{ required: true, message: '请输入节点地址', trigger: 'blur' }],
+  bucket: [{ required: true, message: '请输入存储bucket', trigger: 'blur' }],
+  accessKey: [{ required: true, message: '请输入accessKey', trigger: 'blur' }],
+  accessSecret: [{ required: true, message: '请输入accessSecret', trigger: 'blur' }],
 });
 
 
@@ -178,5 +200,138 @@ function handleAdd() {
   open.value = true;
 }
 
+/**
+ * 重置添加表单
+ */
+function resetAddForm() {
+  addForm.value = {
+    id: '',
+    name: '',
+    remark: '',
+    storage: undefined,
+    basePath: '',
+    endpoint: '',
+    bucket: '',
+    accessKey: '',
+    accessSecret: '',
+    domain: '',
+  }
+  addFormRef.value.resetFields();
+}
+
+/**
+ * 添加提交
+ */
+function submitAddForm() {
+  addFormRef.value.validate(valid => {
+    if (valid) {
+      let config;
+      if (addForm.value.storage === 0) {
+        config = {
+          basePath: addForm.value.basePath,
+        }
+      } else {
+        config = {
+          endpoint: addForm.value.endpoint,
+          bucket: addForm.value.bucket,
+          accessKey: addForm.value.accessKey,
+          accessSecret: addForm.value.accessSecret,
+          domain: addForm.value.domain,
+        }
+      }
+
+      const param = {
+        id: addForm.value.id,
+        name: addForm.value.name,
+        remark: addForm.value.remark,
+        storage: addForm.value.storage,
+        config: JSON.stringify(config)
+      }
+
+      if (addForm.value.id) {
+        update(param).then((res) => {
+          if (res.code === 200) {
+            ElMessage.success('修改成功');
+            open.value = false;
+            resetAddForm();
+            initList();
+          } else {
+            ElMessage.error(res.msg);
+          }
+        });
+      } else {
+        add(param).then((res) => {
+          if (res.code === 200) {
+            ElMessage.success('添加成功');
+            open.value = false;
+            resetAddForm();
+            initList();
+          } else {
+            ElMessage.error(res.msg);
+          }
+        })
+      }
+    }
+  })
+}
+
+
+/**
+ * 删除
+ * @param row
+ */
+function handleDelete(row) {
+  if (row.master) {
+    ElMessage.error('默认配置不允许删除!');
+    return;
+  }
+
+  ElMessageBox.confirm('确定要删除[' + row.name + ']吗？', '提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    del(row.id).then((res) => {
+      if (res.code === 200 && res.data) {
+        ElMessage.success('删除成功');
+        initList();
+      } else {
+        ElMessage.error(res.msg);
+      }
+    });
+  }).catch(() => {})
+}
+
+/**
+ * 修改
+ */
+function handleUpdate(row) {
+  title.value = '修改配置';
+  open.value = true;
+  getAttachConfig(row.id).then((res) => {
+    addForm.value = Object.assign(res.data, JSON.parse(res.data.config));
+  })
+}
+
+/**
+ * 修改默认配置
+ */
+function handleUpdateMaster(row){
+  ElMessageBox.confirm('确定要将除[' + row.name + ']设置为主配置吗？', '提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    updateMaster({id: row.id}).then((res) => {
+      ElMessage.success('修改成功');
+      initList();
+    })
+  }).catch(() => {})
+}
+
 initList();
 </script>
+
+
+<style scoped>
+</style>

@@ -13,3 +13,8 @@ export function menuList() {
 export function userInfo() {
     return axios.get('/api/userInfo');
 }
+
+export function getAllOption() {
+    return axios.get('/api/getAllOption');
+}
+

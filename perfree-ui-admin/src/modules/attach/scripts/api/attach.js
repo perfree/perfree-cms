@@ -1,5 +1,5 @@
 export function page(data) {
-    return axios.post('/api/attachConfig/page', data);
+    return axios.post('/api/attach/page', data);
 }
 
 export function getRoleMenus(id) {

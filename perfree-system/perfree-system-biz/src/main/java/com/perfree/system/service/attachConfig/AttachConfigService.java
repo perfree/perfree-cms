@@ -5,6 +5,7 @@ import com.perfree.commons.common.PageResult;
 import com.perfree.system.model.AttachConfig;
 import com.perfree.system.vo.attachConfig.AttachConfigCreateVO;
 import com.perfree.system.vo.attachConfig.AttachConfigPageReqVO;
+import com.perfree.system.vo.attachConfig.AttachConfigUpdateMasterVO;
 import com.perfree.system.vo.attachConfig.AttachConfigUpdateVO;
 
 import java.util.List;
@@ -53,5 +54,12 @@ public interface AttachConfigService extends IService<AttachConfig> {
      * @return PageResult<AttachConfig>
      */
     PageResult<AttachConfig> attachConfigPage(AttachConfigPageReqVO pageVO);
+
+    /**
+     * 修改主配置
+     * @param attachConfigUpdateMasterVO attachConfigUpdateMasterVO
+     * @return Boolean
+     */
+    Boolean updateMaster(AttachConfigUpdateMasterVO attachConfigUpdateMasterVO);
 
 }

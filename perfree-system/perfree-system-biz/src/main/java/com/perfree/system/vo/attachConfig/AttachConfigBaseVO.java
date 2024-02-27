@@ -24,6 +24,10 @@ public class AttachConfigBaseVO {
     @Schema(description = "备注")
     private String remark;
 
+
+    @Schema(description = "是否为主配置")
+    private Boolean master;
+
     /**
      * 存储配置
      */
