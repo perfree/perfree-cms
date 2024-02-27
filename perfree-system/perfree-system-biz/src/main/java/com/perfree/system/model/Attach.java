@@ -49,11 +49,6 @@ public class Attach implements Serializable {
     private String path;
 
     /**
-     * 附件后缀
-     */
-    private String suffix;
-
-    /**
      * 标识
      */
     private String flag;
@@ -68,10 +63,23 @@ public class Attach implements Serializable {
      */
     private String saveType;
 
+
     /**
-     * fileKey
+     * 配置id
      */
-    private String fileKey;
+    private Integer configId;
+
+
+    /**
+     * 访问地址
+     */
+    private String url;
+
+
+    /**
+     * 附件分组
+     */
+    private String attachGroup;
 
     /**
      * 创建时间

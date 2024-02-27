@@ -197,6 +197,7 @@ function resetSearchForm() {
  */
 function handleAdd() {
   title.value = '新增配置';
+  resetAddForm();
   open.value = true;
 }
 
@@ -216,7 +217,9 @@ function resetAddForm() {
     accessSecret: '',
     domain: '',
   }
-  addFormRef.value.resetFields();
+  if (addFormRef.value) {
+    addFormRef.value.resetFields();
+  }
 }
 
 /**
@@ -307,6 +310,7 @@ function handleDelete(row) {
  */
 function handleUpdate(row) {
   title.value = '修改配置';
+  resetAddForm();
   open.value = true;
   getAttachConfig(row.id).then((res) => {
     addForm.value = Object.assign(res.data, JSON.parse(res.data.config));

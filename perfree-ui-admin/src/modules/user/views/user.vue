@@ -271,7 +271,9 @@ function resetUserRoleForm() {
     account: '',
     roles: '',
   }
-  userRoleFormRef.value.resetFields();
+  if (userRoleFormRef.value) {
+    userRoleFormRef.value.resetFields();
+  }
 }
 
 /**
@@ -312,6 +314,7 @@ function submitAddForm() {
  * 新增
  */
 function handleAdd() {
+  resetAddForm();
   title.value = '添加用户';
   open.value = true;
   isUpdate.value = false;
@@ -321,6 +324,7 @@ function handleAdd() {
  * 修改
  */
 function handleUpdate(row) {
+  resetAddForm();
   title.value = '修改用户';
   open.value = true;
   isUpdate.value = true;
@@ -386,13 +390,16 @@ function resetAddForm() {
     email: '',
     website: ''
   }
-  addFormRef.value.resetFields();
+  if (addFormRef.value) {
+    addFormRef.value.resetFields();
+  }
 }
 
 /**
  * 分配角色
  */
 function handleUserRole(row) {
+  resetUserRoleForm();
   userRoleForm.value.id = row.id;
   userRoleForm.value.userName = row.userName;
   userRoleForm.value.account = row.account;

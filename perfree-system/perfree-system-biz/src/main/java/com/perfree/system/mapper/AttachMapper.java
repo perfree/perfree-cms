@@ -10,6 +10,8 @@ import com.perfree.system.vo.role.RolePageReqVO;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * <p>
  *  Mapper 接口
@@ -28,7 +30,14 @@ public interface AttachMapper extends BaseMapperX<Attach> {
      */
     default PageResult<Attach> selectPage(AttachPageReqVO pageVO) {
         return selectPage(pageVO, new LambdaQueryWrapper<Attach>()
-                .like(StringUtils.isNotBlank(pageVO.getName()), Attach::getName, pageVO.getName()));
+                .like(StringUtils.isNotBlank(pageVO.getName()), Attach::getName, pageVO.getName())
+                .orderByDesc(Attach::getCreateTime));
+    }
+
+    default List<Attach> getAllAttachGroup(){
+        return selectList(new LambdaQueryWrapper<Attach>()
+                .groupBy(Attach::getAttachGroup)
+                .orderByDesc(Attach::getCreateTime));
     }
 
 }

@@ -22,6 +22,9 @@ public class AttachUploadVO {
     @Schema(description = "附件标识")
     private String flag;
 
+    @Schema(description = "附件分组")
+    private String attachGroup;
+
     @Schema(description = "附件服务器配置ID")
     private Integer attachConfigId;
 

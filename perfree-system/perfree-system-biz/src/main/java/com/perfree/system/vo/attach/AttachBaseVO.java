@@ -16,8 +16,11 @@ public class AttachBaseVO {
     @Schema(description = "附件路径")
     private String path;
 
-    @Schema(description = "附件后缀")
-    private String suffix;
+    @Schema(description = "配置id")
+    private String configId;
+
+    @Schema(description = "访问域名")
+    private String url;
 
     @Schema(description = "附件标识")
     private String flag;
@@ -28,6 +31,6 @@ public class AttachBaseVO {
     @Schema(description = "存储方式")
     private String saveType;
 
-    @Schema(description = "fileKey")
-    private String fileKey;
+    @Schema(description = "附件分组")
+    private String attachGroup;
 }

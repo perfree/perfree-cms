@@ -266,6 +266,7 @@ function initList() {
  */
 function handleAdd(row) {
   title.value = "添加菜单";
+  resetForm();
   open.value = true;
   if (row && row.id) {
     addForm.value.parentId = row.id;
@@ -301,7 +302,9 @@ function resetForm() {
     status: 0,
     menuType: 0
   }
-  ruleFormRef.value.resetFields();
+  if (ruleFormRef.value) {
+    ruleFormRef.value.resetFields();
+  }
 }
 
 /**
@@ -309,6 +312,7 @@ function resetForm() {
  * @param row
  */
 function handleUpdate(row) {
+  resetForm();
   get(row.id).then((res) => {
     addForm.value = res.data;
     title.value = "修改菜单";

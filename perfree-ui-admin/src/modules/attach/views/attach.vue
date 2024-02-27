@@ -55,7 +55,7 @@
     </div>
 
 
-    <el-dialog v-model="open" :title="title" width="600px" draggable>
+    <el-dialog v-model="open" :title="title" width="600px" draggable  @close="initList">
       <el-form
           ref="addFormRef"
           :model="addForm"
@@ -65,8 +65,14 @@
       >
         <el-form-item label="存储策略" prop="name">
           <el-select v-model="addForm.attachConfigId" placeholder="请选择存储策略" >
-            <el-option :key="3" :label="'本地磁盘'" :value="3" />
-            <el-option :key="1" :label="'S3对象存储'" :value="1" />
+            <el-option  v-for="item in attachConfigs" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="分组" prop="attachGroup">
+          <el-select v-model="addForm.attachGroup" placeholder="请选择分组" filterable
+                     allow-create>
+            <el-option v-for="item in attachGroups" :key="item.label" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
 
@@ -78,21 +84,23 @@
               :action="serverBaseUrl + '/api/attach/upload'"
               multiple
               style="width: 100%"
-              :data="{attachConfigId: addForm.attachConfigId}"
+              v-model:file-list="addForm.fileList"
+              :data="{attachConfigId: addForm.attachConfigId, attachGroup: addForm.attachGroup}"
           >
             <el-icon class="el-icon--upload"><upload-filled /></el-icon>
             <div class="el-upload__text">
-              Drop file here or <em>click to upload</em>
+              拖拽文件到此处或者<em>点击上传</em>
             </div>
             <template #tip>
               <div class="el-upload__tip">
-                jpg/png files with a size less than 500kb
+                请先选择存储策略及分组,如不选择将使用默认存储策略及分组
               </div>
             </template>
           </el-upload>
         </el-form-item>
       </el-form>
     </el-dialog>
+    
   </div>
  
 </template>
@@ -101,9 +109,10 @@
 import {Delete, Edit, Download, UploadFilled, Refresh, Search } from "@element-plus/icons-vue";
 import {reactive, ref} from "vue";
 import {parseTime} from "@/core/utils/perfree";
-import {page} from "@/modules/attach/scripts/api/attach";
+import {getAllAttachGroup, page} from "@/modules/attach/scripts/api/attach";
 import axios_config from "@/core/api/axios_config";
 import {CONSTANTS} from "@/core/utils/constants";
+import {getAllAttachConfig} from "@/modules/attach/scripts/api/attachConfig";
 
 let token_info = localStorage.getItem(CONSTANTS.STORAGE_TOKEN);
 let serverBaseUrl = axios_config.baseURL;
@@ -112,13 +121,18 @@ let loading = ref(false);
 const searchFormRef = ref();
 let open = ref(false);
 let title = ref('');
+let attachGroups = ref([]);
+let attachConfigs = ref([]);
+let defaultAttachConfig = ref(null);
 let  headers = {
   Authorization: "Bearer " + JSON.parse(token_info).accessToken,
 };
 const addFormRef = ref();
 
 const addForm = ref({
-  attachConfigId: '',
+  attachConfigId: defaultAttachConfig.value,
+  attachGroup: 'default',
+  fileList: []
 });
 const addRule = reactive({
   attachConfigId: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
@@ -155,12 +169,54 @@ function resetSearchForm() {
 }
 
 /**
+ * 重置新增表单
+ */
+function resetAddForm() {
+  addForm.value = {
+    attachConfigId: defaultAttachConfig.value,
+    attachGroup: 'default',
+    fileList: []
+  }
+  if (addFormRef.value) {
+    addFormRef.value.resetFields();
+  }
+}
+
+/**
  * 新增
  */
 function handleAdd() {
+  resetAddForm();
   title.value = '上传附件';
-  open.value = true;
+  attachGroups.value = [];
+  getAllAttachGroup().then(res => {
+    res.data.forEach(item => {
+      let option = {
+        label: item.attachGroup !== 'default' ? item.attachGroup : '未分组',
+        value: item.attachGroup
+      };
+      attachGroups.value.push(option);
+    });
+    open.value = true;
+  });
 }
 
+
+/**
+ * 初始化存储策略列表
+ */
+function initAttachConfigs() {
+  getAllAttachConfig().then(res => {
+    attachConfigs.value = res.data;
+    res.data.forEach(item => {
+      if (item.master) {
+        defaultAttachConfig.value = item.id;
+      }
+    })
+  })
+}
+
+initAttachConfigs();
 initList();
+
 </script>

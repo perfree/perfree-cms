@@ -25,7 +25,7 @@ public class AttachConfigController {
     @Resource
     private AttachConfigService attachConfigService;
 
-    @PostMapping("/getAll")
+    @GetMapping("/getAll")
     @Operation(summary = "获取所有配置")
     public CommonResult<List<AttachConfigRespVO>> getAll() {
         List<AttachConfig> attachConfigList = attachConfigService.getAll();

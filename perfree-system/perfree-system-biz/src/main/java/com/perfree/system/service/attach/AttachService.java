@@ -6,6 +6,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.perfree.system.vo.attach.AttachPageReqVO;
 import com.perfree.system.vo.attach.AttachUploadVO;
 
+import java.io.IOException;
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -36,5 +39,20 @@ public interface AttachService extends IService<Attach> {
      * @return Boolean
      */
     Boolean del(Integer id);
+
+    /**
+     * 附件获取文件内容
+     * @param configId configId
+     * @param path path
+     * @return byte[]
+     * @throws IOException IOException
+     */
+    byte[] getFileContent(Integer configId, String path);
+
+    /**
+     * 获取所有附件分组
+     * @return List<AttachGroupRespVO>
+     */
+    List<Attach> getAllAttachGroup();
 
 }

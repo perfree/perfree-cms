@@ -37,9 +37,19 @@ public class FileHandleService {
         }
         BaseFileHandle fileHandleStorage = FileHandleStorageHolder.getFileHandleStorage(masterAttachConfig.getStorage());
         if (null != fileHandleStorage) {
+            fileHandleStorage.init(masterAttachConfig);
             return fileHandleStorage;
         }
        throw new ServiceException(500, "未匹配到文件处理器,请检查文件处配置!");
     }
 
+    public byte[] getFileContent(Integer configId, String path) {
+        AttachConfigCacheDTO attachConfig = attachConfigCacheService.getAttachConfig(configId);
+        BaseFileHandle fileHandleStorage = FileHandleStorageHolder.getFileHandleStorage(attachConfig.getStorage());
+        if (null != fileHandleStorage) {
+            fileHandleStorage.init(attachConfig);
+            return fileHandleStorage.getFileContent(path);
+        }
+        throw new ServiceException(500, "未匹配到文件处理器,请检查文件处配置!");
+    }
 }

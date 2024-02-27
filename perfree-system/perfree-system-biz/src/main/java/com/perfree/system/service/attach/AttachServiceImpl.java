@@ -18,6 +18,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.util.List;
+
 /**
  * <p>
  *  服务实现类
@@ -46,15 +49,21 @@ public class AttachServiceImpl extends ServiceImpl<AttachMapper, Attach> impleme
     @Override
     @Transactional
     public Attach create(AttachUploadVO attachUploadVO) {
-        BaseFileHandle fileHandle = fileHandleService.getFileHandle(attachUploadVO.getAttachConfigId());
-        AttachFileDTO upload = fileHandle.upload(AttachConvert.INSTANCE.convertAttachUploadDTO(attachUploadVO));
-        Attach attach = AttachConvert.INSTANCE.convertAttachFileDTO(upload);
-        if (null == attach) {
-            LOGGER.error("file upload error, Attach is empty");
+        try{
+            BaseFileHandle fileHandle = fileHandleService.getFileHandle(attachUploadVO.getAttachConfigId());
+            AttachFileDTO upload = fileHandle.upload(AttachConvert.INSTANCE.convertAttachUploadDTO(attachUploadVO));
+            Attach attach = AttachConvert.INSTANCE.convertAttachFileDTO(upload);
+            if (null == attach) {
+                LOGGER.error("file upload error, Attach is empty");
+                throw new ServiceException(ErrorCode.FILE_HANDLE_ERROR);
+            }
+            attachMapper.insert(attach);
+            return attach;
+        }catch (Exception e) {
+            LOGGER.error("file upload error", e);
             throw new ServiceException(ErrorCode.FILE_HANDLE_ERROR);
         }
-        attachMapper.insert(attach);
-        return attach;
+
     }
 
     @Override
@@ -68,5 +77,15 @@ public class AttachServiceImpl extends ServiceImpl<AttachMapper, Attach> impleme
 //        }
 //        attachMapper.deleteById(id);
         return true;
+    }
+
+    @Override
+    public byte[] getFileContent(Integer configId, String path) {
+        return fileHandleService.getFileContent(configId, path);
+    }
+
+    @Override
+    public List<Attach> getAllAttachGroup() {
+        return attachMapper.getAllAttachGroup();
     }
 }

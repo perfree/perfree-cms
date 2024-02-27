@@ -199,6 +199,7 @@ function submitAddForm() {
  * 新增
  */
 function handleAdd() {
+  resetAddForm();
   title.value = '添加角色';
   open.value = true;
 }
@@ -207,6 +208,7 @@ function handleAdd() {
  * 修改
  */
 function handleUpdate(row) {
+  resetAddForm();
   title.value = '修改角色';
   open.value = true;
   getRole(row.id).then((res) => {
@@ -267,7 +269,9 @@ function resetAddForm() {
     code: '',
     description: ''
   }
-  addFormRef.value.resetFields();
+  if (addFormRef.value) {
+    addFormRef.value.resetFields();
+  }
 }
 
 /**
@@ -281,7 +285,9 @@ function resetMenuForm() {
     expand: false,
     selectAll: false
   }
-  menuFormRef.value.resetFields();
+  if (menuFormRef.value) {
+    menuFormRef.value.resetFields();
+  }
 }
 
 /**
@@ -292,6 +298,7 @@ function handleRoleMenu(row) {
     ElMessage.warning('admin角色默认拥有所有权限,不可修改');
     return;
   }
+  resetMenuForm();
   roleMenuOpen.value = true;
   menuForm.value.name = row.name;
   menuForm.value.code = row.code;

@@ -21,11 +21,6 @@ public class AttachFileDTO {
     private String path;
 
     /**
-     * 附件后缀
-     */
-    private String suffix;
-
-    /**
      * 标识
      */
     private String flag;
@@ -40,8 +35,21 @@ public class AttachFileDTO {
      */
     private String saveType;
 
+
     /**
-     * fileKey
+     * 配置
      */
-    private String fileKey;
+    private Integer configId;
+
+
+    /**
+     * 访问地址
+     */
+    private String url;
+
+
+    /**
+     * 附件分组
+     */
+    private String attachGroup;
 }

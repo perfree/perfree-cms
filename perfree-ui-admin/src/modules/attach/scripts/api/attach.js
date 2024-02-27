@@ -2,8 +2,8 @@ export function page(data) {
     return axios.post('/api/attach/page', data);
 }
 
-export function getRoleMenus(id) {
-    return axios.get('/api/role/getRoleMenus?id=' + id);
+export function getAllAttachGroup() {
+    return axios.get('/api/attach/getAllAttachGroup');
 }
 
 export function assignRoleMenu(data) {

@@ -13,6 +13,7 @@ import com.perfree.enums.ErrorCode;
 import com.perfree.enums.OptionEnum;
 import com.perfree.system.api.option.dto.OptionCacheDTO;
 import com.perfree.system.convert.option.OptionConvert;
+import com.perfree.system.service.attach.AttachService;
 import com.perfree.system.service.menu.MenuService;
 import com.perfree.system.service.user.UserService;
 import com.perfree.system.vo.option.OptionRespVO;
@@ -20,6 +21,8 @@ import com.perfree.system.vo.system.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.FastByteArrayOutputStream;
 import org.springframework.web.bind.annotation.*;
 
@@ -39,7 +42,6 @@ import java.util.List;
 @Tag(name = "系统基础接口")
 @RequestMapping("api")
 public class SystemController {
-
     @Resource
     private UserService userService;
 
@@ -114,5 +116,4 @@ public class SystemController {
         captchaImageResp.setImg(Base64.encode(os.toByteArray()));
         return CommonResult.success(captchaImageResp);
     }
-
 }

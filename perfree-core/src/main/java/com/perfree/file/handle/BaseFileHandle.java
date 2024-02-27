@@ -2,23 +2,47 @@ package com.perfree.file.handle;
 
 import com.perfree.system.api.attach.dto.AttachFileDTO;
 import com.perfree.system.api.attach.dto.AttachUploadDTO;
+import com.perfree.system.api.attachConfig.dto.AttachConfigCacheDTO;
+import lombok.Getter;
 
-/**
- * TODO:: 定义文件处理器接口,提供给主程序及插件实现,插件可实现该接口即可代理文件上传服务,需支持下拉选择,这点还没想好
- */
-public interface BaseFileHandle {
+import java.io.IOException;
+
+@Getter
+public abstract class BaseFileHandle {
+
+    private AttachConfigCacheDTO attachConfig;
+
+    public void init(AttachConfigCacheDTO attachConfig) {
+        this.attachConfig = attachConfig;
+    }
 
     /**
      * 文件上传
+     *
      * @param attachUploadDTO attachUploadDTO
      * @return AttachFileDTO
      */
-    AttachFileDTO upload(AttachUploadDTO attachUploadDTO);
+    public AttachFileDTO upload(AttachUploadDTO attachUploadDTO) throws IOException {
+        return null;
+    }
 
     /**
      * 删除文件
+     *
      * @param attachFileDTO attachFileDTO
      * @return boolean
      */
-    boolean delete(AttachFileDTO attachFileDTO);
+    public boolean delete(AttachFileDTO attachFileDTO) {
+        return false;
+    }
+
+    /**
+     * 获取文件内容
+     *
+     * @param path path
+     * @return byte[]
+     */
+    public byte[] getFileContent(String path) {
+        return null;
+    }
 }

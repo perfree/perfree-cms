@@ -5,10 +5,13 @@ import com.perfree.commons.common.PageResult;
 import com.perfree.system.api.attach.dto.AttachFileDTO;
 import com.perfree.system.api.attach.dto.AttachUploadDTO;
 import com.perfree.system.model.Attach;
+import com.perfree.system.vo.attach.AttachGroupRespVO;
 import com.perfree.system.vo.attach.AttachRespVO;
 import com.perfree.system.vo.attach.AttachUploadVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface AttachConvert {
@@ -23,5 +26,7 @@ public interface AttachConvert {
     AttachRespVO convertRespVO(Attach attach);
 
     AttachFileDTO convertToAttachFileDTO(Attach attach);
+
+    List<AttachGroupRespVO> convertGroupRespVO(List<Attach> attachList);
 
 }
