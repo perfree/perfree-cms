@@ -2,9 +2,31 @@
   <div class="page">
     <div class="search-box">
       <el-form :inline="true" :model="searchForm" class="demo-form-inline" ref="searchFormRef">
+        <el-form-item label="分组">
+          <el-select v-model="searchForm.attachGroup" placeholder="请选择分组" filterable
+                     allow-create clearable>
+            <el-option v-for="item in attachGroups" :key="item.attachGroup" :label="item.attachGroup" :value="item.attachGroup" />
+          </el-select>
+        </el-form-item>
+
         <el-form-item label="附件名称">
           <el-input v-model="searchForm.name" placeholder="请输入附件名称" clearable/>
         </el-form-item>
+
+        <el-form-item label="存储器类型">
+          <el-select v-model="searchForm.storage" placeholder="请选择存储器类型" clearable>
+            <el-option :key="0" :label="'本地磁盘'" :value="0" />
+            <el-option :key="1" :label="'S3对象存储'" :value="1" />
+          </el-select>
+        </el-form-item>
+
+
+        <el-form-item label="存储策略">
+          <el-select v-model="searchForm.attachConfigId" placeholder="请选择存储策略" clearable>
+            <el-option  v-for="item in attachConfigs" :key="item.id" :label="item.name" :value="item.id" />
+          </el-select>
+        </el-form-item>
+
         <el-form-item>
           <el-button type="primary" @click="initList" :icon="Search">查询</el-button>
           <el-button :icon="Refresh" @click="resetSearchForm">重置</el-button>
@@ -23,21 +45,34 @@
 
     <div class="table-box">
 
-      <el-table :data="tableData" style="width: 100%;height:100%;" row-key="id" v-loading="loading">
+      <el-table :data="tableData" style="width: 100%;height:100%;" row-key="id" v-loading="loading"  :show-overflow-tooltip="true">
+        <el-table-column label="序号" min-width="80" type="index" />
         <el-table-column prop="name" label="附件名称" min-width="150" />
-        <el-table-column prop="path" label="附件路径" min-width="150" />
-        <el-table-column prop="desc" label="附件描述" min-width="240" />
-        <el-table-column prop="createTime" label="创建时间" min-width="120" >
+        <el-table-column prop="path" label="存储路径" min-width="200" />
+        <el-table-column prop="url" label="访问地址" min-width="200">
+          <template v-slot="scope">
+            <el-link :href="scope.row.url" target="_blank" :underline="false">{{ scope.row.url }}</el-link>
+          </template>
+        </el-table-column>
+        <el-table-column prop="attachGroup" label="分组" min-width="150">
+          <template v-slot="scope">
+            <span>{{scope.row.attachGroup }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="type" label="附件类型" min-width="120" />
+        <el-table-column prop="createTime" label="上传时间" min-width="140" >
           <template v-slot="scope">
             <span>{{ parseTime(scope.row.createTime) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="240" fixed="right">
-          <template v-slot="scope">
-            <el-button size="small" type="primary" link :icon="Download" @click="handleDelete(scope.row)">下载</el-button>
-            <el-button size="small" type="primary" link :icon="Edit" @click="handleUpdate(scope.row)">修改</el-button>
-            <el-button size="small" type="primary" link :icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
 
+        <el-table-column label="操作" width="160" fixed="right">
+          <template v-slot="scope">
+            <el-button size="small" type="primary" link :icon="View" @click="handleShow(scope.row)">详情</el-button>
+            <el-link type="primary" :underline="false" target="_blank" :icon="Download" style="font-size: 12px;"
+                     :href="'/api/attach/file/' + scope.row.configId + '/get/' + scope.row.path">下载
+            </el-link>
+            <el-button size="small" type="primary" link :icon="Delete" @click="handleDelete(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -55,16 +90,15 @@
     </div>
 
 
-    <el-dialog v-model="open" :title="title" width="600px" draggable  @close="initList">
+    <el-dialog v-model="open" :title="title" width="600px" draggable  @close="closeAdd">
       <el-form
           ref="addFormRef"
           :model="addForm"
           label-width="80px"
           status-icon
-          :rules="addRule"
       >
         <el-form-item label="存储策略" prop="name">
-          <el-select v-model="addForm.attachConfigId" placeholder="请选择存储策略" >
+          <el-select v-model="addForm.attachConfigId" placeholder="请选择存储策略" clearable >
             <el-option  v-for="item in attachConfigs" :key="item.id" :label="item.name" :value="item.id" />
           </el-select>
         </el-form-item>
@@ -72,7 +106,7 @@
         <el-form-item label="分组" prop="attachGroup">
           <el-select v-model="addForm.attachGroup" placeholder="请选择分组" filterable
                      allow-create>
-            <el-option v-for="item in attachGroups" :key="item.label" :label="item.label" :value="item.value" />
+            <el-option v-for="item in attachGroups" :key="item.attachGroup" :label="item.attachGroup" :value="item.attachGroup" />
           </el-select>
         </el-form-item>
 
@@ -100,19 +134,80 @@
         </el-form-item>
       </el-form>
     </el-dialog>
+
+
+    <el-dialog v-model="showOpen" :title="title" width="800px" draggable>
+      <el-row>
+        <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" >
+          <div  style="padding-right: 15px">
+            <el-image style="width: 100%; max-height: 100%" :src="showForm.url" :zoom-rate="1.2" :max-scale="7" :min-scale="0.2"
+                      :preview-src-list="[showForm.url]" :initial-index="4" fit="cover" v-if="showForm.type&&showForm.type.indexOf('image/') === 0"/>
+            <video v-else-if="showForm.type&&showForm.type.indexOf('video/') === 0" controls style="width: 100%; max-height: 100%">
+              <source :src="showForm.url"/>
+            </video>
+            <i v-else>无法预览，点击
+              <el-link type="primary" :underline="false" style="font-size:12px;vertical-align: baseline;" target="_blank"
+                       :href="'/api/attach/file/' + showForm.configId + '/get/' + showForm.path">下载
+              </el-link>
+            </i>
+          </div>
+        </el-col>
+        <el-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12" >
+          <div class="showForm">
+            <el-form
+                ref="showFormRef"
+                :model="showForm"
+                label-width="auto"
+                :rules="showRule"
+                :label-position="'top'"
+            >
+              <el-form-item label="附件名称" prop="name">
+                <el-input v-model="showForm.name" />
+              </el-form-item>
+              <el-form-item label="附件类型">
+                <el-input v-model="showForm.type" disabled />
+              </el-form-item>
+              <el-form-item label="分组">
+                <el-select v-model="showForm.attachGroup" placeholder="请选择分组" filterable style="width: 100%"
+                           allow-create>
+                  <el-option v-for="item in attachGroups" :key="item.attachGroup" :label="item.attachGroup" :value="item.attachGroup" />
+                </el-select>
+              </el-form-item>
+              <el-form-item label="存储路径">
+                <el-input v-model="showForm.path" disabled />
+              </el-form-item>
+              <el-form-item label="访问地址">
+                <el-input v-model="showForm.url" disabled />
+              </el-form-item>
+              <el-form-item label="附件描述">
+                <el-input v-model="showForm.desc"  :autosize="{ minRows: 2, maxRows: 4 }" type="textarea" resize="none" placeholder="请输入附件描述"/>
+              </el-form-item>
+            </el-form>
+          </div>
+        </el-col>
+      </el-row>
+
+      <template #footer>
+        <span class="dialog-footer">
+              <el-button type="primary" @click="submitUpdateForm">修 改</el-button>
+              <el-button @click="showOpen = false; resetShowForm()">取 消</el-button>
+        </span>
+      </template>
+    </el-dialog>
     
   </div>
  
 </template>
 
 <script setup>
-import {Delete, Edit, Download, UploadFilled, Refresh, Search } from "@element-plus/icons-vue";
+import {Delete, Download, Refresh, Search, UploadFilled, View} from "@element-plus/icons-vue";
 import {reactive, ref} from "vue";
 import {parseTime} from "@/core/utils/perfree";
-import {getAllAttachGroup, page} from "@/modules/attach/scripts/api/attach";
+import {del, getAllAttachGroup, getAttach, page, update} from "@/modules/attach/scripts/api/attach";
 import axios_config from "@/core/api/axios_config";
 import {CONSTANTS} from "@/core/utils/constants";
 import {getAllAttachConfig} from "@/modules/attach/scripts/api/attachConfig";
+import {ElMessage, ElMessageBox} from "element-plus";
 
 let token_info = localStorage.getItem(CONSTANTS.STORAGE_TOKEN);
 let serverBaseUrl = axios_config.baseURL;
@@ -120,6 +215,7 @@ let tableData = ref([]);
 let loading = ref(false);
 const searchFormRef = ref();
 let open = ref(false);
+let showOpen = ref(false);
 let title = ref('');
 let attachGroups = ref([]);
 let attachConfigs = ref([]);
@@ -128,14 +224,16 @@ let  headers = {
   Authorization: "Bearer " + JSON.parse(token_info).accessToken,
 };
 const addFormRef = ref();
+const showFormRef = ref();
 
 const addForm = ref({
   attachConfigId: defaultAttachConfig.value,
   attachGroup: 'default',
   fileList: []
 });
-const addRule = reactive({
-  attachConfigId: [{ required: true, message: '请输入角色名称', trigger: 'blur' }],
+
+const showRule = reactive({
+  name: [{ required: true, message: '请输入附件名称', trigger: 'blur' }],
 });
 
 
@@ -143,8 +241,22 @@ const searchForm = ref({
   pageNo: 1,
   pageSize: 20,
   total: 0,
-  name: ''
+  name: '',
+  attachConfigId: undefined,
+  storage: undefined,
+  attachGroup: undefined
 })
+
+
+const showForm = ref({
+  name: '',
+  type: '',
+  attachGroup: 'default',
+  path: '',
+  url: '',
+  desc: ''
+})
+
 
 /**
  * 加载列表
@@ -159,10 +271,21 @@ function initList() {
 }
 
 /**
+ * 关闭新增
+ */
+function closeAdd() {
+  initAttachGroups();
+  initList();
+}
+
+/**
  * 重置搜索表单
  */
 function resetSearchForm() {
   searchForm.value = {
+    attachConfigId: undefined,
+    attachGroup: undefined,
+    storage: undefined,
     name: ''
   }
   searchFormRef.value.resetFields();
@@ -188,19 +311,15 @@ function resetAddForm() {
 function handleAdd() {
   resetAddForm();
   title.value = '上传附件';
-  attachGroups.value = [];
-  getAllAttachGroup().then(res => {
-    res.data.forEach(item => {
-      let option = {
-        label: item.attachGroup !== 'default' ? item.attachGroup : '未分组',
-        value: item.attachGroup
-      };
-      attachGroups.value.push(option);
-    });
-    open.value = true;
-  });
+  initAttachGroups();
+  open.value = true;
 }
 
+function initAttachGroups() {
+  getAllAttachGroup().then(res => {
+    attachGroups.value = res.data;
+  })
+}
 
 /**
  * 初始化存储策略列表
@@ -216,7 +335,73 @@ function initAttachConfigs() {
   })
 }
 
+/**
+ * 查看附件
+ * @param row
+ */
+function handleShow(row) {
+  resetShowForm();
+  getAttach(row.id).then(res => {
+    showForm.value = res.data;
+    title.value = '详情';
+    showOpen.value = true;
+  })
+}
+
+/**
+ * 重置详情表单
+ */
+function resetShowForm() {
+  showForm.value = {
+    name: '',
+    type: '',
+    attachGroup: 'default',
+    path: '',
+    url: '',
+    desc: ''
+  }
+  if (showFormRef.value) {
+    showFormRef.value.resetFields();
+  }
+}
+
+function submitUpdateForm () {
+  showFormRef.value.validate(valid => {
+    if (valid) {
+      update(showForm.value).then((res) => {
+        if (res.code === 200) {
+          ElMessage.success('修改成功');
+          showOpen.value = false;
+          resetShowForm();
+          initList();
+        } else {
+          ElMessage.error(res.msg);
+        }
+      })
+    }
+  })
+}
+
+function handleDelete(row) {
+  ElMessageBox.confirm('确定要删除[' + row.name + ']吗？删除后该文件将无法找回!', '提示', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    type: 'warning',
+  }).then(() => {
+    del(row.id).then((res) => {
+      if (res.code === 200 && res.data) {
+        ElMessage.success('删除成功');
+        initList();
+      } else {
+        ElMessage.error('删除失败');
+      }
+    });
+  }).catch(() => {})
+}
+
+initAttachGroups();
 initAttachConfigs();
 initList();
 
 </script>
+

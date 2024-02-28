@@ -7,6 +7,7 @@ import com.perfree.system.api.attach.dto.AttachUploadDTO;
 import com.perfree.system.model.Attach;
 import com.perfree.system.vo.attach.AttachGroupRespVO;
 import com.perfree.system.vo.attach.AttachRespVO;
+import com.perfree.system.vo.attach.AttachUpdateVO;
 import com.perfree.system.vo.attach.AttachUploadVO;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -28,5 +29,7 @@ public interface AttachConvert {
     AttachFileDTO convertToAttachFileDTO(Attach attach);
 
     List<AttachGroupRespVO> convertGroupRespVO(List<Attach> attachList);
+
+    Attach convertByUpdateVO(AttachUpdateVO attachUpdateVO);
 
 }

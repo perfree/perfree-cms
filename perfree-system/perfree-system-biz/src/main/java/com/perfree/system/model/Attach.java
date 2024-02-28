@@ -59,12 +59,6 @@ public class Attach implements Serializable {
     private String type;
 
     /**
-     * 存储方式
-     */
-    private String saveType;
-
-
-    /**
      * 配置id
      */
     private Integer configId;
@@ -74,6 +68,12 @@ public class Attach implements Serializable {
      * 访问地址
      */
     private String url;
+
+
+    /**
+     * 存储器类型
+     */
+    private Integer storage;
 
 
     /**

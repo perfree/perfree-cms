@@ -28,8 +28,8 @@ public class AttachBaseVO {
     @Schema(description = "文件类型")
     private String type;
 
-    @Schema(description = "存储方式")
-    private String saveType;
+    @Schema(description = "存储器类型")
+    private Integer storage;
 
     @Schema(description = "附件分组")
     private String attachGroup;

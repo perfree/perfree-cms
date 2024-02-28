@@ -84,13 +84,14 @@
         </el-form-item>
 
         <el-form-item label="存储器类型" prop="storage">
-          <el-select v-model="addForm.storage" placeholder="请选择存储器类型" >
+          <el-select v-model="addForm.storage" placeholder="请选择存储器类型" :disabled="isUpdate">
             <el-option :key="0" :label="'本地磁盘'" :value="0" />
             <el-option :key="1" :label="'S3对象存储'" :value="1" />
           </el-select>
         </el-form-item>
         <el-form-item label="存储路径" prop="basePath" v-if="addForm.storage === 0">
           <el-input v-model="addForm.basePath" placeholder="请输入存储路径" />
+          <el-text class="mx-1" type="danger" v-if="isUpdate">提示: 修改存储路径将会造成原有上传图片不能访问,建议新增存储策略</el-text>
         </el-form-item>
 
         <el-form-item label="节点地址" prop="endpoint" v-if="addForm.storage === 1">
@@ -107,6 +108,11 @@
 
         <el-form-item label="accessSecret" prop="accessSecret" v-if="addForm.storage === 1">
           <el-input v-model="addForm.accessSecret" placeholder="请输入accessSecret" />
+        </el-form-item>
+
+        <el-form-item label="上传目录" prop="uploadDir" v-if="addForm.storage === 1">
+          <el-input v-model="addForm.uploadDir" placeholder="请输入上传目录" />
+          <el-text class="mx-1" type="info">支持{year},{month}, {day}占位符,不填写则上传至根目录</el-text>
         </el-form-item>
 
         <el-form-item label="访问域名" prop="domain" v-if="addForm.storage === 1">
@@ -136,6 +142,7 @@ let tableData = ref([]);
 let loading = ref(false);
 const searchFormRef = ref();
 let open = ref(false);
+let isUpdate = ref(false);
 let title = ref('');
 const addFormRef = ref();
 
@@ -150,7 +157,7 @@ const addForm = ref({
   accessKey: '',
   accessSecret: '',
   domain: '',
-
+  uploadDir: ''
 });
 const addRule = reactive({
   name: [{ required: true, message: '请输入配置名称', trigger: 'blur' }],
@@ -196,6 +203,7 @@ function resetSearchForm() {
  * 新增
  */
 function handleAdd() {
+  isUpdate.value = false;
   title.value = '新增配置';
   resetAddForm();
   open.value = true;
@@ -216,6 +224,7 @@ function resetAddForm() {
     accessKey: '',
     accessSecret: '',
     domain: '',
+    uploadDir: ''
   }
   if (addFormRef.value) {
     addFormRef.value.resetFields();
@@ -240,6 +249,7 @@ function submitAddForm() {
           accessKey: addForm.value.accessKey,
           accessSecret: addForm.value.accessSecret,
           domain: addForm.value.domain,
+          uploadDir: addForm.value.uploadDir,
         }
       }
 
@@ -289,7 +299,7 @@ function handleDelete(row) {
     return;
   }
 
-  ElMessageBox.confirm('确定要删除[' + row.name + ']吗？', '提示', {
+  ElMessageBox.confirm('确定要删除[' + row.name + ']吗？删除后该配置内上传的文件将无法展示!', '提示', {
     confirmButtonText: '确认',
     cancelButtonText: '取消',
     type: 'warning',
@@ -309,6 +319,7 @@ function handleDelete(row) {
  * 修改
  */
 function handleUpdate(row) {
+  isUpdate.value = true;
   title.value = '修改配置';
   resetAddForm();
   open.value = true;
@@ -338,4 +349,7 @@ initList();
 
 
 <style scoped>
+.el-text{
+  line-height: 20px;
+}
 </style>

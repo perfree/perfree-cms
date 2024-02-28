@@ -11,6 +11,7 @@ import com.perfree.system.convert.attach.AttachConvert;
 import com.perfree.system.mapper.AttachMapper;
 import com.perfree.system.model.Attach;
 import com.perfree.system.vo.attach.AttachPageReqVO;
+import com.perfree.system.vo.attach.AttachUpdateVO;
 import com.perfree.system.vo.attach.AttachUploadVO;
 import jakarta.annotation.Resource;
 import org.slf4j.Logger;
@@ -70,12 +71,12 @@ public class AttachServiceImpl extends ServiceImpl<AttachMapper, Attach> impleme
     @Transactional
     public Boolean del(Integer id) {
         Attach attach = attachMapper.selectById(id);
-//        BaseFileHandle fileHandle = fileHandleService.getFileHandle();
-//        boolean result = fileHandle.delete(AttachConvert.INSTANCE.convertToAttachFileDTO(attach));
-//        if (!result) {
-//            return false;
-//        }
-//        attachMapper.deleteById(id);
+        BaseFileHandle fileHandle = fileHandleService.getFileHandle(attach.getConfigId());
+        boolean result = fileHandle.delete(AttachConvert.INSTANCE.convertToAttachFileDTO(attach));
+        if (!result) {
+            return false;
+        }
+        attachMapper.deleteById(id);
         return true;
     }
 
@@ -87,5 +88,13 @@ public class AttachServiceImpl extends ServiceImpl<AttachMapper, Attach> impleme
     @Override
     public List<Attach> getAllAttachGroup() {
         return attachMapper.getAllAttachGroup();
+    }
+
+    @Override
+    @Transactional
+    public Boolean updateAttach(AttachUpdateVO attachUpdateVO) {
+        Attach attach = AttachConvert.INSTANCE.convertByUpdateVO(attachUpdateVO);
+        attachMapper.updateById(attach);
+        return true;
     }
 }

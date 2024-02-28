@@ -31,6 +31,9 @@ public interface AttachMapper extends BaseMapperX<Attach> {
     default PageResult<Attach> selectPage(AttachPageReqVO pageVO) {
         return selectPage(pageVO, new LambdaQueryWrapper<Attach>()
                 .like(StringUtils.isNotBlank(pageVO.getName()), Attach::getName, pageVO.getName())
+                .eq(StringUtils.isNotBlank(pageVO.getAttachGroup()), Attach::getAttachGroup, pageVO.getAttachGroup())
+                .eq(pageVO.getAttachConfigId() != null, Attach::getConfigId, pageVO.getAttachConfigId())
+                .eq(pageVO.getStorage()!= null, Attach::getStorage, pageVO.getStorage())
                 .orderByDesc(Attach::getCreateTime));
     }
 

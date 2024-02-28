@@ -127,5 +127,16 @@
             <groupId>io.minio</groupId>
             <artifactId>minio</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>transmittable-thread-local</artifactId>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId> <!-- 文件类型的识别 -->
+        </dependency>
     </dependencies>
 </project>

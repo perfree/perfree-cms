@@ -8,10 +8,7 @@ import com.perfree.commons.common.PageResult;
 import com.perfree.system.convert.attach.AttachConvert;
 import com.perfree.system.model.Attach;
 import com.perfree.system.service.attach.AttachService;
-import com.perfree.system.vo.attach.AttachGroupRespVO;
-import com.perfree.system.vo.attach.AttachPageReqVO;
-import com.perfree.system.vo.attach.AttachRespVO;
-import com.perfree.system.vo.attach.AttachUploadVO;
+import com.perfree.system.vo.attach.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
@@ -59,7 +56,21 @@ public class AttachController {
         return success(AttachConvert.INSTANCE.convertPageResultVO(rolePageResult));
     }
 
-    @PostMapping("/del")
+    @GetMapping("/get")
+    @Operation(summary = "获取附件")
+    public CommonResult<AttachRespVO> get(@RequestParam(value = "id") Integer id) {
+        Attach byId = attachService.getById(id);
+        return success(AttachConvert.INSTANCE.convertRespVO(byId));
+    }
+
+    @PutMapping("/update")
+    @Operation(summary = "修改附件")
+    public CommonResult<Boolean> update(@RequestBody AttachUpdateVO attachUpdateVO) {
+        return success(attachService.updateAttach(attachUpdateVO));
+    }
+
+
+    @DeleteMapping("/del")
     @Operation(summary = "删除附件")
     public CommonResult<Boolean> del(@RequestParam(value = "id") Integer id) {
         return success(attachService.del(id));

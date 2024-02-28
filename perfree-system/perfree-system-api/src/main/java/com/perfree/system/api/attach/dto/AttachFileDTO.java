@@ -30,11 +30,6 @@ public class AttachFileDTO {
      */
     private String type;
 
-    /**
-     * 存储方式
-     */
-    private String saveType;
-
 
     /**
      * 配置
@@ -52,4 +47,9 @@ public class AttachFileDTO {
      * 附件分组
      */
     private String attachGroup;
+
+    /**
+     * 存储器类型
+     */
+    private Integer storage;
 }

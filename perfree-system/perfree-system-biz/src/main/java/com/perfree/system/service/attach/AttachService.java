@@ -4,6 +4,7 @@ import com.perfree.commons.common.PageResult;
 import com.perfree.system.model.Attach;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.perfree.system.vo.attach.AttachPageReqVO;
+import com.perfree.system.vo.attach.AttachUpdateVO;
 import com.perfree.system.vo.attach.AttachUploadVO;
 
 import java.io.IOException;
@@ -54,5 +55,12 @@ public interface AttachService extends IService<Attach> {
      * @return List<AttachGroupRespVO>
      */
     List<Attach> getAllAttachGroup();
+
+    /**
+     * 附件修改
+     * @param attachUpdateVO attachUpdateVO
+     * @return Boolean
+     */
+    Boolean updateAttach(AttachUpdateVO attachUpdateVO);
 
 }

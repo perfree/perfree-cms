@@ -12,4 +12,13 @@ import lombok.EqualsAndHashCode;
 public class AttachPageReqVO extends PageParam {
     @Schema(description = "附件名")
     private String name;
+
+    @Schema(description = "配置id")
+    private Integer attachConfigId;
+
+    @Schema(description = "分组")
+    private String attachGroup;
+
+    @Schema(description = "存储器类型")
+    private Integer storage;
 }
