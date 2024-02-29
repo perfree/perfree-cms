@@ -1,5 +1,6 @@
 package com.perfree.plugin;
 
+import com.perfree.plugin.pojo.PluginBaseConfig;
 import lombok.Data;
 
 import java.util.List;
@@ -20,4 +21,7 @@ public class PluginInfo {
 
     // 插件安装路径
     private String pluginPath;
+
+    // 插件配置信息
+    private PluginBaseConfig pluginConfig;
 }

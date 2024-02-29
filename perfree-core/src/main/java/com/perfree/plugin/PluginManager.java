@@ -3,16 +3,19 @@ package com.perfree.plugin;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.lang.JarClassLoader;
 import cn.hutool.core.util.ClassLoaderUtil;
+import com.perfree.plugin.commons.PluginUtils;
 import com.perfree.plugin.handle.compound.PluginHandle;
+import com.perfree.plugin.pojo.PluginBaseConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -27,6 +30,12 @@ import java.util.jar.JarFile;
 @Component
 public class PluginManager implements ApplicationContextAware {
     private static final Logger LOGGER = LoggerFactory.getLogger(PluginManager.class);
+
+    @Value("${perfree.plugin-dir}")
+    private String pluginBaseDir;
+
+    @Value("${perfree.temp-dir}")
+    private String tempDir;
 
     // 主程序 applicationContext
     ApplicationContext applicationContext;
@@ -43,11 +52,20 @@ public class PluginManager implements ApplicationContextAware {
      * @date 2023-09-27 16:09:44
      */
     public void initPlugins() {
-        List<File> jarFiles = FileUtil.loopFiles("E:\\111", file -> file.getName().toLowerCase().endsWith(".jar"));
+        File pluginBaseDirFile = new File(pluginBaseDir);
+        if (!pluginBaseDirFile.exists()) {
+           return;
+        }
+        File[] files = pluginBaseDirFile.listFiles();
         int id = 1;
-        for (File pluginJarFile : jarFiles) {
-            runPluginJar(pluginJarFile, id);
-            id++;
+        if (files == null) {
+            return;
+        }
+        for (File file : files) {
+            if (file.isDirectory()) {
+                runPluginJar(file, id);
+                id++;
+            }
         }
     }
 
@@ -63,11 +81,13 @@ public class PluginManager implements ApplicationContextAware {
             LOGGER.info("plugin  ----->  load plugin jar msg, jarFile: {}", pluginJarFile);
             PluginInfo pluginInfo = new PluginInfo();
             pluginInfo.setPluginId(pluginId);
+            // 加载插件配置文件
+            pluginInfo.setPluginConfig(PluginUtils.getPluginConfig(pluginJarFile));
 
             // 加载插件JarClassLoader
             JarClassLoader jarClassLoader = ClassLoaderUtil.getJarClassLoader(pluginJarFile);
             PluginClassLoaderHolder.addPluginJarClassLoader(pluginId, jarClassLoader);
-            pluginInfo.setClassList(getClassList(pluginJarFile,jarClassLoader));
+            pluginInfo.setClassList(PluginUtils.getClassList(pluginJarFile,jarClassLoader));
             pluginInfo.setPluginPath(pluginJarFile.getAbsolutePath());
             // 加载插件专属AnnotationConfigApplicationContext
             AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
@@ -95,7 +115,7 @@ public class PluginManager implements ApplicationContextAware {
         try {
             PluginInfo pluginInfo = new PluginInfo();
             pluginInfo.setPluginId(pluginId);
-            pluginInfo.setClassList(getClassList(pluginJarFile,PluginClassLoaderHolder.getJarClassLoader(pluginId)));
+            pluginInfo.setClassList(PluginUtils.getClassList(pluginJarFile,PluginClassLoaderHolder.getJarClassLoader(pluginId)));
 
             LOGGER.info("plugin  ----->  plugin msg load complete: {}", pluginInfo);
             pluginHandle.initialize();
@@ -111,35 +131,30 @@ public class PluginManager implements ApplicationContextAware {
         }
     }
 
-    /**
-     * 获取插件jar中所有的class集合
-     * @author perfree
-     * @date 2023-09-27 16:09:53
-     * @param pluginJarFile 插件jar文件
-     * @param classLoader 插件classLoader
-     * @return java.util.List<java.lang.Class < ?>>
-     */
-    private List<Class<?>> getClassList(File pluginJarFile, ClassLoader classLoader) {
-        List<Class<?>> classList = new ArrayList<>();
-        try (JarFile JarFile = new JarFile(pluginJarFile);) {
-            Enumeration<JarEntry> entries = JarFile.entries();
-            while (entries.hasMoreElements()) {
-                JarEntry jarEntry = entries.nextElement();
-                String entryName = jarEntry.getName();
-                if (!jarEntry.isDirectory() && entryName.endsWith(".class")) {
-                    String className = entryName.replace("/", ".").substring(0, entryName.length() - 6);
-                    Class<?> aClass = classLoader.loadClass(className);
-                    classList.add(aClass);
-                }
-            }
-        } catch (Exception e) {
-            LOGGER.error("plugin -> initClassNameList error: {}", e.getMessage(), e);
-        }
-        return classList;
-    }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+    /**
+     * 安装插件
+     * @param pluginFile pluginFile
+     */
+    public void installPlugin(File pluginFile) throws Exception {
+        if (null == pluginFile || !pluginFile.exists()) {
+            return;
+        }
+        File pluginDir;
+        if (pluginFile.getName().endsWith(".jar")) {
+            pluginDir = PluginUtils.extractJarPlugin(pluginFile, tempDir, pluginBaseDir);
+        }else {
+            pluginDir = PluginUtils.extractZipPlugin(pluginFile, tempDir, pluginBaseDir);
+        }
+        if (null == pluginDir) {
+            return;
+        }
+
+        runPluginJar(pluginDir, 1);
     }
 }

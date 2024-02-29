@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.perfree.commons.common.CommonResult.success;
 
@@ -30,5 +31,12 @@ public class PluginsController {
     public CommonResult<PageResult<PluginsRespVO>> page(@RequestBody PluginsPageReqVO pageVO) {
         PageResult<Plugins> pluginsPageResult = pluginsService.pluginsPage(pageVO);
         return success(PluginsConvert.INSTANCE.convertPageResultVO(pluginsPageResult));
+    }
+
+
+    @PostMapping("/installPlugin")
+    @Operation(summary = "插件安装")
+    public CommonResult<Boolean> installPlugin(MultipartFile file) {
+        return success(pluginsService.installPlugin(file));
     }
 }

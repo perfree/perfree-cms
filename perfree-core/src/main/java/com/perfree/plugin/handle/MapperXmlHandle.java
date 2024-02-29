@@ -1,26 +1,23 @@
 package com.perfree.plugin.handle;
 
+import cn.hutool.core.io.FileUtil;
 import com.perfree.plugin.PluginApplicationContextHolder;
 import com.perfree.plugin.PluginClassLoaderHolder;
 import com.perfree.plugin.PluginInfo;
+import com.perfree.plugin.commons.PluginUtils;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
-import org.apache.ibatis.executor.ErrorContext;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.defaults.DefaultSqlSession;
 import org.springframework.util.ClassUtils;
 
+import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.net.JarURLConnection;
-import java.net.URI;
-import java.net.URL;
-import java.util.*;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.regex.Pattern;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @description 自定义Mybatis Mapper注册
@@ -41,36 +38,13 @@ public class MapperXmlHandle implements BasePluginRegistryHandler {
 
         try {
             Resources.setDefaultClassLoader(PluginClassLoaderHolder.getJarClassLoader(plugin.getPluginId()));
-            String pluginPath = plugin.getPluginPath();
-            String xmlLocationPattern = "mapper/*.xml";
-            xmlLocationPattern = xmlLocationPattern.replaceAll("\\*\\*", "<>").replaceAll("\\*", "<>")
-                    .replaceAll("\\.", "\\.").replaceAll("<>", ".*");
-
-            File jarFile = new File(pluginPath);
-            Enumeration<JarEntry> jarEntries = new JarFile(jarFile).entries();
-            while (jarEntries.hasMoreElements()) {
-                JarEntry entry = jarEntries.nextElement();
-                String jarEntryName = entry.getName();
-                if (Pattern.matches(xmlLocationPattern, jarEntryName) && jarEntryName.endsWith(".xml")) {
-                    URL url = new URL("jar:file:" + jarFile.getAbsolutePath() + "!/" + jarEntryName);
-                    JarURLConnection jarConnection = (JarURLConnection) url.openConnection();
-                    InputStream in = jarConnection.getInputStream();
-                    try {
-                        XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(in,
-                                configuration, url.getPath(), configuration.getSqlFragments());
-                        xmlMapperBuilder.parse();
-                        in.close();
-                    } catch (Exception e) {
-                        throw new Exception("Failed to parse mapping resource: '" + url.getPath() + "'", e);
-                    } finally {
-                        if (in != null) {
-                            in.close();
-                        }
-                        ErrorContext.instance().reset();
-                        JarFile currJarFile = jarConnection.getJarFile();
-                        currJarFile.close();
-                    }
-                }
+            List<File> mapperXml = PluginUtils.getMapperXml(new File(plugin.getPluginPath()), plugin.getPluginConfig());
+            for (File file : mapperXml) {
+                BufferedInputStream inputStream = FileUtil.getInputStream(file);
+                XMLMapperBuilder xmlMapperBuilder = new XMLMapperBuilder(inputStream,
+                        configuration, file.getAbsolutePath(), configuration.getSqlFragments());
+                xmlMapperBuilder.parse();
+                inputStream.close();
             }
         } finally {
             Resources.setDefaultClassLoader(ClassUtils.getDefaultClassLoader());

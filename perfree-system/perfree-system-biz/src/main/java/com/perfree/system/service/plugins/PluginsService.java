@@ -4,6 +4,7 @@ import com.perfree.commons.common.PageResult;
 import com.perfree.system.model.Plugins;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.perfree.system.vo.plugins.PluginsPageReqVO;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * <p>
@@ -21,5 +22,12 @@ public interface PluginsService extends IService<Plugins> {
      * @return PageResult<Plugins>
      */
     PageResult<Plugins> pluginsPage(PluginsPageReqVO pageVO);
+
+    /**
+     * 安装插件
+     * @param file file
+     * @return Boolean
+     */
+    Boolean installPlugin(MultipartFile file);
 
 }
