@@ -85,7 +85,7 @@ springdoc:
   group-configs:
     - group: 'default'
       paths-to-match: '/**'
-      packages-to-scan: com
+      packages-to-scan:
 # knife4j的增强配置
 knife4j:
   enable: true
