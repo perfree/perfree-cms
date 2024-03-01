@@ -1,26 +1,16 @@
 package com.perfree.plugin;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.lang.JarClassLoader;
-import cn.hutool.core.util.ClassLoaderUtil;
 import com.perfree.plugin.commons.PluginUtils;
+import com.perfree.plugin.exception.PluginException;
 import com.perfree.plugin.handle.compound.PluginHandle;
 import com.perfree.plugin.pojo.PluginBaseConfig;
+import jakarta.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
+import java.io.File;
 
 /**
  * @author Perfree
@@ -28,7 +18,7 @@ import java.util.jar.JarFile;
  * @date 15:36 2023/9/28
  */
 @Component
-public class PluginManager implements ApplicationContextAware {
+public class PluginManager{
     private static final Logger LOGGER = LoggerFactory.getLogger(PluginManager.class);
 
     @Value("${perfree.plugin-dir}")
@@ -37,14 +27,8 @@ public class PluginManager implements ApplicationContextAware {
     @Value("${perfree.temp-dir}")
     private String tempDir;
 
-    // 主程序 applicationContext
-    ApplicationContext applicationContext;
-
-    private final PluginHandle pluginHandle;
-
-    public PluginManager(PluginHandle pluginHandle) {
-        this.pluginHandle = pluginHandle;
-    }
+    @Resource
+    private PluginHandle pluginHandle;
 
     /**
      * 初始化所有插件
@@ -57,14 +41,12 @@ public class PluginManager implements ApplicationContextAware {
            return;
         }
         File[] files = pluginBaseDirFile.listFiles();
-        int id = 1;
         if (files == null) {
             return;
         }
         for (File file : files) {
             if (file.isDirectory()) {
-                runPluginJar(file, id);
-                id++;
+                runPlugin(file);
             }
         }
     }
@@ -73,32 +55,15 @@ public class PluginManager implements ApplicationContextAware {
      * 运行插件
      * @author perfree
      * @date 2023-09-27 16:09:02
-     * @param pluginJarFile 插件jar文件
-     * @param pluginId 插件id
+     * @param pluginDir 插件目录
      */
-    public void runPluginJar(File pluginJarFile, int pluginId) {
+    public void runPlugin(File pluginDir) {
         try {
-            LOGGER.info("plugin  ----->  load plugin jar msg, jarFile: {}", pluginJarFile);
-            PluginInfo pluginInfo = new PluginInfo();
-            pluginInfo.setPluginId(pluginId);
-            // 加载插件配置文件
-            pluginInfo.setPluginConfig(PluginUtils.getPluginConfig(pluginJarFile));
-
-            // 加载插件JarClassLoader
-            JarClassLoader jarClassLoader = ClassLoaderUtil.getJarClassLoader(pluginJarFile);
-            PluginClassLoaderHolder.addPluginJarClassLoader(pluginId, jarClassLoader);
-            pluginInfo.setClassList(PluginUtils.getClassList(pluginJarFile,jarClassLoader));
-            pluginInfo.setPluginPath(pluginJarFile.getAbsolutePath());
-            // 加载插件专属AnnotationConfigApplicationContext
-            AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
-            annotationConfigApplicationContext.setParent(applicationContext);
-            PluginApplicationContextHolder.addPluginApplicationContext(pluginId, annotationConfigApplicationContext);
-
-            LOGGER.info("plugin  ----->  plugin msg load complete: {}", pluginInfo);
-            pluginHandle.initialize();
-            pluginHandle.registry(pluginInfo);
-            PluginInfoHolder.addPluginInfo(pluginInfo.getPluginId(), pluginInfo);
-            LOGGER.info("plugin  ----->  start success: {}", pluginInfo);
+            PluginInfo pluginInfo = pluginHandle.startPlugin(pluginDir);
+            BasePluginEvent bean = PluginApplicationContextHolder.getPluginBean(pluginInfo.getPluginId(), BasePluginEvent.class);
+            if (null != bean) {
+                bean.onStart();
+            }
         } catch (Exception e) {
             LOGGER.error("plugin  ----->  start error:{}", e.getMessage(), e);
         }
@@ -108,33 +73,19 @@ public class PluginManager implements ApplicationContextAware {
      * 停止插件
      * @author perfree
      * @date 2023-09-27 16:09:24
-     * @param pluginJarFile 插件jar文件
      * @param pluginId 插件id
      */
-    public void stopPluginJar(File pluginJarFile, int pluginId) {
+    public void stopPlugin(String pluginId) {
         try {
-            PluginInfo pluginInfo = new PluginInfo();
-            pluginInfo.setPluginId(pluginId);
-            pluginInfo.setClassList(PluginUtils.getClassList(pluginJarFile,PluginClassLoaderHolder.getJarClassLoader(pluginId)));
-
-            LOGGER.info("plugin  ----->  plugin msg load complete: {}", pluginInfo);
-            pluginHandle.initialize();
-            pluginHandle.unRegistry(pluginInfo);
-            // 移除插件专属AnnotationConfigApplicationContext
-            PluginApplicationContextHolder.removePluginApplicationContext(pluginId);
-            // 移除插件JarClassLoader
-            PluginClassLoaderHolder.removePluginJarClassLoader(pluginId);
-            PluginInfoHolder.removePluginInfo(pluginId);
-            LOGGER.info("plugin  ----->  stop success: {}", pluginInfo);
+            PluginInfo pluginInfo = PluginInfoHolder.getPluginInfo(pluginId);
+            BasePluginEvent bean = PluginApplicationContextHolder.getPluginBean(pluginInfo.getPluginId(), BasePluginEvent.class);
+            if (null != bean) {
+                bean.onStop();
+            }
+            pluginHandle.stopPlugin(pluginId);
         } catch (Exception e) {
             LOGGER.error("plugin  ----->  stop error:{}", e.getMessage(), e);
         }
-    }
-
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 
     /**
@@ -143,18 +94,37 @@ public class PluginManager implements ApplicationContextAware {
      */
     public void installPlugin(File pluginFile) throws Exception {
         if (null == pluginFile || !pluginFile.exists()) {
-            return;
+            throw new PluginException("pluginFile not found!");
         }
-        File pluginDir;
+        File pluginTempDir;
         if (pluginFile.getName().endsWith(".jar")) {
-            pluginDir = PluginUtils.extractJarPlugin(pluginFile, tempDir, pluginBaseDir);
+            pluginTempDir = PluginUtils.extractJarPlugin(pluginFile, tempDir, pluginBaseDir);
         }else {
-            pluginDir = PluginUtils.extractZipPlugin(pluginFile, tempDir, pluginBaseDir);
+            pluginTempDir = PluginUtils.extractZipPlugin(pluginFile, tempDir, pluginBaseDir);
         }
-        if (null == pluginDir) {
-            return;
+        if (null == pluginTempDir) {
+            throw new PluginException("plugin extract fail!");
         }
 
-        runPluginJar(pluginDir, 1);
+        PluginBaseConfig pluginConfig = PluginUtils.getPluginConfig(pluginTempDir);
+        if (null == pluginConfig) {
+            throw new PluginException("plugin.yaml parse fail");
+        }
+
+        Boolean update = PluginUtils.isUpdate(pluginConfig, pluginBaseDir);
+        if (update && PluginInfoHolder.getPluginInfo(pluginConfig.getPlugin().getName()) != null) {
+            pluginHandle.stopPlugin(pluginConfig.getPlugin().getName());
+        }
+        File pluginDir = PluginUtils.copyPluginTempToPlugin(pluginTempDir, pluginBaseDir);
+        PluginInfo pluginInfo = pluginHandle.startPlugin(pluginDir);
+        BasePluginEvent bean = PluginApplicationContextHolder.getPluginBean(pluginInfo.getPluginId(), BasePluginEvent.class);
+        if (null != bean) {
+            if (update) {
+                bean.onUpdate();
+            } else {
+                bean.onInstall();
+            }
+        }
+        pluginHandle.stopPlugin(pluginInfo.getPluginId());
     }
 }

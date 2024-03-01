@@ -63,11 +63,9 @@ public class PluginDevManager {
             if (null == files || files.length == 0) {
                 continue;
             }
-            int id = 1;
             for (File pluginSource : files) {
                 File copy = FileUtil.copy(pluginSource, new File("E:\\my-work\\java\\1111\\" + load.getPlugin().getName()), true);
-                pluginManager.runPluginJar(copy, id);
-                id++;
+                pluginManager.runPlugin(copy);
             }
         }
     }

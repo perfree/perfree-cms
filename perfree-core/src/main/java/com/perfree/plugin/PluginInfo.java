@@ -14,7 +14,7 @@ import java.util.List;
 public class PluginInfo {
 
     // 插件ID
-    private Integer pluginId;
+    private String pluginId;
 
     // 插件内Class集合
     private List<Class<?>> classList;

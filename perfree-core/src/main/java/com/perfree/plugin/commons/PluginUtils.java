@@ -33,22 +33,38 @@ public class PluginUtils {
         return yaml.loadAs(new FileReader(file).readString(), PluginBaseConfig.class);
     }
 
+    /**
+     * 判断是否为更新插件
+     * @param pluginConfig PluginBaseConfig
+     * @param pluginBaseDir pluginBaseDir
+     * @return Boolean
+     */
+    public static Boolean isUpdate(PluginBaseConfig pluginConfig,String pluginBaseDir) {
+        File file = new File(pluginBaseDir + File.separator + pluginConfig.getPlugin().getName());
+        return file.exists();
+    }
 
     /**
      * 将临时插件文件拷贝至指定目录
      */
-    private static File copyPluginTempToPlugin(File srcDir, String destDir) {
-        File[] files = srcDir.listFiles();
+    public static File copyPluginTempToPlugin(File pluginTempDir, String pluginBaseDir) {
+        PluginBaseConfig pluginConfig = getPluginConfig(pluginTempDir);
+        if (null == pluginConfig) {
+            LOGGER.error("plugin.yaml parse fail");
+            return null;
+        }
+        File[] files = pluginTempDir.listFiles();
         if (null == files) {
            return null;
         }
-        File destDirFile = new File(destDir);
+        File destDirFile = new File(pluginBaseDir + File.separator + pluginConfig.getPlugin().getName());
         if (!destDirFile.exists()) {
             FileUtil.mkdir(destDirFile);
         }
         for (File pluginSource : files) {
             FileUtil.copy(pluginSource, destDirFile, true);
         }
+        FileUtil.del(pluginTempDir);
         return destDirFile;
     }
 
@@ -84,16 +100,10 @@ public class PluginUtils {
                     outputStream.close();
                 }
             }
-            PluginBaseConfig pluginConfig = getPluginConfig(dir);
-            if (null == pluginConfig) {
-                LOGGER.error("plugin.yaml parse fail");
-                return null;
-            }
-            File file = copyPluginTempToPlugin(dir, pluginBaseDir + File.separator + pluginConfig.getPlugin().getName());
-            FileUtil.del(dir);
-            return file;
+            return dir;
         }
     }
+
 
     /**
      * 解压压缩包形式的插件
@@ -123,8 +133,7 @@ public class PluginUtils {
         List<File> files = FileUtil.loopFiles(pluginDir);
         for (File file : files) {
             if (file.getName().endsWith(".class")) {
-                String entryName = file.getAbsolutePath().replace(pluginDir.getAbsolutePath(), "");
-                entryName = entryName.replaceAll("[\\\\/]", ".");
+                String entryName = file.getAbsolutePath().replace(pluginDir.getAbsolutePath(), "").replaceAll("[\\\\/]", ".");
                 if (entryName.startsWith(".")) {
                     entryName = entryName.replaceFirst(".", "");
                 }

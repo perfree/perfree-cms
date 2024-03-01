@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class PluginClassLoaderHolder {
 
-	private final static Map<Integer, JarClassLoader> pluginJarClassLoader = new ConcurrentHashMap<>();
+	private final static Map<String, JarClassLoader> pluginJarClassLoader = new ConcurrentHashMap<>();
 
 	/**
 	 * 新增jarClassLoader
@@ -23,7 +23,7 @@ public abstract class PluginClassLoaderHolder {
 	 * @param pluginId 插件id
 	 * @param jarClassLoader jarClassLoader
 	 */
-	public static void addPluginJarClassLoader(Integer pluginId, JarClassLoader jarClassLoader) {
+	public static void addPluginJarClassLoader(String pluginId, JarClassLoader jarClassLoader) {
 		pluginJarClassLoader.put(pluginId, jarClassLoader);
 	}
 
@@ -33,7 +33,7 @@ public abstract class PluginClassLoaderHolder {
 	 * @date 2023-09-27 14:09:44
 	 * @param pluginId 插件id
 	 */
-	public static void removePluginJarClassLoader(Integer pluginId) throws IOException {
+	public static void removePluginJarClassLoader(String pluginId) throws IOException {
 		pluginJarClassLoader.get(pluginId).close();
 		pluginJarClassLoader.remove(pluginId);
 	}
@@ -45,7 +45,7 @@ public abstract class PluginClassLoaderHolder {
 	 * @param pluginId 插件id
 	 * @return JarClassLoader
 	 */
-	public static JarClassLoader getJarClassLoader(Integer pluginId) {
+	public static JarClassLoader getJarClassLoader(String pluginId) {
 		return pluginJarClassLoader.get(pluginId);
 	}
 

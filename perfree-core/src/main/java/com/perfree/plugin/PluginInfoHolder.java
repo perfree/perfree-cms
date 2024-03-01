@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PluginInfoHolder {
 
-    private final static Map<Integer, PluginInfo> pluginInfoList = new ConcurrentHashMap<>();
+    private final static Map<String, PluginInfo> pluginInfoList = new ConcurrentHashMap<>();
 
     /**
      * 新增PluginInfo
@@ -17,7 +17,7 @@ public class PluginInfoHolder {
      * @param pluginId 插件id
      * @param pluginInfo pluginInfo
      */
-    public static void addPluginInfo(Integer pluginId, PluginInfo pluginInfo) {
+    public static void addPluginInfo(String pluginId, PluginInfo pluginInfo) {
         pluginInfoList.put(pluginId, pluginInfo);
     }
 
@@ -27,7 +27,7 @@ public class PluginInfoHolder {
      * @date 2023-09-27 14:09:44
      * @param pluginId 插件id
      */
-    public static void removePluginInfo(Integer pluginId) throws IOException {
+    public static void removePluginInfo(String pluginId) throws IOException {
         pluginInfoList.remove(pluginId);
     }
 
@@ -38,7 +38,7 @@ public class PluginInfoHolder {
      * @param pluginId 插件id
      * @return PluginInfo
      */
-    public static PluginInfo getPluginInfo(Integer pluginId) {
+    public static PluginInfo getPluginInfo(String pluginId) {
         return pluginInfoList.get(pluginId);
     }
 
@@ -50,7 +50,7 @@ public class PluginInfoHolder {
      */
     public static List<PluginInfo> getAllPluginInfo() {
         List<PluginInfo> pluginInfos = new ArrayList<>();
-        for (Integer id : pluginInfoList.keySet()) {
+        for (String id : pluginInfoList.keySet()) {
             pluginInfos.add(pluginInfoList.get(id));
         }
         return pluginInfos;

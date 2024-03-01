@@ -1,19 +1,20 @@
 package com.perfree.system.service.plugins;
 
 import cn.hutool.core.io.FileUtil;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.perfree.commons.common.PageResult;
 import com.perfree.plugin.PluginManager;
-import com.perfree.system.model.Plugins;
 import com.perfree.system.mapper.PluginsMapper;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.perfree.system.model.Plugins;
 import com.perfree.system.vo.plugins.PluginsPageReqVO;
 import jakarta.annotation.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * <p>
@@ -26,6 +27,7 @@ import java.io.IOException;
 @Service
 public class PluginsServiceImpl extends ServiceImpl<PluginsMapper, Plugins> implements PluginsService {
 
+    private final static Logger LOGGER = LoggerFactory.getLogger(PluginsServiceImpl.class);
     @Resource
     private PluginsMapper pluginsMapper;
 
@@ -54,6 +56,7 @@ public class PluginsServiceImpl extends ServiceImpl<PluginsMapper, Plugins> impl
             FileUtil.del(pluginFile);
             return true;
         } catch (Exception e) {
+            LOGGER.error("", e);
             throw new RuntimeException(e);
         }
     }

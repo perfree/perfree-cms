@@ -53,7 +53,7 @@ public class GlobalExceptionHandler{
     @ExceptionHandler(HttpMessageConversionException.class)
     @ResponseBody
     public CommonResult<?> parameterTypeException(HttpMessageConversionException exception) {
-        LOGGER.error(exception.getMessage());
+        LOGGER.error(exception.getMessage(), exception);
         return CommonResult.error(ResultCodeEnum.FAIL.getCode(), exception.getMessage());
     }
 
@@ -85,21 +85,21 @@ public class GlobalExceptionHandler{
     @ExceptionHandler(ServiceException.class)
     @ResponseBody
     public CommonResult<?> handleServiceException(Exception exception) {
-        LOGGER.error(exception.getMessage());
+        LOGGER.error(exception.getMessage(),exception);
         return CommonResult.error(ResultCodeEnum.FAIL.getCode(), exception.getMessage());
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseBody
     public CommonResult<?> handleAccessDeniedException(Exception exception) {
-        LOGGER.error(exception.getMessage());
+        LOGGER.error(exception.getMessage(), exception);
         return CommonResult.error(ResultCodeEnum.AUTH_FORBIDDEN.getCode(), ResultCodeEnum.AUTH_FORBIDDEN.getMsg());
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public CommonResult<?> handleException(Exception exception) {
-        LOGGER.error(exception.getMessage());
+        LOGGER.error(exception.getMessage(), exception);
         return CommonResult.error(ResultCodeEnum.FAIL.getCode(), exception.getMessage());
     }
 }

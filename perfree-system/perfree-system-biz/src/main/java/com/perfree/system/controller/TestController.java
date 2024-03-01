@@ -29,10 +29,8 @@ public class TestController {
     @PreAuthorize(value = "hasAuthority('admin')")
     public String unInstallJar() {
         List<File> jarFiles = FileUtil.loopFiles("E:\\111", file -> file.getName().toLowerCase().endsWith(".jar"));
-        int id = 1;
         for (File pluginJarFile : jarFiles) {
-            pluginManager.stopPluginJar(pluginJarFile, id);
-            id++;
+            pluginManager.stopPlugin("");
         }
         return "111";
     }

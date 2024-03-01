@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class PluginApplicationContextHolder {
 
-	private final static Map<Integer, AnnotationConfigApplicationContext> pluginApplicationMap = new ConcurrentHashMap<>();
+	private final static Map<String, AnnotationConfigApplicationContext> pluginApplicationMap = new ConcurrentHashMap<>();
 
 	/**
 	 * 新增AnnotationConfigApplicationContext
@@ -23,7 +23,7 @@ public abstract class PluginApplicationContextHolder {
 	 * @param pluginId 插件id
 	 * @param applicationContext 插件AnnotationConfigApplicationContext
 	 */
-	public static void addPluginApplicationContext(Integer pluginId, AnnotationConfigApplicationContext applicationContext) {
+	public static void addPluginApplicationContext(String pluginId, AnnotationConfigApplicationContext applicationContext) {
 		pluginApplicationMap.put(pluginId, applicationContext);
 	}
 
@@ -33,7 +33,7 @@ public abstract class PluginApplicationContextHolder {
 	 * @date 2023-09-27 14:09:44
 	 * @param pluginId 插件id
 	 */
-	public static void removePluginApplicationContext(Integer pluginId) {
+	public static void removePluginApplicationContext(String pluginId) {
 		pluginApplicationMap.get(pluginId).close();
 		pluginApplicationMap.remove(pluginId);
 	}
@@ -45,14 +45,28 @@ public abstract class PluginApplicationContextHolder {
 	 * @param pluginId 插件id
 	 * @return org.springframework.context.annotation.AnnotationConfigApplicationContext
 	 */
-	public static AnnotationConfigApplicationContext getApplicationContext(Integer pluginId) {
+	public static AnnotationConfigApplicationContext getApplicationContext(String pluginId) {
 		return pluginApplicationMap.get(pluginId);
+	}
+
+	/**
+	 * 获取插件内bean
+	 * @param pluginId pluginId
+	 * @param c c
+	 * @return T
+	 */
+	public static <T> T getPluginBean(String pluginId, Class<T> c) {
+		try{
+			return pluginApplicationMap.get(pluginId).getBean(c);
+		}catch (Exception e) {
+			return null;
+		}
 	}
 
 
 	public static List<AnnotationConfigApplicationContext> getAllPluginApplicationContext() {
 		List<AnnotationConfigApplicationContext> result = new ArrayList<>();
-		for (Integer id : pluginApplicationMap.keySet()) {
+		for (String id : pluginApplicationMap.keySet()) {
 			result.add(pluginApplicationMap.get(id));
 		}
 		return result;

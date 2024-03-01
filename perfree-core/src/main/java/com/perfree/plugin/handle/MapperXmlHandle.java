@@ -53,17 +53,18 @@ public class MapperXmlHandle implements BasePluginRegistryHandler {
 
     @Override
     public void unRegistry(PluginInfo plugin) throws Exception {
-        SqlSessionFactory sqlSessionFactory = (SqlSessionFactory) PluginApplicationContextHolder.getApplicationContext(plugin.getPluginId()).getBean("sqlSessionFactory");
-        Configuration configuration = sqlSessionFactory.getConfiguration();
+        SqlSessionFactory bean = PluginApplicationContextHolder.getApplicationContext(plugin.getPluginId()).getBean(SqlSessionFactory.class);
+        org.apache.ibatis.session.Configuration configuration = bean.getConfiguration();
         clearValues(configuration, "mappedStatements");
         clearValues(configuration, "caches");
         clearValues(configuration, "resultMaps");
         clearValues(configuration, "parameterMaps");
         clearValues(configuration, "keyGenerators");
         clearValues(configuration, "sqlFragments");
-        Field loadedResourcesField = configuration.getClass().getDeclaredField("loadedResources");
+        Field loadedResourcesField = configuration.getClass().getSuperclass().getDeclaredField("loadedResources");
         loadedResourcesField.setAccessible(true);
         ((Set<?>) loadedResourcesField.get(configuration)).clear();
+        System.out.println(111);
     }
 
 
