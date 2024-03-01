@@ -113,9 +113,9 @@ public class PluginManager{
 
         Boolean update = PluginUtils.isUpdate(pluginConfig, pluginBaseDir);
         if (update && PluginInfoHolder.getPluginInfo(pluginConfig.getPlugin().getName()) != null) {
-            pluginHandle.stopPlugin(pluginConfig.getPlugin().getName());
+            stopPlugin(pluginConfig.getPlugin().getName());
         }
-        File pluginDir = PluginUtils.copyPluginTempToPlugin(pluginTempDir, pluginBaseDir);
+        File pluginDir = PluginUtils.copyPluginTempToPlugin(pluginTempDir, pluginBaseDir, true);
         PluginInfo pluginInfo = pluginHandle.startPlugin(pluginDir);
         BasePluginEvent bean = PluginApplicationContextHolder.getPluginBean(pluginInfo.getPluginId(), BasePluginEvent.class);
         if (null != bean) {

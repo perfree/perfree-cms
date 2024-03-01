@@ -3,6 +3,7 @@ package com.perfree.plugin.commons;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.file.FileReader;
 import com.perfree.plugin.pojo.PluginBaseConfig;
+import com.perfree.plugin.pojo.PluginBasisConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -10,6 +11,7 @@ import org.yaml.snakeyaml.Yaml;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -30,7 +32,14 @@ public class PluginUtils {
             return null;
         }
         Yaml yaml = new Yaml();
-        return yaml.loadAs(new FileReader(file).readString(), PluginBaseConfig.class);
+        HashMap<String, Object> hashMap = yaml.loadAs(new FileReader(file).readString(), HashMap.class);
+        PluginBaseConfig pluginBaseConfig = new PluginBaseConfig();
+        PluginBasisConfig pluginBasisConfig = new PluginBasisConfig();
+        HashMap<String, Object> plugin = (HashMap<String, Object>) hashMap.get("plugin");
+        pluginBasisConfig.setName(plugin.get("name").toString());
+        pluginBasisConfig.setMapperLocation(plugin.get("mapperLocation").toString());
+        pluginBaseConfig.setPlugin(pluginBasisConfig);
+        return pluginBaseConfig;
     }
 
     /**
@@ -47,7 +56,7 @@ public class PluginUtils {
     /**
      * 将临时插件文件拷贝至指定目录
      */
-    public static File copyPluginTempToPlugin(File pluginTempDir, String pluginBaseDir) {
+    public static File copyPluginTempToPlugin(File pluginTempDir, String pluginBaseDir, Boolean isDelTemp) {
         PluginBaseConfig pluginConfig = getPluginConfig(pluginTempDir);
         if (null == pluginConfig) {
             LOGGER.error("plugin.yaml parse fail");
@@ -64,7 +73,9 @@ public class PluginUtils {
         for (File pluginSource : files) {
             FileUtil.copy(pluginSource, destDirFile, true);
         }
-        FileUtil.del(pluginTempDir);
+        if (isDelTemp) {
+            FileUtil.del(pluginTempDir);
+        }
         return destDirFile;
     }
 
@@ -169,6 +180,30 @@ public class PluginUtils {
             String realPath = file.getAbsolutePath().replace(pluginDir.getAbsolutePath() + File.separator, "").replaceAll("\\\\","/");
             if (Pattern.matches(xmlLocationPattern, realPath) && file.getName().endsWith(".xml")) {
                 result.add(file);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 获取插件中所有的mapperXml路径
+     * @param pluginDir pluginDir
+     * @param pluginBaseConfig pluginBaseConfig
+     * @return List<String>
+     */
+    public static List<String> getMapperXmlPath(File pluginDir, PluginBaseConfig pluginBaseConfig) {
+        String xmlLocationPattern = pluginBaseConfig.getPlugin().getMapperLocation()
+                .replaceAll("\\*\\*", "<>")
+                .replaceAll("\\*", "<>")
+                .replaceAll("\\.", "\\.")
+                .replaceAll("<>", ".*");
+
+        List<File> files = FileUtil.loopFiles(pluginDir);
+        List<String> result = new ArrayList<>();
+        for (File file : files) {
+            String realPath = file.getAbsolutePath().replace(pluginDir.getAbsolutePath() + File.separator, "").replaceAll("\\\\","/");
+            if (Pattern.matches(xmlLocationPattern, realPath) && file.getName().endsWith(".xml")) {
+                result.add(file.getAbsolutePath());
             }
         }
         return result;

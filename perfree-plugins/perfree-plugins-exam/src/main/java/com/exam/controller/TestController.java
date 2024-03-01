@@ -1,5 +1,6 @@
 package com.exam.controller;
 
+import com.exam.commons.TestConfig;
 import com.exam.convert.TestConvert;
 import com.exam.model.Test;
 import com.exam.service.test.TestService;
@@ -36,6 +37,8 @@ public class TestController {
     @Resource
     private TestService testService;
 
+    @Resource
+    private TestConfig testConfig;
 
     @PostMapping("/page")
     @Operation(summary = "分页列表")
@@ -74,6 +77,12 @@ public class TestController {
     @Operation(summary = "mapperXml查询")
     public CommonResult<List<TestRespVO>> queryByMapperXml(){
         return success(TestConvert.INSTANCE.convertRespListVO(testService.queryByMapperXml()));
+    }
+
+    @GetMapping("/queryByConfigBean")
+    @Operation(summary = "queryByConfigBean")
+    public CommonResult<String> queryByConfigBean(){
+        return success(testConfig.getName());
     }
 
 }

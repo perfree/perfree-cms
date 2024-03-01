@@ -70,7 +70,7 @@ public class AppInit implements ApplicationRunner {
         String command = System.getProperty("sun.java.command");
         if (command != null && !command.contains(".jar")) {
             // 源码运行,加载本地插件
-            // pluginDevManager.initPlugins();
+            pluginDevManager.initPlugins();
         }
         List<PluginInfo> pluginInfoList = PluginInfoHolder.getAllPluginInfo();
         StringBuilder successPluginStr = new StringBuilder();

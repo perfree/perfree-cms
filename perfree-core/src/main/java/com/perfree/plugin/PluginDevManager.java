@@ -2,6 +2,8 @@ package com.perfree.plugin;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.file.FileReader;
+import com.perfree.plugin.commons.PluginUtils;
+import com.perfree.plugin.handle.compound.PluginHandle;
 import com.perfree.plugin.pojo.PluginBaseConfig;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -26,11 +28,13 @@ public class PluginDevManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(PluginDevManager.class);
 
     @Value("${perfree.plugin-dir}")
-    private String pluginDir;
+    private String pluginBaseDir;
 
+    private final PluginHandle pluginHandle;
     private final PluginManager pluginManager;
 
-    public PluginDevManager(PluginManager pluginManager) {
+    public PluginDevManager(PluginHandle pluginHandle, PluginManager pluginManager) {
+        this.pluginHandle = pluginHandle;
         this.pluginManager = pluginManager;
     }
 
@@ -39,9 +43,7 @@ public class PluginDevManager {
      * @author perfree
      * @date 2023-09-27 16:09:44
      */
-    public void initPlugins() {
-       // FileUtil.copy(new File("E:\\my-work\\java\\perfree-cms\\perfree-plugins\\perfree-plugins-exam\\target\\classes"), new File("E:\\my-work\\java\\1111"), true);
-        //pluginManager.runPluginJar(new File("E:\\my-work\\java\\1111\\classes"), 1);
+    public void initPlugins() throws Exception {
         List<String> plugins = getPluginClassPath();
         if (null == plugins || plugins.isEmpty()) {
             return;
@@ -52,20 +54,24 @@ public class PluginDevManager {
                 LOGGER.error("{} not found", plugin);
                 continue;
             }
-            File file = new File(plugin + File.separator + "plugin.yaml");
-            if (!file.exists()) {
+            PluginBaseConfig pluginConfig = PluginUtils.getPluginConfig(pluginDir);
+            if (null == pluginConfig) {
                 LOGGER.error("{} plugin.yaml not found", plugin);
                 continue;
             }
-            Yaml yaml = new Yaml();
-            PluginBaseConfig load = yaml.loadAs(new FileReader(file).readString(), PluginBaseConfig.class);
-            File[] files = pluginDir.listFiles();
-            if (null == files || files.length == 0) {
-                continue;
+            Boolean update = PluginUtils.isUpdate(pluginConfig, pluginBaseDir);
+            if (update && PluginInfoHolder.getPluginInfo(pluginConfig.getPlugin().getName()) != null) {
+                pluginManager.stopPlugin(pluginConfig.getPlugin().getName());
             }
-            for (File pluginSource : files) {
-                File copy = FileUtil.copy(pluginSource, new File("E:\\my-work\\java\\1111\\" + load.getPlugin().getName()), true);
-                pluginManager.runPlugin(copy);
+            pluginDir = PluginUtils.copyPluginTempToPlugin(pluginDir, pluginBaseDir, false);
+            PluginInfo pluginInfo = pluginHandle.startPlugin(pluginDir);
+            BasePluginEvent bean = PluginApplicationContextHolder.getPluginBean(pluginInfo.getPluginId(), BasePluginEvent.class);
+            if (null != bean) {
+                if (update) {
+                    bean.onUpdate();
+                } else {
+                    bean.onInstall();
+                }
             }
         }
     }
