@@ -1,6 +1,7 @@
 package com.perfree.plugin.handle;
 
 import cn.hutool.core.io.FileUtil;
+import com.perfree.commons.utils.SpringBeanUtil;
 import com.perfree.plugin.PluginApplicationContextHolder;
 import com.perfree.plugin.PluginClassLoaderHolder;
 import com.perfree.plugin.PluginInfo;
@@ -71,7 +72,6 @@ public class MapperXmlHandle implements BasePluginRegistryHandler {
         ((Set<?>) loadedResourcesField.get(configuration)).clear();
     }
 
-
     private void clearValues(Configuration configuration, String fieldName,  List<String> mapperXml) throws Exception {
         Field field = configuration.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
@@ -79,8 +79,12 @@ public class MapperXmlHandle implements BasePluginRegistryHandler {
         ConcurrentMap<Object, Object> newMap = new ConcurrentHashMap<>();
         for (Object key : map.keySet()) {
             try {
-                MappedStatement o = (MappedStatement) map.get(key);
-                if (!mapperXml.contains(o.getResource())) {
+                Object object = map.get(key);
+                if (object instanceof MappedStatement o) {
+                    if (!mapperXml.contains(o.getResource())) {
+                        newMap.put(key, map.get(key));
+                    }
+                } else {
                     newMap.put(key, map.get(key));
                 }
             } catch (IllegalArgumentException ex) {

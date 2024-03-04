@@ -26,12 +26,15 @@ public class TestController {
 
     @GetMapping("/unInstallJar")
     @Operation(summary = "卸载插件jar")
-    @PreAuthorize(value = "hasAuthority('admin')")
     public String unInstallJar() {
-        List<File> jarFiles = FileUtil.loopFiles("E:\\111", file -> file.getName().toLowerCase().endsWith(".jar"));
-        for (File pluginJarFile : jarFiles) {
-            pluginManager.stopPlugin("");
-        }
+        pluginManager.stopPlugin("perfree-exam123");
+        return "111";
+    }
+
+    @GetMapping("/start")
+    @Operation(summary = "启动插件jar")
+    public String start() {
+        pluginManager.runPlugin(new File("E:\\my-work\\java\\perfree-cms\\resources\\plugins\\perfree-exam123"));
         return "111";
     }
 }

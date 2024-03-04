@@ -20,6 +20,7 @@ public class TestServiceImpl extends ServiceImpl<TestMapper, Test> implements Te
 
     @Override
     public List<Test> test() {
+        System.out.println(this.getClass().getClassLoader());
         return testMapper.selectList();
     }
 

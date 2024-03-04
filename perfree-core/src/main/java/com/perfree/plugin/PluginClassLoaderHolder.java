@@ -1,6 +1,7 @@
 package com.perfree.plugin;
 
 import cn.hutool.core.lang.JarClassLoader;
+import com.perfree.plugin.core.PluginClassLoader;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.IOException;
@@ -14,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public abstract class PluginClassLoaderHolder {
 
-	private final static Map<String, JarClassLoader> pluginJarClassLoader = new ConcurrentHashMap<>();
+	private final static Map<String, PluginClassLoader> pluginJarClassLoader = new ConcurrentHashMap<>();
 
 	/**
 	 * 新增jarClassLoader
@@ -23,7 +24,7 @@ public abstract class PluginClassLoaderHolder {
 	 * @param pluginId 插件id
 	 * @param jarClassLoader jarClassLoader
 	 */
-	public static void addPluginJarClassLoader(String pluginId, JarClassLoader jarClassLoader) {
+	public static void addPluginJarClassLoader(String pluginId, PluginClassLoader jarClassLoader) {
 		pluginJarClassLoader.put(pluginId, jarClassLoader);
 	}
 
@@ -45,8 +46,17 @@ public abstract class PluginClassLoaderHolder {
 	 * @param pluginId 插件id
 	 * @return JarClassLoader
 	 */
-	public static JarClassLoader getJarClassLoader(String pluginId) {
+	public static PluginClassLoader getJarClassLoader(String pluginId) {
 		return pluginJarClassLoader.get(pluginId);
 	}
 
+	public static String getPluginId(PluginClassLoader pluginClassLoader) {
+		for (String s : pluginJarClassLoader.keySet()) {
+			if (pluginJarClassLoader.get(s).equals(pluginClassLoader)) {
+				return s;
+			}
+
+		}
+		return null;
+	}
 }

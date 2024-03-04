@@ -19,10 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class OpenApiDocHandle implements BasePluginRegistryHandler{
 
@@ -69,10 +66,13 @@ public class OpenApiDocHandle implements BasePluginRegistryHandler{
                 }
             }
         }
-        Method setCachedOpenApiMethod = ReflectUtil.getMethod(openApiService.getClass(), "setCachedOpenAPI", OpenAPI.class);
+        OpenAPI cachedOpenAPI = openApiService.getCachedOpenAPI(Locale.getDefault());
+        openApiService.setCachedOpenAPI(null, Locale.getDefault());
+        openApiService.build(Locale.getDefault());
+        /*Method setCachedOpenApiMethod = ReflectUtil.getMethod(openApiService.getClass(), "setCachedOpenAPI", OpenAPI.class, Locale.class);
         if(setCachedOpenApiMethod != null){
-            setCachedOpenApiMethod.invoke(openApiService);
-        }
+            setCachedOpenApiMethod.invoke(openApiService, null, null);
+        }*/
     }
 
     @Override
@@ -86,10 +86,12 @@ public class OpenApiDocHandle implements BasePluginRegistryHandler{
                 }
             }
         }
-        Method setCachedOpenApiMethod = ReflectUtil.getMethod(openApiService.getClass(), "setCachedOpenAPI", OpenAPI.class);
+        openApiService.setCachedOpenAPI(null, Locale.getDefault());
+        openApiService.build(Locale.getDefault());
+        /*Method setCachedOpenApiMethod = ReflectUtil.getMethod(openApiService.getClass(), "setCachedOpenAPI", OpenAPI.class, Locale.class);
         if(setCachedOpenApiMethod != null){
-            setCachedOpenApiMethod.invoke(openApiService);
-        }
+            setCachedOpenApiMethod.invoke(openApiService, null, null);
+        }*/
     }
 
 }
