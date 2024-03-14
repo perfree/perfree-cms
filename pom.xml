@@ -37,7 +37,7 @@
         <velocity.version>2.3</velocity.version>
         <knife4j.version>4.3.0</knife4j.version>
         <jwt.version>0.11.5</jwt.version>
-        <mapstruct.version>1.5.5.Final</mapstruct.version>
+        <mapstruct.version>1.6.0.Beta1</mapstruct.version>
         <maven-invoker.version>3.0.1</maven-invoker.version>
         <maven-model-builder.version>3.9.6</maven-model-builder.version>
         <minio.version>8.5.4</minio.version>
@@ -128,11 +128,6 @@
             <dependency>
                 <groupId>org.mapstruct</groupId>
                 <artifactId>mapstruct</artifactId>
-                <version>${mapstruct.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.mapstruct</groupId>
-                <artifactId>mapstruct-jdk8</artifactId>
                 <version>${mapstruct.version}</version>
             </dependency>
             <dependency>

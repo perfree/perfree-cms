@@ -1,5 +1,6 @@
 package com.perfree.plugin.handle;
 
+import cn.hutool.core.util.StrUtil;
 import com.perfree.plugin.PluginApplicationContextHolder;
 import com.perfree.plugin.PluginInfo;
 import com.perfree.plugin.annotation.InterceptPath;
@@ -7,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
@@ -105,6 +107,21 @@ public class ClassHandler implements BasePluginRegistryHandler{
 
         for (Class<?> mapperClass : mapperClassList) {
             PluginApplicationContextHolder.getApplicationContext(pluginInfo.getPluginId()).removeBeanDefinition(mapperClass.getName());
+        }
+
+
+        List<Class<?>> pluginClassList = pluginInfo.getClassList().stream().filter(item -> !item.isInterface()).toList();
+        if(!pluginClassList.isEmpty()) {
+            for (Class<?> aClass : pluginClassList) {
+                Annotation[] annotations = aClass.getAnnotations();
+                if (annotations.length > 0 && Collections.disjoint(Arrays.asList(annotations), Arrays.asList(REGISTER_ANNO))) {
+                    AnnotationConfigApplicationContext applicationContext = PluginApplicationContextHolder.getApplicationContext(pluginInfo.getPluginId());
+                    boolean containsBean = applicationContext.containsBean(StrUtil.lowerFirst(aClass.getSimpleName()));
+                    if (containsBean) {
+                        applicationContext.removeBeanDefinition(StrUtil.lowerFirst(aClass.getSimpleName()));
+                    }
+                }
+            }
         }
     }
 }

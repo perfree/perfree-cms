@@ -6,11 +6,15 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Schema(description = "管理后台 - 测试RespVO")
-@Data
-@EqualsAndHashCode(callSuper = true)
 public class TestRespVO extends TestBaseVO{
 
-    @Schema(description = "id")
     private String id;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

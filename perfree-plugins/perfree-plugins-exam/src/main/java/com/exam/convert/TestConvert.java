@@ -9,7 +9,7 @@ import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface TestConvert {
     TestConvert INSTANCE = Mappers.getMapper(TestConvert.class);
 
@@ -22,4 +22,5 @@ public interface TestConvert {
 
     Test convertAddOrUpdate(TestAddOrUpdateReqVO testAddOrUpdateReqVO);
 
+    TestRespVO convertTestVO(TestAddOrUpdateReqVO testAddOrUpdateReqVO);
 }

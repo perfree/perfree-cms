@@ -1,5 +1,6 @@
 package com.perfree.plugin;
 
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.ArrayList;
@@ -34,7 +35,9 @@ public abstract class PluginApplicationContextHolder {
 	 * @param pluginId 插件id
 	 */
 	public static void removePluginApplicationContext(String pluginId) {
-		pluginApplicationMap.get(pluginId).close();
+		AnnotationConfigApplicationContext annotationConfigApplicationContext = pluginApplicationMap.get(pluginId);
+		annotationConfigApplicationContext.stop();
+		annotationConfigApplicationContext.close();
 		pluginApplicationMap.remove(pluginId);
 	}
 

@@ -35,8 +35,10 @@ public abstract class PluginClassLoaderHolder {
 	 * @param pluginId 插件id
 	 */
 	public static void removePluginJarClassLoader(String pluginId) throws IOException {
-		pluginJarClassLoader.get(pluginId).close();
-		pluginJarClassLoader.remove(pluginId);
+		PluginClassLoader remove = pluginJarClassLoader.remove(pluginId);
+		remove.close();
+		remove = null;
+		System.gc();
 	}
 
 	/**

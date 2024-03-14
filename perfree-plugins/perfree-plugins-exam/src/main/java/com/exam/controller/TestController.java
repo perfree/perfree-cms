@@ -1,5 +1,6 @@
 package com.exam.controller;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.exam.commons.TestConfig;
 import com.exam.convert.TestConvert;
 import com.exam.model.Test;
@@ -15,6 +16,7 @@ import jakarta.annotation.Resource;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,7 +53,15 @@ public class TestController {
     @Operation(summary = "获取所有")
     public CommonResult<List<TestRespVO>> hello(){
         LOGGER.info("测试日志~");
-        return success(TestConvert.INSTANCE.convertRespListVO(testService.test()));
+        return success(BeanUtil.copyToList(testService.test(), TestRespVO.class));
+    }
+
+    @GetMapping("/listTest")
+    @Operation(summary = "获取所有")
+    public CommonResult<List<TestRespVO>> listTest(){
+        List<Test> test = testService.test();
+        List<TestRespVO> testRespVOS = BeanUtil.copyToList(test, TestRespVO.class);
+        return success(testRespVOS);
     }
 
     @GetMapping("/get")

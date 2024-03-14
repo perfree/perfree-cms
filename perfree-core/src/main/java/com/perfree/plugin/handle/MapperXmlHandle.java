@@ -7,6 +7,7 @@ import com.perfree.plugin.PluginClassLoaderHolder;
 import com.perfree.plugin.PluginInfo;
 import com.perfree.plugin.commons.PluginUtils;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
+import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
@@ -17,10 +18,7 @@ import org.springframework.util.ClassUtils;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -59,8 +57,8 @@ public class MapperXmlHandle implements BasePluginRegistryHandler {
     @Override
     public void unRegistry(PluginInfo plugin) throws Exception {
         List<String> mapperXml = PluginUtils.getMapperXmlPath(new File(plugin.getPluginPath()), plugin.getPluginConfig());
-        SqlSessionFactory bean = PluginApplicationContextHolder.getApplicationContext(plugin.getPluginId()).getBean(SqlSessionFactory.class);
-        org.apache.ibatis.session.Configuration configuration = bean.getConfiguration();
+        SqlSessionFactory sqlSessionFactory = PluginApplicationContextHolder.getApplicationContext(plugin.getPluginId()).getBean(SqlSessionFactory.class);
+        org.apache.ibatis.session.Configuration configuration = sqlSessionFactory.getConfiguration();
         clearValues(configuration, "mappedStatements", mapperXml);
         clearValues(configuration, "caches", mapperXml);
         clearValues(configuration, "resultMaps", mapperXml);

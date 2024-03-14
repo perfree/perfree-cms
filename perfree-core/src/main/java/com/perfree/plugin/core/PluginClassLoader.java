@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Iterator;
@@ -15,11 +16,17 @@ public class PluginClassLoader extends URLClassLoader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PluginClassLoader.class);
 
-    private final ClassLoader parent;
+    private ClassLoader parent;
 
     public PluginClassLoader(URL[] urls, ClassLoader parent) {
         super(urls, parent);
         this.parent = parent;
+    }
+
+    @Override
+    public void close() throws IOException {
+        super.close();
+        this.parent = null;
     }
 
     public PluginClassLoader addJar(File jarFileOrDir) {
@@ -53,5 +60,16 @@ public class PluginClassLoader extends URLClassLoader {
 
     private static boolean isJarFile(File file) {
         return !FileUtil.isFile(file) ? false : file.getPath().toLowerCase().endsWith(".jar");
+    }
+
+
+    @Override
+    protected Class<?> findClass(String name) throws ClassNotFoundException {
+        return super.findClass(name);
+    }
+
+    @Override
+    public Class<?> loadClass(String name) throws ClassNotFoundException {
+        return super.loadClass(name);
     }
 }
