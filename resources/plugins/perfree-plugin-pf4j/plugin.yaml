@@ -1,0 +1,12 @@
+plugin:
+  name: perfree-plugin-pf4j
+  mapperLocation: mapper/*.xml
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    map-underscore-to-camel-case: false
+  global-config:
+    db-config:
+      id-type: NONE
+  type-aliases-package: com.exam.*.model
+  mapper-locations: classpath*:mapper/*.xml

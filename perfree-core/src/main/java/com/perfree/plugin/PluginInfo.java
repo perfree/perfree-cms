@@ -1,5 +1,6 @@
 package com.perfree.plugin;
 
+import com.perfree.plugin.core.PluginClassLoader;
 import com.perfree.plugin.pojo.PluginBaseConfig;
 import lombok.Data;
 
@@ -24,4 +25,6 @@ public class PluginInfo {
 
     // 插件配置信息
     private PluginBaseConfig pluginConfig;
+
+    private ClassLoader pluginClassLoader;
 }

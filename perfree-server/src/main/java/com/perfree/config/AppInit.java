@@ -11,12 +11,12 @@ import com.perfree.plugin.PluginInfoHolder;
 import com.perfree.plugin.PluginManager;
 import com.perfree.system.api.attachConfig.dto.AttachConfigCacheDTO;
 import com.perfree.system.api.option.dto.OptionCacheDTO;
-import com.perfree.system.convert.attachConfig.AttachConfigConvert;
-import com.perfree.system.convert.option.OptionConvert;
-import com.perfree.system.mapper.AttachConfigMapper;
-import com.perfree.system.model.AttachConfig;
-import com.perfree.system.model.Option;
-import com.perfree.system.service.option.OptionService;
+import com.perfree.convert.attachConfig.AttachConfigConvert;
+import com.perfree.convert.option.OptionConvert;
+import com.perfree.mapper.AttachConfigMapper;
+import com.perfree.model.AttachConfig;
+import com.perfree.model.Option;
+import com.perfree.service.option.OptionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -67,6 +67,7 @@ public class AppInit implements ApplicationRunner {
         initOptions();
         initAttachConfig();
         pluginManager.initPlugins();
+        //   pluginManager.initPluginsByPf4j();
         String command = System.getProperty("sun.java.command");
         if (command != null && !command.contains(".jar")) {
             // 源码运行,加载本地插件

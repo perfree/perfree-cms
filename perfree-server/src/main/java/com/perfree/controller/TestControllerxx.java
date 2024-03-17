@@ -24,21 +24,21 @@ public class TestControllerxx {
     @Resource
     private PluginHandle pluginHandle;
 
-    @GetMapping("/stop")
-    @Operation(summary = "停止")
-    public CommonResult<Boolean> stop() throws Exception {
+    @GetMapping("/stopPf4j")
+    @Operation(summary = "停止Pf4j")
+    public CommonResult<Boolean> stopPf4j() throws Exception {
         for (PluginWrapper pluginWrapper : pluginManagerHandle.getPlugins()) {
-            pluginHandle.stopPlugin(pluginWrapper.getPluginId());
+            pluginHandle.stopPluginByPf4j(pluginWrapper.getPluginId());
         }
         return success(true);
     }
 
 
-    @GetMapping("/start")
-    @Operation(summary = "启动")
-    public CommonResult<Boolean> get() throws Exception {
+    @GetMapping("/startPf4j")
+    @Operation(summary = "启动Pf4j")
+    public CommonResult<Boolean> startPf4j() throws Exception {
         for (PluginWrapper pluginWrapper : pluginManagerHandle.getPlugins()) {
-            pluginHandle.startPlugin(pluginWrapper.getPluginId());
+            pluginHandle.startPluginByPf4j(pluginWrapper.getPluginId());
         }
         return success(true);
     }

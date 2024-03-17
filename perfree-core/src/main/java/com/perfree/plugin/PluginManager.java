@@ -39,19 +39,21 @@ public class PluginManager{
     @Resource
     private PluginManagerHandle pluginManagerHandle;
 
+    public void initPluginsByPf4j() throws Exception {
+        pluginManagerHandle.loadPlugins();
+        List<PluginWrapper> plugins = pluginManagerHandle.getPlugins();
+        for (PluginWrapper pluginWrapper : plugins) {
+            pluginHandle.startPluginByPf4j(pluginWrapper.getPluginId());
+        }
+    }
     /**
      * 初始化所有插件
      * @author perfree
      * @date 2023-09-27 16:09:44
      */
     public void initPlugins() throws Exception {
-        pluginManagerHandle.loadPlugins();
-        List<PluginWrapper> plugins = pluginManagerHandle.getPlugins();
-        for (PluginWrapper pluginWrapper : plugins) {
 
-            pluginHandle.startPlugin(pluginWrapper.getPluginId());
-        }
-        /*File pluginBaseDirFile = new File(pluginBaseDir);
+        File pluginBaseDirFile = new File(pluginBaseDir);
         if (!pluginBaseDirFile.exists()) {
            return;
         }
@@ -63,9 +65,7 @@ public class PluginManager{
             if (file.isDirectory()) {
                 runPlugin(file);
             }
-        }*/
-
-
+        }
 
     }
 
@@ -76,7 +76,7 @@ public class PluginManager{
      * @param pluginDir 插件目录
      */
     public void runPlugin(File pluginDir) {
-      /*  try {
+        try {
             PluginInfo pluginInfo = pluginHandle.startPlugin(pluginDir);
             BasePluginEvent bean = PluginApplicationContextHolder.getPluginBean(pluginInfo.getPluginId(), BasePluginEvent.class);
             if (null != bean) {
@@ -84,7 +84,7 @@ public class PluginManager{
             }
         } catch (Exception e) {
             LOGGER.error("plugin  ----->  start error:{}", e.getMessage(), e);
-        }*/
+        }
     }
 
     /**

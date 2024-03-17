@@ -3,7 +3,6 @@ package com.perfree.plugin.handle;
 import cn.hutool.core.io.FileUtil;
 import com.perfree.plugin.commons.PluginUtils;
 import com.perfree.plugin.PluginApplicationContextHolder;
-import com.perfree.plugin.PluginClassLoaderHolder;
 import com.perfree.plugin.PluginInfo;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
 import org.apache.ibatis.io.Resources;
@@ -37,7 +36,7 @@ public class MapperXmlHandle implements BasePluginRegistryHandler {
         org.apache.ibatis.session.Configuration configuration = bean.getConfiguration();
 
         try {
-            Resources.setDefaultClassLoader(PluginClassLoaderHolder.getJarClassLoader(plugin.getPluginId()));
+            Resources.setDefaultClassLoader(plugin.getPluginClassLoader());
             List<File> mapperXml = PluginUtils.getMapperXml(new File(plugin.getPluginPath()), plugin.getPluginConfig());
             for (File file : mapperXml) {
                 BufferedInputStream inputStream = FileUtil.getInputStream(file);

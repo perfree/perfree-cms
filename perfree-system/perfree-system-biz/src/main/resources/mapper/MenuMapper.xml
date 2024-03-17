@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.perfree.system.mapper.MenuMapper">
+<mapper namespace="com.perfree.mapper.MenuMapper">
 
-    <select id="menuListByUserId" resultType="com.perfree.system.model.Menu">
+    <select id="menuListByUserId" resultType="com.perfree.model.Menu">
         SELECT pm.* FROM p_menu pm
         INNER JOIN p_role_menu prm ON pm.id = prm.menuId
         INNER JOIN p_user_role pur ON prm.roleId = pur.roleId
@@ -15,7 +15,7 @@
         INNER JOIN p_user_role pur ON prm.roleId = pur.roleId
         WHERE pm.menuType = #{type,jdbcType=INTEGER} AND pur.userId = #{userId,jdbcType=INTEGER}
     </select>
-    <select id="menuListByAdmin" resultType="com.perfree.system.model.Menu">
+    <select id="menuListByAdmin" resultType="com.perfree.model.Menu">
         SELECT pm.* FROM p_menu pm
         WHERE pm.type = #{type,jdbcType=INTEGER} AND pm.menuType in(0, 1)
         order by pm.seq asc
