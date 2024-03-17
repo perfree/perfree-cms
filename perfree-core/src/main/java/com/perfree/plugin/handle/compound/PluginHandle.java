@@ -2,28 +2,26 @@ package com.perfree.plugin.handle.compound;
 
 
 import cn.hutool.core.util.URLUtil;
-import com.perfree.plugin.PluginApplicationContextHolder;
-import com.perfree.plugin.PluginClassLoaderHolder;
-import com.perfree.plugin.PluginInfo;
-import com.perfree.plugin.PluginInfoHolder;
+import com.perfree.plugin.*;
 import com.perfree.plugin.commons.PluginUtils;
 import com.perfree.plugin.core.PluginClassLoader;
 import jakarta.annotation.Resource;
+import org.pf4j.PluginWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ReflectionUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 @Component
 public class PluginHandle implements ApplicationContextAware {
@@ -37,6 +35,10 @@ public class PluginHandle implements ApplicationContextAware {
     @Resource
     ConfigurableApplicationContext context;
 
+    @Resource
+    private PluginManagerHandle pluginManagerHandle;
+
+
     private static final Logger LOGGER = LoggerFactory.getLogger(PluginHandle.class);
 
     /**
@@ -45,30 +47,31 @@ public class PluginHandle implements ApplicationContextAware {
      * @return  PluginInfo
      * @throws Exception
      */
-    public PluginInfo startPlugin(File pluginDir) throws Exception {
-        PluginInfo pluginInfo = new PluginInfo();
-        // 加载插件配置文件
-        pluginInfo.setPluginConfig(PluginUtils.getPluginConfig(pluginDir));
-        pluginInfo.setPluginId(pluginInfo.getPluginConfig().getPlugin().getName());
-        // 加载插件JarClassLoader
-       // JarClassLoader jarClassLoader = ClassLoaderUtil.getJarClassLoader(pluginDir);
-        PluginClassLoader pluginClassLoader = PluginClassLoaderHolder.getJarClassLoader(pluginInfo.getPluginId());
-        if (null == pluginClassLoader) {
-            pluginClassLoader = new PluginClassLoader(new URL[]{URLUtil.getURL(pluginDir)}, Thread.currentThread().getContextClassLoader());
+    public PluginInfo startPlugin(String pluginId) throws Exception {
+        List<Class<?>> classList = new ArrayList<>();
+        pluginManagerHandle.stopPlugin(pluginId);
+        PluginWrapper pluginWrapper = pluginManagerHandle.getPlugin(pluginId);
+        BasePlugin basePlugin = (BasePlugin) pluginManagerHandle.getPlugin(pluginId).getPlugin();
+        String scanPackage = basePlugin.scanPackage();
+        Set<String> classPackageName = scanClassPackageName(scanPackage, pluginWrapper);
+        for (String packageName : classPackageName) {
+            ClassLoader pluginClassLoader = pluginWrapper.getPluginClassLoader();
+            Class<?> clazz = pluginClassLoader.loadClass(packageName);
+            if (!BasePlugin.class.isAssignableFrom(clazz)) {
+                classList.add(clazz);
+            }
         }
-        PluginClassLoaderHolder.addPluginJarClassLoader(pluginInfo.getPluginId(), pluginClassLoader);
-        pluginInfo.setClassList(PluginUtils.getClassList(pluginDir,pluginClassLoader));
-        pluginInfo.setPluginPath(pluginDir.getAbsolutePath());
-        // 加载插件专属AnnotationConfigApplicationContext
+        PluginInfo pluginInfo = new PluginInfo();
+        pluginInfo.setPluginId(pluginWrapper.getPluginId());
+        pluginInfo.setClassList(classList);
+        pluginInfo.setPluginPath(pluginWrapper.getPluginPath().toString());
         AnnotationConfigApplicationContext annotationConfigApplicationContext = new AnnotationConfigApplicationContext();
         annotationConfigApplicationContext.setParent(applicationContext);
-        annotationConfigApplicationContext.setClassLoader(pluginClassLoader);
+        annotationConfigApplicationContext.setClassLoader(pluginWrapper.getPluginClassLoader());
         PluginApplicationContextHolder.addPluginApplicationContext(pluginInfo.getPluginId(), annotationConfigApplicationContext);
-        LOGGER.info("plugin  ----->  plugin msg load complete: {}", pluginInfo);
         pluginCompoundHandle.initialize();
         pluginCompoundHandle.registry(pluginInfo);
         PluginInfoHolder.addPluginInfo(pluginInfo.getPluginId(), pluginInfo);
-        LOGGER.info("plugin  ----->  start success: {}", pluginInfo);
         return pluginInfo;
     }
 
@@ -85,14 +88,32 @@ public class PluginHandle implements ApplicationContextAware {
         // 移除插件专属AnnotationConfigApplicationContext
         PluginApplicationContextHolder.removePluginApplicationContext(pluginId);
         PluginInfoHolder.removePluginInfo(pluginId);
-        PluginClassLoaderHolder.removePluginJarClassLoader(pluginId);
         LOGGER.info("plugin  ----->  stop success: {}", pluginInfo);
         pluginInfo.setPluginConfig(null);
         pluginInfo.setClassList(null);
+        pluginManagerHandle.stopPlugin(pluginId);
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
+    }
+
+
+    public static Set<String> scanClassPackageName(String basePackage, PluginWrapper pluginWrapper) throws IOException {
+        String pluginPath = pluginWrapper.getPluginPath().toString();
+        Set<String> classPackageNames = new HashSet<>();
+        try (JarFile jarFile = new JarFile(pluginPath)) {
+            Enumeration<JarEntry> jarEntries = jarFile.entries();
+            while (jarEntries.hasMoreElements()) {
+                JarEntry entry = jarEntries.nextElement();
+                String jarEntryName = entry.getName();
+                if (jarEntryName.contains(".class") && jarEntryName.replaceAll("/", ".").startsWith(basePackage)) {
+                    String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replace("/", ".");
+                    classPackageNames.add(className);
+                }
+            }
+        }
+        return classPackageNames;
     }
 }

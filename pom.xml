@@ -167,6 +167,13 @@
                 <version>2.2</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.pf4j</groupId>
+                <artifactId>pf4j</artifactId>
+                <version>3.11.0</version>
+            </dependency>
+
+
         </dependencies>
     </dependencyManagement>
 

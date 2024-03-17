@@ -1,7 +1,5 @@
 package com.perfree.plugin;
 
-import cn.hutool.core.io.FileUtil;
-import cn.hutool.core.io.file.FileReader;
 import com.perfree.plugin.commons.PluginUtils;
 import com.perfree.plugin.handle.compound.PluginHandle;
 import com.perfree.plugin.pojo.PluginBaseConfig;
@@ -11,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,7 +41,7 @@ public class PluginDevManager {
      * @date 2023-09-27 16:09:44
      */
     public void initPlugins() throws Exception {
-        List<String> plugins = getPluginClassPath();
+        /*List<String> plugins = getPluginClassPath();
         if (null == plugins || plugins.isEmpty()) {
             return;
         }
@@ -73,7 +70,7 @@ public class PluginDevManager {
                     bean.onInstall();
                 }
             }
-        }
+        }*/
     }
 
     /**

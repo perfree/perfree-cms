@@ -1,18 +1,15 @@
 package com.perfree.plugin.handle;
 
 import cn.hutool.core.io.FileUtil;
-import com.perfree.commons.utils.SpringBeanUtil;
+import com.perfree.plugin.commons.PluginUtils;
 import com.perfree.plugin.PluginApplicationContextHolder;
 import com.perfree.plugin.PluginClassLoaderHolder;
 import com.perfree.plugin.PluginInfo;
-import com.perfree.plugin.commons.PluginUtils;
 import org.apache.ibatis.builder.xml.XMLMapperBuilder;
-import org.apache.ibatis.cache.Cache;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.apache.ibatis.session.defaults.DefaultSqlSession;
 import org.springframework.util.ClassUtils;
 
 import java.io.BufferedInputStream;

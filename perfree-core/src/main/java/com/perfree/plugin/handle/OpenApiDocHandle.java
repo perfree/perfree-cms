@@ -1,24 +1,16 @@
 package com.perfree.plugin.handle;
 
 import cn.hutool.core.util.ReflectUtil;
-import com.perfree.plugin.PluginApplicationContextHolder;
 import com.perfree.plugin.PluginInfo;
 import io.swagger.v3.oas.models.OpenAPI;
-import org.apache.commons.lang3.StringUtils;
 import org.springdoc.api.AbstractOpenApiResource;
-import org.springdoc.core.configurer.SpringdocActuatorBeanFactoryConfigurer;
-import org.springdoc.core.configurer.SpringdocBeanFactoryConfigurer;
-import org.springdoc.core.models.GroupedOpenApi;
 import org.springdoc.core.properties.SpringDocConfigProperties;
 import org.springdoc.core.service.OpenAPIService;
-import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.*;
 
 public class OpenApiDocHandle implements BasePluginRegistryHandler{

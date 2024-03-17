@@ -37,8 +37,8 @@ spring:
     static-path-pattern: /static/**
   datasource:
     username: root
-    url: jdbc:mysql://153.153.234.13:3306/perfree?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&nullCatalogMeansCurrent=true
-    password: xwt@123
+    url: jdbc:mysql://127.0.0.1:3306/perfree?useSSL=false&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&nullCatalogMeansCurrent=true
+    password: 215607..
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     druid:

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.exam.mapper.TestMapper">
+<mapper namespace="org.pf4j.com.exam.mapper.TestMapper">
 
-    <select id="queryByMapperXml" resultType="com.exam.model.Test">
+    <select id="queryByMapperXml" resultType="org.pf4j.com.exam.model.Test">
         select * from p_test
     </select>
 

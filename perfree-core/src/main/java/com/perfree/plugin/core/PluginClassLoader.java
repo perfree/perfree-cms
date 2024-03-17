@@ -18,6 +18,8 @@ public class PluginClassLoader extends URLClassLoader {
 
     private ClassLoader parent;
 
+    private static final String JAVA_PACKAGE_PREFIX = "java.";
+
     public PluginClassLoader(URL[] urls, ClassLoader parent) {
         super(urls, parent);
         this.parent = parent;
@@ -64,12 +66,34 @@ public class PluginClassLoader extends URLClassLoader {
 
 
     @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
-        return super.findClass(name);
-    }
+    public Class<?> loadClass(String className) throws ClassNotFoundException {
+        synchronized (getClassLoadingLock(className)) {
+            if (className.startsWith(JAVA_PACKAGE_PREFIX)) {
+                return findSystemClass(className);
+            }
 
-    @Override
-    public Class<?> loadClass(String name) throws ClassNotFoundException {
-        return super.loadClass(name);
+            if (className.startsWith("com.perfree")) {
+                return getParent().loadClass(className);
+            }
+
+            Class<?> loadedClass = findLoadedClass(className);
+            if (loadedClass != null) {
+                return loadedClass;
+            }
+
+            if (className.startsWith("com.baomidou.mybatisplus")) {
+                return getParent().loadClass(className);
+            }
+
+            Class<?> c = findClass(className);
+            if (c != null) {
+                return c;
+            }
+            c = super.loadClass(className);
+            if (c != null) {
+                return c;
+            }
+        }
+        throw new ClassNotFoundException(className);
     }
 }

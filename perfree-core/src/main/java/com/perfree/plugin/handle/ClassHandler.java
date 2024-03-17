@@ -1,9 +1,9 @@
 package com.perfree.plugin.handle;
 
 import cn.hutool.core.util.StrUtil;
+import com.perfree.plugin.annotation.InterceptPath;
 import com.perfree.plugin.PluginApplicationContextHolder;
 import com.perfree.plugin.PluginInfo;
-import com.perfree.plugin.annotation.InterceptPath;
 import org.apache.ibatis.annotations.Mapper;
 import org.mybatis.spring.mapper.MapperFactoryBean;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;

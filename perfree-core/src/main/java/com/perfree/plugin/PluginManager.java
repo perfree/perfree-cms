@@ -5,12 +5,18 @@ import com.perfree.plugin.exception.PluginException;
 import com.perfree.plugin.handle.compound.PluginHandle;
 import com.perfree.plugin.pojo.PluginBaseConfig;
 import jakarta.annotation.Resource;
+import org.pf4j.PluginWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 /**
  * @author Perfree
@@ -30,13 +36,22 @@ public class PluginManager{
     @Resource
     private PluginHandle pluginHandle;
 
+    @Resource
+    private PluginManagerHandle pluginManagerHandle;
+
     /**
      * 初始化所有插件
      * @author perfree
      * @date 2023-09-27 16:09:44
      */
-    public void initPlugins() {
-        File pluginBaseDirFile = new File(pluginBaseDir);
+    public void initPlugins() throws Exception {
+        pluginManagerHandle.loadPlugins();
+        List<PluginWrapper> plugins = pluginManagerHandle.getPlugins();
+        for (PluginWrapper pluginWrapper : plugins) {
+
+            pluginHandle.startPlugin(pluginWrapper.getPluginId());
+        }
+        /*File pluginBaseDirFile = new File(pluginBaseDir);
         if (!pluginBaseDirFile.exists()) {
            return;
         }
@@ -48,7 +63,10 @@ public class PluginManager{
             if (file.isDirectory()) {
                 runPlugin(file);
             }
-        }
+        }*/
+
+
+
     }
 
     /**
@@ -58,7 +76,7 @@ public class PluginManager{
      * @param pluginDir 插件目录
      */
     public void runPlugin(File pluginDir) {
-        try {
+      /*  try {
             PluginInfo pluginInfo = pluginHandle.startPlugin(pluginDir);
             BasePluginEvent bean = PluginApplicationContextHolder.getPluginBean(pluginInfo.getPluginId(), BasePluginEvent.class);
             if (null != bean) {
@@ -66,7 +84,7 @@ public class PluginManager{
             }
         } catch (Exception e) {
             LOGGER.error("plugin  ----->  start error:{}", e.getMessage(), e);
-        }
+        }*/
     }
 
     /**
@@ -93,7 +111,7 @@ public class PluginManager{
      * @param pluginFile pluginFile
      */
     public void installPlugin(File pluginFile) throws Exception {
-        if (null == pluginFile || !pluginFile.exists()) {
+      /*  if (null == pluginFile || !pluginFile.exists()) {
             throw new PluginException("pluginFile not found!");
         }
         File pluginTempDir;
@@ -125,6 +143,7 @@ public class PluginManager{
                 bean.onInstall();
             }
         }
-        pluginHandle.stopPlugin(pluginInfo.getPluginId());
+        pluginHandle.stopPlugin(pluginInfo.getPluginId());*/
     }
+
 }

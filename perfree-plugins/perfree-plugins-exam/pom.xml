@@ -14,6 +14,14 @@
     <packaging>jar</packaging>
     <description>PerfreeBlog插件示例</description>
 
+    <properties>
+        <plugin.id>hello-plugin</plugin.id>
+        <plugin.class>org.pf4j.com.exam.PluginMain</plugin.class>
+        <plugin.version>0.0.1</plugin.version>
+        <plugin.provider>Decebal Suiu</plugin.provider>
+        <plugin.dependencies />
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.perfree</groupId>
@@ -21,19 +29,4 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-                <configuration>
-                    <source>14</source>
-                    <target>14</target>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>

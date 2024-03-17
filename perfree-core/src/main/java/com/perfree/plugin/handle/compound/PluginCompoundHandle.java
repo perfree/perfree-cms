@@ -29,7 +29,7 @@ public class PluginCompoundHandle implements BasePluginRegistryHandler, Applicat
     public void initialize() throws Exception {
         pluginRegisterList.clear();
         pluginRegisterList.add(new ClassHandler());
-        pluginRegisterList.add(new MapperXmlHandle());
+        // pluginRegisterList.add(new MapperXmlHandle());
 
         pluginRegisterList.add(new ControllerHandler(this.applicationContext));
         pluginRegisterList.add(new OpenApiDocHandle(this.applicationContext));

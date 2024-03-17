@@ -1,6 +1,5 @@
 package com.perfree.plugin;
 
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.ArrayList;

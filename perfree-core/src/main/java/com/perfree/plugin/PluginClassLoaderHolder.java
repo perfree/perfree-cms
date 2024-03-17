@@ -1,9 +1,8 @@
 package com.perfree.plugin;
 
-import cn.hutool.core.lang.JarClassLoader;
 import com.perfree.plugin.core.PluginClassLoader;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,8 +35,9 @@ public abstract class PluginClassLoaderHolder {
 	 */
 	public static void removePluginJarClassLoader(String pluginId) throws IOException {
 		PluginClassLoader remove = pluginJarClassLoader.remove(pluginId);
-		remove.close();
-		remove = null;
+		if (remove != null) {
+			((Closeable) remove).close();
+		}
 		System.gc();
 	}
 
