@@ -41,7 +41,7 @@ public class PluginDevManager {
      * @date 2023-09-27 16:09:44
      */
     public void initPlugins() throws Exception {
-        /*List<String> plugins = getPluginClassPath();
+        List<String> plugins = getPluginClassPath();
         if (null == plugins || plugins.isEmpty()) {
             return;
         }
@@ -70,7 +70,7 @@ public class PluginDevManager {
                     bean.onInstall();
                 }
             }
-        }*/
+        }
     }
 
     /**
