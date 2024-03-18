@@ -31,14 +31,14 @@ public class TestController {
     @GetMapping("/unInstallJar")
     @Operation(summary = "卸载插件jar")
     public String unInstallJar() {
-        pluginManager.stopPlugin("perfree-plugin-pf4j");
+        pluginManager.stopPlugin("perfree-exam123");
         return "111";
     }
 
     @GetMapping("/start")
     @Operation(summary = "启动插件jar")
     public String start() {
-        pluginManager.runPlugin(new File(pluginBaseDir + "/perfree-plugin-pf4j"));
+        pluginManager.runPlugin(new File(pluginBaseDir + "/perfree-exam123"));
         return "111";
     }
 }

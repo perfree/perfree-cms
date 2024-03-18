@@ -3,7 +3,7 @@
 <mapper namespace="com.exam.mapper.TestMapper">
 
     <select id="queryByMapperXml" resultType="com.exam.model.Test">
-        select * from p_test
+        select * from p_test order by id asc
     </select>
 
 </mapper>

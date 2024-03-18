@@ -76,10 +76,10 @@ public class PluginManager{
     public void stopPlugin(String pluginId) {
         try {
             PluginInfo pluginInfo = PluginInfoHolder.getPluginInfo(pluginId);
-            BasePluginEvent bean = PluginApplicationContextHolder.getPluginBean(pluginInfo.getPluginId(), BasePluginEvent.class);
+          /*  BasePluginEvent bean = PluginApplicationContextHolder.getPluginBean(pluginInfo.getPluginId(), BasePluginEvent.class);
             if (null != bean) {
                 bean.onStop();
-            }
+            }*/
             pluginHandle.stopPlugin(pluginId);
         } catch (Exception e) {
             LOGGER.error("plugin  ----->  stop error:{}", e.getMessage(), e);

@@ -38,17 +38,6 @@ public class OpenApiDocHandle implements BasePluginRegistryHandler{
 
     @Override
     public void registry(PluginInfo pluginInfo) throws Exception {
-//        SpringDocConfigProperties.GroupConfig groupConfig = new SpringDocConfigProperties.GroupConfig();
-//        List<String> packagesToScan = new ArrayList<>();
-//        packagesToScan.add("com.exam");
-//        groupConfig.setPackagesToScan(packagesToScan);
-//
-//        List<String> pathsToMatch = new ArrayList<>();
-//        pathsToMatch.add("/**");
-//        groupConfig.setPathsToMatch(pathsToMatch);
-//        groupConfig.setDisplayName("测试");
-//        groupConfig.setGroup("测试");
-//        springDocConfigProperties.addGroupConfig(groupConfig);
         List<Class<?>> pluginClassList = pluginInfo.getClassList().stream().filter(item -> !item.isInterface()).toList();
         if(!pluginClassList.isEmpty()) {
             for (Class<?> aClass : pluginClassList) {
@@ -58,13 +47,8 @@ public class OpenApiDocHandle implements BasePluginRegistryHandler{
                 }
             }
         }
-        OpenAPI cachedOpenAPI = openApiService.getCachedOpenAPI(Locale.getDefault());
         openApiService.setCachedOpenAPI(null, Locale.getDefault());
         openApiService.build(Locale.getDefault());
-        /*Method setCachedOpenApiMethod = ReflectUtil.getMethod(openApiService.getClass(), "setCachedOpenAPI", OpenAPI.class, Locale.class);
-        if(setCachedOpenApiMethod != null){
-            setCachedOpenApiMethod.invoke(openApiService, null, null);
-        }*/
     }
 
     @Override
@@ -80,10 +64,6 @@ public class OpenApiDocHandle implements BasePluginRegistryHandler{
         }
         openApiService.setCachedOpenAPI(null, Locale.getDefault());
         openApiService.build(Locale.getDefault());
-        /*Method setCachedOpenApiMethod = ReflectUtil.getMethod(openApiService.getClass(), "setCachedOpenAPI", OpenAPI.class, Locale.class);
-        if(setCachedOpenApiMethod != null){
-            setCachedOpenApiMethod.invoke(openApiService, null, null);
-        }*/
     }
 
 }

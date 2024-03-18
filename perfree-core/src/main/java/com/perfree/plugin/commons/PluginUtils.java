@@ -9,7 +9,10 @@ import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
@@ -17,13 +20,24 @@ import java.util.regex.Pattern;
 public class PluginUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(PluginUtils.class);
 
+    public static final String CODE_DIR = "code";
+
+    public static final String LIB_DIR = "lib";
+
+    public static final String PLUGIN_CONFIG_NAME = "plugin.yaml";
+
     /**
      * 获取插件配置信息
      * @param pluginFile pluginFile
      * @return PluginBaseConfig
      */
-    public static PluginBaseConfig getPluginConfig(File pluginFile) {
-        File file = new File(pluginFile.getAbsolutePath() + File.separator + "plugin.yaml");
+    public static PluginBaseConfig getPluginConfig(File pluginFile, boolean dev) {
+        File file;
+        if (dev) {
+            file = new File(pluginFile.getAbsolutePath() + File.separator + PLUGIN_CONFIG_NAME);
+        } else {
+            file = new File(pluginFile.getAbsolutePath() + File.separator + CODE_DIR + File.separator + PLUGIN_CONFIG_NAME);
+        }
         if (!file.exists()) {
             LOGGER.error("plugin.yaml not found");
             return null;
@@ -53,27 +67,43 @@ public class PluginUtils {
     /**
      * 将临时插件文件拷贝至指定目录
      */
-    public static File copyPluginTempToPlugin(File pluginTempDir, String pluginBaseDir, Boolean isDelTemp) {
-        PluginBaseConfig pluginConfig = getPluginConfig(pluginTempDir);
+    public static File devCopyPluginToPluginDir(String devPluginDir, String pluginBaseDir) {
+        // 拷贝源代码
+        File codeDirFile = new File(devPluginDir +File.separator + "classes");
+        PluginBaseConfig pluginConfig = getPluginConfig(codeDirFile, true);
         if (null == pluginConfig) {
             LOGGER.error("plugin.yaml parse fail");
             return null;
         }
-        File[] files = pluginTempDir.listFiles();
-        if (null == files) {
+
+        File pluginDir = new File(pluginBaseDir + File.separator + pluginConfig.getPlugin().getName());
+
+        File[] codeFiles = codeDirFile.listFiles();
+        if (null == codeFiles) {
            return null;
         }
-        File destDirFile = new File(pluginBaseDir + File.separator + pluginConfig.getPlugin().getName());
-        if (!destDirFile.exists()) {
-            FileUtil.mkdir(destDirFile);
+        File codeDestDirFile = new File(pluginBaseDir + File.separator + pluginConfig.getPlugin().getName() + File.separator + PluginUtils.CODE_DIR);
+        if (!codeDestDirFile.exists()) {
+            FileUtil.mkdir(codeDestDirFile);
         }
-        for (File pluginSource : files) {
-            FileUtil.copy(pluginSource, destDirFile, true);
+        for (File pluginSource : codeFiles) {
+            FileUtil.copy(pluginSource, codeDestDirFile, true);
         }
-        if (isDelTemp) {
-            FileUtil.del(pluginTempDir);
+
+        // 拷贝依赖文件
+        File libDirFile = new File(devPluginDir +File.separator + PluginUtils.LIB_DIR);
+        File[] libFiles = libDirFile.listFiles();
+        if (null == libFiles) {
+            return pluginDir;
         }
-        return destDirFile;
+        File libeDestDirFile = new File(pluginBaseDir + File.separator + pluginConfig.getPlugin().getName() + File.separator + PluginUtils.LIB_DIR);
+        if (!libeDestDirFile.exists()) {
+            FileUtil.mkdir(libeDestDirFile);
+        }
+        for (File pluginSource : libFiles) {
+            FileUtil.copy(pluginSource, libeDestDirFile, true);
+        }
+        return pluginDir;
     }
 
     /**
@@ -138,10 +168,11 @@ public class PluginUtils {
         if (!pluginDir.exists()) {
             return classList;
         }
-        List<File> files = FileUtil.loopFiles(pluginDir);
+        File codeDir = new File(pluginDir.getAbsolutePath() + File.separator + CODE_DIR);
+        List<File> files = FileUtil.loopFiles(codeDir);
         for (File file : files) {
             if (file.getName().endsWith(".class")) {
-                String entryName = file.getAbsolutePath().replace(pluginDir.getAbsolutePath(), "").replaceAll("[\\\\/]", ".");
+                String entryName = file.getAbsolutePath().replace(codeDir.getAbsolutePath(), "").replaceAll("[\\\\/]", ".");
                 if (entryName.startsWith(".")) {
                     entryName = entryName.replaceFirst(".", "");
                 }
@@ -171,10 +202,11 @@ public class PluginUtils {
                 .replaceAll("\\.", "\\.")
                 .replaceAll("<>", ".*");
 
-        List<File> files = FileUtil.loopFiles(pluginDir);
+        File codeDir = new File(pluginDir.getAbsolutePath() + File.separator + CODE_DIR);
+        List<File> files = FileUtil.loopFiles(codeDir);
         List<File> result = new ArrayList<>();
         for (File file : files) {
-            String realPath = file.getAbsolutePath().replace(pluginDir.getAbsolutePath() + File.separator, "").replaceAll("\\\\","/");
+            String realPath = file.getAbsolutePath().replace(codeDir.getAbsolutePath() + File.separator, "").replaceAll("\\\\","/");
             if (Pattern.matches(xmlLocationPattern, realPath) && file.getName().endsWith(".xml")) {
                 result.add(file);
             }
@@ -194,11 +226,11 @@ public class PluginUtils {
                 .replaceAll("\\*", "<>")
                 .replaceAll("\\.", "\\.")
                 .replaceAll("<>", ".*");
-
-        List<File> files = FileUtil.loopFiles(pluginDir);
+        File codeDir = new File(pluginDir.getAbsolutePath() + File.separator + CODE_DIR);
+        List<File> files = FileUtil.loopFiles(codeDir);
         List<String> result = new ArrayList<>();
         for (File file : files) {
-            String realPath = file.getAbsolutePath().replace(pluginDir.getAbsolutePath() + File.separator, "").replaceAll("\\\\","/");
+            String realPath = file.getAbsolutePath().replace(codeDir.getAbsolutePath() + File.separator, "").replaceAll("\\\\","/");
             if (Pattern.matches(xmlLocationPattern, realPath) && file.getName().endsWith(".xml")) {
                 result.add(file.getAbsolutePath());
             }

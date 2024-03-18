@@ -1,6 +1,7 @@
 package com.perfree.plugin.handle;
 
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration;
 import com.perfree.plugin.annotation.InterceptPath;
 import com.perfree.plugin.PluginApplicationContextHolder;
 import com.perfree.plugin.PluginInfo;
@@ -40,6 +41,7 @@ public class ClassHandler implements BasePluginRegistryHandler{
 
     @Override
     public void registry(PluginInfo pluginInfo) throws Exception {
+
         // mybatis-plus实现一系列框架自定义bean,必须先注册mapper接口,否则会报错
         registerMapper(pluginInfo);
         // 此处逻辑: 只要类里包含REGISTER_ANNO中任意一个注解,就注册进入Bean容器中

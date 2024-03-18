@@ -1,24 +1,23 @@
 package com.exam.controller;
 
-import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.excel.util.ListUtils;
+import com.exam.commons.TestConfig;
 import com.exam.convert.TestConvert;
 import com.exam.service.test.TestService;
-import com.exam.vo.test.TestBaseVO;
-import com.exam.vo.test.TestPageReqVO;
 import com.exam.vo.test.TestRespVO;
-import com.exam.commons.TestConfig;
-import com.exam.model.Test;
-import com.exam.vo.test.TestAddOrUpdateReqVO;
 import com.perfree.commons.common.CommonResult;
-import com.perfree.commons.common.PageResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
-import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 
 import static com.perfree.commons.common.CommonResult.success;
@@ -42,44 +41,27 @@ public class TestController {
     @Resource
     private TestConfig testConfig;
 
-    @PostMapping("/page")
-    @Operation(summary = "分页列表")
-    public CommonResult<PageResult<TestRespVO>> page(@RequestBody TestPageReqVO pageVO) {
-        PageResult<Test> testPageResult = testService.testPage(pageVO);
-        return success(TestConvert.INSTANCE.convertPageResultVO(testPageResult));
-    }
-
-    @GetMapping("/list")
-    @Operation(summary = "获取所有")
-    public CommonResult<List<TestRespVO>> hello(){
-        LOGGER.info("测试日志~");
-        return success(BeanUtil.copyToList(testService.test(), TestRespVO.class));
-    }
-
-    @GetMapping("/listTest")
-    @Operation(summary = "获取所有")
-    public CommonResult<TestRespVO> listTest(){
-        TestBaseVO testBaseVO = new TestBaseVO();
-        testBaseVO.setName("123");
-        return success((TestRespVO) testBaseVO);
-    }
 
     @GetMapping("/get")
     @Operation(summary = "获取信息")
-    public CommonResult<TestRespVO> get(@RequestParam(value = "id") Integer id) {
-        return success(TestConvert.INSTANCE.convertRespVO(testService.getById(id)));
+    public CommonResult<Boolean> get(@RequestParam(value = "id") Integer id) {
+        String fileName = "E:\\" + "write" + System.currentTimeMillis() + ".xlsx";
+        // 这里 需要指定写用哪个class去读，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
+        // 如果这里想使用03 则 传入excelType参数即可
+        EasyExcel.write(fileName, DemoData.class).sheet("模板").doWrite(data());
+        return success(true);
     }
 
-    @PostMapping("/addOrUpdate")
-    @Operation(summary = "添加或更新")
-    public CommonResult<TestRespVO> addOrUpdate(@RequestBody @Valid TestAddOrUpdateReqVO testAddOrUpdateReqVO) {
-        return success(TestConvert.INSTANCE.convertRespVO(testService.addOrUpdate(testAddOrUpdateReqVO)));
-    }
-
-    @DeleteMapping("/del")
-    @Operation(summary = "删除角色")
-    public CommonResult<Boolean> del(@RequestParam(value = "id") Integer id) {
-        return success(testService.removeById(id));
+    private List<DemoData> data() {
+        List<DemoData> list = ListUtils.newArrayList();
+        for (int i = 0; i < 10; i++) {
+            DemoData data = new DemoData();
+            data.setString("字符串" + i);
+            data.setDate(new Date());
+            data.setDoubleData(0.56);
+            list.add(data);
+        }
+        return list;
     }
 
 

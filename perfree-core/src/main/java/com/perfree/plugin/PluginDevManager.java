@@ -1,5 +1,8 @@
 package com.perfree.plugin;
 
+import cn.hutool.core.io.watch.SimpleWatcher;
+import cn.hutool.core.io.watch.WatchMonitor;
+import cn.hutool.core.io.watch.watchers.DelayWatcher;
 import com.perfree.plugin.commons.PluginUtils;
 import com.perfree.plugin.handle.compound.PluginHandle;
 import com.perfree.plugin.pojo.PluginBaseConfig;
@@ -12,6 +15,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.file.Path;
+import java.nio.file.WatchEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,29 +51,49 @@ public class PluginDevManager {
             return;
         }
         for (String plugin : plugins) {
-            File pluginDir = new File(plugin);
-            if (!pluginDir.exists()) {
-                LOGGER.error("{} not found", plugin);
-                continue;
-            }
-            PluginBaseConfig pluginConfig = PluginUtils.getPluginConfig(pluginDir);
-            if (null == pluginConfig) {
-                LOGGER.error("{} plugin.yaml not found", plugin);
-                continue;
-            }
-            Boolean update = PluginUtils.isUpdate(pluginConfig, pluginBaseDir);
-            if (update && PluginInfoHolder.getPluginInfo(pluginConfig.getPlugin().getName()) != null) {
-                pluginManager.stopPlugin(pluginConfig.getPlugin().getName());
-            }
-            pluginDir = PluginUtils.copyPluginTempToPlugin(pluginDir, pluginBaseDir, false);
-            PluginInfo pluginInfo = pluginHandle.startPlugin(pluginDir);
-            BasePluginEvent bean = PluginApplicationContextHolder.getPluginBean(pluginInfo.getPluginId(), BasePluginEvent.class);
-            if (null != bean) {
-                if (update) {
-                    bean.onUpdate();
-                } else {
-                    bean.onInstall();
+            initPlugin(plugin);
+            WatchMonitor watchMonitor = WatchMonitor.createAll(plugin,  new DelayWatcher(new SimpleWatcher() {
+                @Override
+                public void onModify(WatchEvent<?> event, Path currentPath) {
+                    try {
+                        initPlugin(plugin);
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
                 }
+            },1000));
+            watchMonitor.start();
+        }
+    }
+
+    /**
+     * 初始化插件
+     * @param pluginPath
+     * @throws Exception
+     */
+    private void initPlugin(String pluginPath) throws Exception {
+        File classes = new File(pluginPath + "/classes");
+        if (!classes.exists()) {
+            LOGGER.error("{} not found", pluginPath);
+            return;
+        }
+        PluginBaseConfig pluginConfig = PluginUtils.getPluginConfig(classes, true);
+        if (null == pluginConfig) {
+            LOGGER.error("{} plugin.yaml not found", pluginPath);
+            return;
+        }
+        Boolean update = PluginUtils.isUpdate(pluginConfig, pluginBaseDir);
+        if (update && PluginInfoHolder.getPluginInfo(pluginConfig.getPlugin().getName()) != null) {
+            pluginManager.stopPlugin(pluginConfig.getPlugin().getName());
+        }
+        File pluginDir = PluginUtils.devCopyPluginToPluginDir(pluginPath, pluginBaseDir);
+        PluginInfo pluginInfo = pluginHandle.startPlugin(pluginDir);
+        BasePluginEvent bean = PluginApplicationContextHolder.getPluginBean(pluginInfo.getPluginId(), BasePluginEvent.class);
+        if (null != bean) {
+            if (update) {
+                bean.onUpdate();
+            } else {
+                bean.onInstall();
             }
         }
     }
@@ -107,7 +132,7 @@ public class PluginDevManager {
                 File pluginPom = new File(file.getAbsoluteFile() + "/pom.xml");
                 String pluginArtifactId = getPluginArtifactId(pluginPom);
                 if (enablePlugins.contains(pluginArtifactId)) {
-                    pluginPaths.add(file.getAbsoluteFile() + "/target/classes");
+                    pluginPaths.add(file.getAbsoluteFile() + "/target");
                 }
             }
         }
