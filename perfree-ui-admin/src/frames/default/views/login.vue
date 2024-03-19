@@ -165,7 +165,12 @@
    * 获取验证码
    */
   function getCode() {
-    captchaEnabled = getOptionByKey(OPTION_KEY.LOGIN_CAPTCHA_ENABLE).value === '0';
+    const optionByKey = getOptionByKey(OPTION_KEY.LOGIN_CAPTCHA_ENABLE);
+    if (optionByKey){
+      captchaEnabled = optionByKey.value === '0';
+    } else {
+      captchaEnabled = false;
+    }
     if (captchaEnabled){
       getCodeImg().then(res => {
         codeUrl.value = "data:image/gif;base64," + res.data.img;
