@@ -27,8 +27,6 @@ module.exports = function(type, perfree) {
     },
     plugins: [
       new CleanWebpackPlugin(),
-      // 解决动态模块导入打包重名的问题
-      // new webpack.NamedChunksPlugin(chunk => puzzle + "/" + chunk.name)
     ]
   };
 

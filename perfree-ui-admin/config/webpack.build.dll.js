@@ -26,7 +26,7 @@ module.exports = {
     hints:false
   },
   output: {
-    filename: "[name]/[name].[chunkhash].dll.js",
+    filename: "[name]/[name].dll.js",
     path: path.join(__dirname, "../static/dll"),
     library: "[name]_perfreeDll",
     libraryTarget: "umd"
@@ -37,7 +37,7 @@ module.exports = {
       path: path.join(
         __dirname,
         "../static/dll/[name]",
-        "[name].[chunkhash].manifest.json"
+        "[name].manifest.json"
       ),
       name: "[name]_perfreeDll"
     })

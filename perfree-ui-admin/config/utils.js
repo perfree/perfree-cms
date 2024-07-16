@@ -80,10 +80,6 @@ exports.getDlls = function() {
   let dlls = ["core", "perfree", 'element', 'NProgress'];
   let dllNames = [];
   for (let item of dlls) {
-    // const dllName = require(`../static/dll/${item}.manifest.json`).name.split(
-    //   "_"
-    // );
-    // dllNames.push(`./static/dll/${dllName[0]}.${dllName[1]}.dll.js`);
     let fileName
     const dllFileObj = requireContext(
       path.resolve(__dirname, `../static/dll/${item}`),
@@ -95,7 +91,7 @@ exports.getDlls = function() {
     })
     const dllName = fileName.split('.')
     dllNames.push(
-      `/static/dll/${dllName[0]}/${dllName[0]}.${dllName[1]}.dll.js`
+      `/static/dll/${dllName[0]}/${dllName[0]}.dll.js`
     )
   }
   return dllNames;
